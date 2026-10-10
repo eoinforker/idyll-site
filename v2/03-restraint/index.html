@@ -9,57 +9,67 @@
 <link rel="stylesheet" href="../../fonts.css">
 <style>
 /* Restraint: one screen, almost empty. Two vertical lines hold everything:
-   the outer margin and a column that starts just right of centre.
-   The nav swaps small panels of text in place; nothing scrolls. */
+   the outer margin and a column that starts just right of centre. One small
+   phone sits to its left and quietly changes its mind. Nothing scrolls. */
 :root {
   --bg: #fbfbfa;
   --ink: #1b1b1a;
-  --mid: #6f6f6b;
-  --faint: #a3a39e;
+  --mid: #6b6b67;
+  --faint: #9d9d98;
   --pill: #efefed;
-  --pill-on: #e6e6e3;
+  --pill-on: #e7e7e4;
   --line: #e9e9e6;
   --col: 54%;
   --m: 36px;
+  --ease: cubic-bezier(.2, .7, .1, 1);
   --sans: "Timeless Sans", -apple-system, system-ui, sans-serif;
   --serif: "Timeless Serif", Georgia, serif;
   --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --ui: -apple-system, "SF Pro Text", system-ui, var(--sans);
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
-body {
-  margin: 0; background: var(--bg); color: var(--ink);
-  font: 400 13px/1.55 var(--sans);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 2px; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 13px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+button { font: inherit; color: inherit; }
+img { display: block; }
+:focus { outline: none; }
+:focus-visible { outline: 1.5px solid var(--ink); outline-offset: 2px; border-radius: 999px; }
 .frame { position: relative; min-height: 100vh; min-height: 100svh; }
 
+/* one entrance, staggered; pure CSS so it never sticks invisible */
+.ld { animation: ld 1.1s var(--ease) both; animation-delay: calc(var(--d, 0) * 110ms + 80ms); }
+@keyframes ld { from { opacity: 0; transform: translateY(8px); } }
+
 /* top */
-.mark { position: absolute; left: var(--m); top: 30px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; letter-spacing: -.005em; }
-.mark i { width: 22px; height: 13px; background: var(--ink); -webkit-mask: url(../../img/cygnet-mark.svg) center/contain no-repeat; mask: url(../../img/cygnet-mark.svg) center/contain no-repeat; }
+.mark { position: absolute; left: var(--m); top: 30px; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; text-decoration: none; color: var(--ink); }
+.mark i { width: 22px; height: 13px; background: var(--ink); -webkit-mask: url(../../img/cygnet-mark.svg) center/contain no-repeat; mask: url(../../img/cygnet-mark.svg) center/contain no-repeat; transition: transform .6s var(--ease); }
+.mark:hover i { transform: translateX(3px); }
 
 nav { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); }
-.pills { display: flex; gap: 2px; padding: 3px; margin: 0; list-style: none; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(0,0,0,.02); }
-.pills button {
-  appearance: none; border: 0; background: transparent; cursor: pointer;
-  font: 400 12px/1 var(--sans); color: var(--mid);
-  height: 26px; padding: 0 12px; border-radius: 999px;
-  transition: background-color .2s, color .2s;
-}
+nav.ld { animation-name: ldn; }
+@keyframes ldn { from { opacity: 0; transform: translate(-50%, -6px); } }
+.pills { position: relative; display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(0,0,0,.02); }
+.pills .ind { position: absolute; top: 3px; left: 0; height: 26px; width: 40px; border-radius: 999px; background: var(--pill-on); transition: transform .5s cubic-bezier(.3,1.2,.4,1), width .5s cubic-bezier(.3,1.2,.4,1); }
+.pills button { position: relative; z-index: 1; appearance: none; border: 0; background: transparent; cursor: pointer; font: 400 12px/1 var(--sans); color: var(--mid); height: 26px; padding: 0 12px; border-radius: 999px; transition: color .25s, transform .15s; }
 .pills button:hover { color: var(--ink); }
-.pills button[aria-selected="true"] { background: var(--pill-on); color: var(--ink); }
+.pills button:active { transform: scale(.95); }
+.pills button[aria-selected="true"] { color: var(--ink); }
 .pills button:focus-visible { outline-offset: -1px; }
+
+.soon { position: absolute; right: var(--m); top: 24px; height: 32px; padding: 0 14px; border: 0; border-radius: 999px; background: var(--pill); color: var(--ink); font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: background-color .2s, transform .15s; }
+.soon:hover { background: var(--pill-on); }
+.soon:active { transform: scale(.96); }
+.soon i { width: 5px; height: 5px; border-radius: 50%; background: #9fb59a; }
+@media (prefers-reduced-motion: no-preference) { .soon i { animation: br 2.8s ease-in-out infinite; } }
+@keyframes br { 50% { opacity: .3; } }
 
 /* the single column */
 .col { position: absolute; left: var(--col); top: 37vh; width: min(380px, calc(100% - var(--col) - var(--m))); }
 .panel { display: none; }
 .panel.on { display: block; }
-@media (prefers-reduced-motion: no-preference) {
-  .panel.on { animation: in .42s cubic-bezier(.2,.7,.2,1) both; }
-  @keyframes in { from { opacity: 0; transform: translateY(5px); } }
-}
+.panel.on > * { animation: pin .6s var(--ease) both; }
+.panel.on > :nth-child(2) { animation-delay: 50ms; } .panel.on > :nth-child(3) { animation-delay: 100ms; } .panel.on > :nth-child(4) { animation-delay: 150ms; } .panel.on > :nth-child(5) { animation-delay: 200ms; }
+@keyframes pin { from { opacity: 0; transform: translateY(5px); } }
 h1, h2 { margin: 0; font: 400 25px/1.18 var(--serif); letter-spacing: -.012em; }
 h2 { font-size: 19px; margin-bottom: 18px; }
 .panel p { margin: 0; color: var(--mid); max-width: 34em; }
@@ -67,38 +77,142 @@ h2 { font-size: 19px; margin-bottom: 18px; }
 .lead { margin-top: 14px !important; }
 .tags { display: flex; gap: 6px; margin-top: 24px; }
 .tag { display: inline-flex; align-items: center; height: 24px; padding: 0 11px; border-radius: 999px; background: var(--pill); color: var(--mid); font-size: 11.5px; }
+.works { display: flex; align-items: center; gap: 12px; margin-top: 30px; font-size: 11px; color: var(--faint); }
+.works span.bm { width: 12px; height: 12px; background: #8e8e89; -webkit-mask: var(--mk) center/contain no-repeat; mask: var(--mk) center/contain no-repeat; }
+.bm-yt { --mk: url(../../img/brands/youtube.svg); } .bm-ig { --mk: url(../../img/brands/instagram.svg); }
+.bm-fb { --mk: url(../../img/brands/facebook.svg); } .bm-x { --mk: url(../../img/brands/x.svg); }
 
 dl { margin: 0; display: grid; grid-template-columns: 76px 1fr; row-gap: 9px; }
 dt { color: var(--ink); }
 dd { margin: 0; color: var(--mid); }
 .note { margin-top: 20px !important; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--faint) !important; }
 
+/* the small phone */
+.ph-wrap { position: absolute; left: calc(var(--col) - 250px); top: calc(37vh - 90px); display: flex; flex-direction: column; align-items: center; gap: 18px; perspective: 900px; }
+.iphone {
+  zoom: .52; position: relative; width: 300px; height: 624px; padding: 11px; border-radius: 54px;
+  background: linear-gradient(140deg, #e7e6e2 0%, #bdbcb7 28%, #d6d5d0 62%, #eeede9 100%);
+  box-shadow: inset 0 0 0 1px #f6f5f2, inset 0 0 0 2.5px #a9a8a3, 0 2px 3px rgba(0,0,0,.06), 0 30px 50px -22px rgba(0,0,0,.22), 0 70px 100px -50px rgba(0,0,0,.18);
+  transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg)); transition: transform .9s var(--ease);
+}
+.iphone .btn { position: absolute; width: 3px; border-radius: 2px 0 0 2px; background: linear-gradient(90deg, #c4c3be, #a9a8a3); }
+.b1 { left: -2.5px; top: 112px; height: 28px; } .b2 { left: -2.5px; top: 162px; height: 52px; } .b3 { left: -2.5px; top: 226px; height: 52px; }
+.b4 { right: -2.5px; top: 186px; height: 82px; border-radius: 0 2px 2px 0 !important; }
+.screen { position: relative; width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: #fff; box-shadow: 0 0 0 7px #0c0c0c; isolation: isolate; font: 400 13px/1.3 var(--ui); color: #111; }
+.iphone { padding: 11px; }
+.island { position: absolute; z-index: 20; top: 11px; left: 50%; width: 86px; height: 26px; margin-left: -43px; border-radius: 20px; background: #000; }
+.glare { position: absolute; inset: 0; z-index: 30; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.04) 26%, rgba(255,255,255,0) 27%); }
+.sb { position: absolute; z-index: 15; top: 0; left: 0; right: 0; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 4px 22px 0 32px; font: 600 14px/1 var(--ui); }
+.sb-r { display: flex; gap: 4px; align-items: center; }
+.sb svg { display: block; }
+.ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; }
+.av { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; font: 600 14px/1 var(--ui); color: rgba(0,0,0,.55); }
+.c1 { background: #ecdccd; } .c2 { background: #d6dfe0; } .c3 { background: #e2e0cc; } .c4 { background: #e3d6df; } .c5 { background: #ece3d6; } .c6 { background: #d7dfd2; }
+
+.before { position: absolute; inset: 0; background: #000; color: #fff; transition: opacity .5s ease .45s; }
+.strip-wrap { position: absolute; inset: 0; overflow: hidden; transition: transform .8s var(--ease), opacity .6s ease, border-radius .8s var(--ease); transform-origin: 50% 30%; }
+.strip { height: 500%; }
+.card { position: relative; height: 20%; overflow: hidden; }
+.card img { width: 100%; height: 100%; object-fit: cover; }
+.card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 50%, rgba(0,0,0,.6) 88%), linear-gradient(rgba(0,0,0,.35), transparent 20%); }
+.rail { position: absolute; z-index: 2; right: 12px; bottom: 120px; display: flex; flex-direction: column; align-items: center; gap: 16px; font: 600 11px/1 var(--ui); }
+.rail span { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.rail .ico { width: 26px; height: 26px; }
+.cap { position: absolute; z-index: 2; left: 14px; right: 64px; bottom: 82px; font-size: 12.5px; }
+.who { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 7px; }
+.who .av { width: 28px; height: 28px; font-size: 11px; }
+.spons { display: block; font-size: 11px; opacity: .8; font-weight: 400; }
+.prog { position: absolute; z-index: 3; left: 0; right: 0; bottom: 44px; height: 2px; background: rgba(255,255,255,.25); }
+.prog::after { content: ""; position: absolute; inset: 0; background: #fff; transform-origin: left; transform: scaleX(0); }
+.topbar { position: absolute; z-index: 4; top: 50px; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 6px 16px; font: 700 19px/1 var(--ui); transition: opacity .4s, transform .6s var(--ease); }
+.topbar small { font: 600 13px/1 var(--ui); }
+.tabbar { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; height: 66px; padding: 10px 26px 0; display: flex; justify-content: space-between; align-items: flex-start; }
+.before .tabbar { background: #000; transition: transform .6s var(--ease) .1s; }
+.me-dot { width: 24px; height: 24px; border-radius: 50%; background: #d9cfc0; box-shadow: 0 0 0 1.5px currentColor; }
+@media (prefers-reduced-motion: no-preference) {
+  .strip { animation: swipe 12s cubic-bezier(.6,0,.2,1) infinite; }
+  .prog::after { animation: fill 3s linear infinite; }
+}
+@keyframes swipe { 0%, 22% { transform: translateY(0); } 25%, 47% { transform: translateY(-20%); } 50%, 72% { transform: translateY(-40%); } 75%, 97% { transform: translateY(-60%); } 100% { transform: translateY(-80%); } }
+@keyframes fill { to { transform: scaleX(1); } }
+
+.after { position: absolute; inset: 0; background: #fff; padding-top: 52px; opacity: 0; transition: opacity .4s ease; }
+.after .row { opacity: 0; transform: translateY(14px); transition: opacity .5s ease, transform .7s var(--ease); }
+.calm .after { opacity: 1; transition-delay: .25s; }
+.calm .after .row { opacity: 1; transform: none; transition-delay: calc(.4s + var(--i, 0) * 60ms); }
+.calm .before { opacity: 0; }
+.calm .strip-wrap { transform: translateY(-18%) scale(.82); opacity: 0; border-radius: 30px; }
+.calm .strip, .calm .prog::after { animation-play-state: paused; }
+.calm .topbar { opacity: 0; transform: translateY(-20px); }
+.calm .before .tabbar { transform: translateY(100%); }
+.ig-h { display: flex; justify-content: space-between; align-items: center; padding: 8px 18px 10px; font: 700 18px/1 var(--ui); }
+.srch { margin: 2px 16px 12px; height: 34px; border-radius: 10px; background: #efefef; display: flex; align-items: center; gap: 8px; padding: 0 11px; color: #8e8e8e; font-size: 14px; }
+.srch .ico { width: 16px; height: 16px; }
+.mtabs { display: flex; justify-content: space-between; padding: 2px 18px 8px; font: 700 14px/1 var(--ui); }
+.mtabs span + span { color: #8e8e8e; font-weight: 600; }
+.cv { display: flex; align-items: center; gap: 11px; padding: 7px 18px; }
+.cv .meta { flex: 1; min-width: 0; }
+.cv b { display: block; font-weight: 400; font-size: 13.5px; }
+.cv small { display: block; color: #8e8e8e; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cv.un b, .cv.un small { font-weight: 600; color: #111; }
+.cv .blue { width: 8px; height: 8px; border-radius: 50%; background: #0095f6; }
+.cv .vthumb { width: 34px; height: 44px; border-radius: 6px; object-fit: cover; }
+.after .tabbar { border-top: 1px solid #efefef; background: #fff; justify-content: space-around; }
+
+.flip { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 2px; border-radius: 999px; background: var(--pill); font-size: 11px; }
+.flip input { position: absolute; opacity: 0; pointer-events: none; }
+.flip label { position: relative; z-index: 1; padding: 4px 11px; cursor: pointer; color: var(--faint); transition: color .25s; border-radius: 999px; text-align: center; }
+.flip label:hover { color: var(--ink); }
+.flip input:checked + label { color: var(--ink); }
+.flip input:focus-visible + label { outline: 1.5px solid var(--ink); outline-offset: 1px; }
+.flip .k { position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 0 0 .5px rgba(0,0,0,.04); transition: transform .5s cubic-bezier(.3,1.25,.4,1); }
+.flip.calm .k { transform: translateX(100%); }
+
 /* bottom */
 .credit { position: absolute; left: var(--col); bottom: 28px; font-size: 11px; color: var(--faint); }
-.status { position: absolute; left: var(--m); bottom: 28px; font: 400 10.5px/1 var(--mono); color: var(--faint); letter-spacing: .01em; }
+.small { position: absolute; left: var(--m); bottom: 28px; font-size: 11px; color: var(--faint); }
 
-@media (max-width: 860px) {
-  :root { --col: 40%; }
-}
-@media (max-width: 680px) {
+@media (max-width: 1000px) { :root { --col: 50%; } .ph-wrap { left: calc(var(--col) - 210px); } }
+@media (max-width: 760px), (max-height: 560px) {
   :root { --m: 20px; }
-  .frame { min-height: 100svh; padding: 0 var(--m); }
+  .frame { padding: 0 var(--m) 90px; }
   .mark { position: static; padding-top: 26px; }
-  nav { position: static; transform: none; margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
+  .soon { top: 20px; }
+  nav { position: static; transform: none; margin-top: 22px; overflow-x: auto; scrollbar-width: none; margin-inline: -4px; padding: 2px 4px; }
+  nav.ld { animation-name: ld; }
   nav::-webkit-scrollbar { display: none; }
   .pills { display: inline-flex; }
-  .col { position: static; width: auto; margin-top: 26vh; padding-bottom: 120px; }
-  .credit { left: var(--m); bottom: 24px; }
-  .status { left: auto; right: var(--m); bottom: 24px; }
+  .col { position: static; width: auto; margin-top: 14vh; }
+  .ph-wrap { position: static; margin-top: 56px; }
+  .credit { left: var(--m); bottom: 26px; }
+  .small { left: auto; right: var(--m); bottom: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 }
 </style>
 </head>
 <body>
-<div class="frame">
-  <div class="mark"><i role="img" aria-label="Idyll cygnet mark"></i>Idyll</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.2 12 3.5l8.5 6.7V20a1 1 0 0 1-1 1H15v-6.5H9V21H4.5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></symbol>
+  <symbol id="i-reels" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M3 8.2h18M8.5 3l3 5.2M14.5 3l3 5.2M10.3 11.6v5.3l4.6-2.65z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.3S3.5 15.4 3.5 9.2A4.4 4.4 0 0 1 12 7.1a4.4 4.4 0 0 1 8.5 2.1c0 6.2-8.5 11.1-8.5 11.1z"/></symbol>
+  <symbol id="i-comment" viewBox="0 0 24 24"><path d="M20.6 16.4A9 9 0 1 0 17 19.9l3.9 1.1z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21.5 3 10.2 13.4M21.5 3 14.6 21l-4.4-7.6L2.6 9.2z"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.1 12.2a1 1 0 0 1-1 .8H7.1a1 1 0 0 1-1-.8zM8.8 8V6.5a3.2 3.2 0 0 1 6.4 0V8"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M12 3.2a8.8 8.8 0 0 0-7.7 13L3.2 20.8l4.6-1.1A8.8 8.8 0 1 0 12 3.2z"/><path d="m7.5 13.6 3-3.2 2.6 2 3.4-3.6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 3.5H6a2.5 2.5 0 0 0-2.5 2.5v12A2.5 2.5 0 0 0 6 20.5h12a2.5 2.5 0 0 0 2.5-2.5v-6M18.4 3.6a2 2 0 0 1 2.9 2.9L12.6 15.2 9 16l.8-3.6z"/></symbol>
+  <symbol id="sb-sig" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></symbol>
+  <symbol id="sb-bat" viewBox="0 0 27 13"><rect x=".5" y=".5" width="23" height="12" rx="3.6" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="20" height="9" rx="2.2"/><path d="M25 4.5v4a2 2 0 0 0 0-4z" opacity=".45"/></symbol>
+</svg>
 
-  <nav aria-label="About Idyll">
+<div class="frame">
+  <a class="mark ld" href="#" data-tab="t-idyll"><i role="img" aria-label="Idyll cygnet mark"></i>Idyll</a>
+
+  <nav aria-label="About Idyll" class="ld" style="--d:1">
     <div class="pills" role="tablist">
+      <span class="ind" aria-hidden="true"></span>
       <button role="tab" id="t-idyll" aria-controls="p-idyll" aria-selected="true">idyll</button>
       <button role="tab" id="t-goes" aria-controls="p-goes" aria-selected="false" tabindex="-1">goes</button>
       <button role="tab" id="t-stays" aria-controls="p-stays" aria-selected="false" tabindex="-1">stays</button>
@@ -108,11 +222,16 @@ dd { margin: 0; color: var(--mid); }
     </div>
   </nav>
 
-  <main class="col">
+  <button class="soon ld" style="--d:2" type="button" data-tab="t-where"><i aria-hidden="true"></i>Coming soon</button>
+
+  <main class="col ld" style="--d:3">
     <section class="panel on" id="p-idyll" role="tabpanel" aria-labelledby="t-idyll">
-      <h1>Social without the scroll.</h1>
-      <p class="lead">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. What you went there for stays.</p>
+      <h1>Your friends, without the feed.</h1>
+      <p class="lead">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. The messages stay. So does the one video a friend sent you.</p>
       <div class="tags"><span class="tag">Free, for good</span><span class="tag">Coming soon</span></div>
+      <div class="works">Works with
+        <span class="bm bm-yt" role="img" aria-label="YouTube"></span><span class="bm bm-ig" role="img" aria-label="Instagram"></span><span class="bm bm-fb" role="img" aria-label="Facebook"></span><span class="bm bm-x" role="img" aria-label="X"></span>
+      </div>
     </section>
 
     <section class="panel" id="p-goes" role="tabpanel" aria-labelledby="t-goes" hidden>
@@ -153,23 +272,78 @@ dd { margin: 0; color: var(--mid); }
     </section>
   </main>
 
-  <span class="status">Coming soon: iPhone, Android, Chrome, Mac</span>
-  <span class="credit">by Eóin Forker</span>
+  <div class="ph-wrap ld" style="--d:4">
+    <div class="iphone" id="phone" role="img" aria-label="A small iPhone showing Instagram. Without Idyll it is an endless Reels feed with a sponsored post. With Idyll it is the messages inbox.">
+      <span class="btn b1"></span><span class="btn b2"></span><span class="btn b3"></span><span class="btn b4"></span>
+      <div class="screen" aria-hidden="true">
+        <div class="island"></div>
+        <div class="before">
+          <div class="sb" style="color:#fff"><span>9:41</span><span class="sb-r"><svg width="17" height="11" fill="currentColor"><use href="#sb-sig"/></svg><svg width="25" height="12" fill="currentColor"><use href="#sb-bat"/></svg></span></div>
+          <div class="topbar">Reels <small>For you</small></div>
+          <div class="strip-wrap"><div class="strip">
+            <div class="card"><img src="../../img/photos/128.jpg" alt="" width="480" height="480"><div class="rail"><span><svg class="ico"><use href="#i-heart"/></svg>48.2K</span><span><svg class="ico"><use href="#i-comment"/></svg>912</span><span><svg class="ico"><use href="#i-send"/></svg></span></div><div class="cap"><div class="who"><span class="av c2">LS</span>lakeside</div>stay for the end</div><div class="prog"></div></div>
+            <div class="card"><img src="../../img/photos/42.jpg" alt="" width="480" height="480"><div class="rail"><span><svg class="ico"><use href="#i-heart"/></svg>3,104</span><span><svg class="ico"><use href="#i-comment"/></svg>58</span><span><svg class="ico"><use href="#i-send"/></svg></span></div><div class="cap"><div class="who"><span class="av c3">RC</span><span>roastco<span class="spons">Sponsored</span></span></div>the morning ritual, now 30% off</div><div class="prog"></div></div>
+            <div class="card"><img src="../../img/photos/106.jpg" alt="" width="480" height="480"><div class="rail"><span><svg class="ico"><use href="#i-heart"/></svg>211K</span><span><svg class="ico"><use href="#i-comment"/></svg>2,870</span><span><svg class="ico"><use href="#i-send"/></svg></span></div><div class="cap"><div class="who"><span class="av c4">BL</span>bloomlab</div>part 4: watch it open</div><div class="prog"></div></div>
+            <div class="card"><img src="../../img/photos/184.jpg" alt="" width="480" height="480"><div class="rail"><span><svg class="ico"><use href="#i-heart"/></svg>96.4K</span><span><svg class="ico"><use href="#i-comment"/></svg>1,402</span><span><svg class="ico"><use href="#i-send"/></svg></span></div><div class="cap"><div class="who"><span class="av c5">DL</span>duneline</div>golden hour never misses</div><div class="prog"></div></div>
+            <div class="card"><img src="../../img/photos/128.jpg" alt="" width="480" height="480"><div class="rail"><span><svg class="ico"><use href="#i-heart"/></svg>48.2K</span><span><svg class="ico"><use href="#i-comment"/></svg>912</span><span><svg class="ico"><use href="#i-send"/></svg></span></div><div class="cap"><div class="who"><span class="av c2">LS</span>lakeside</div>stay for the end</div><div class="prog"></div></div>
+          </div></div>
+          <div class="tabbar" style="color:#fff"><svg class="ico"><use href="#i-home"/></svg><svg class="ico"><use href="#i-search"/></svg><svg class="ico" style="stroke-width:2.3"><use href="#i-reels"/></svg><svg class="ico"><use href="#i-bag"/></svg><span class="me-dot"></span></div>
+        </div>
+        <div class="after">
+          <div class="sb"><span>9:41</span><span class="sb-r"><svg width="17" height="11" fill="currentColor"><use href="#sb-sig"/></svg><svg width="25" height="12" fill="currentColor"><use href="#sb-bat"/></svg></span></div>
+          <div class="ig-h row" style="--i:0"><span>aoife.ward</span><svg class="ico"><use href="#i-pen"/></svg></div>
+          <div class="srch row" style="--i:1"><svg class="ico"><use href="#i-search"/></svg>Search</div>
+          <div class="mtabs row" style="--i:2"><span>Messages</span><span>Requests</span></div>
+          <div class="cv un row" style="--i:3"><span class="av c1">N</span><div class="meta"><b>Niamh</b><small>sent a video · 2m</small></div><img class="vthumb" src="../../img/photos/128.jpg" alt="" width="480" height="480"></div>
+          <div class="cv un row" style="--i:4"><span class="av c2">C</span><div class="meta"><b>Ciarán</b><small>still on for saturday? · 14m</small></div><span class="blue"></span></div>
+          <div class="cv row" style="--i:5"><span class="av c3">T</span><div class="meta"><b>Tom</b><small>sent a photo · 1h</small></div></div>
+          <div class="cv row" style="--i:6"><span class="av c4">P</span><div class="meta"><b>Priya</b><small>ha, perfect · 3h</small></div></div>
+          <div class="cv row" style="--i:7"><span class="av c5">S</span><div class="meta"><b>Sam</b><small>You: see you at the station · 1d</small></div></div>
+          <div class="cv row" style="--i:8"><span class="av c6">B</span><div class="meta"><b>Book club</b><small>Priya: chapter nine by thursday</small></div></div>
+          <div class="tabbar"><svg class="ico"><use href="#i-home"/></svg><svg class="ico"><use href="#i-search"/></svg><svg class="ico" style="stroke-width:2.3"><use href="#i-msg"/></svg><span class="me-dot"></span></div>
+        </div>
+        <div class="glare"></div>
+      </div>
+    </div>
+    <div class="flip" id="flip" role="radiogroup" aria-label="Show the phone">
+      <span class="k" aria-hidden="true"></span>
+      <input type="radio" name="m" id="m-b" value="before" checked><label for="m-b">Without</label>
+      <input type="radio" name="m" id="m-a" value="after"><label for="m-a">With Idyll</label>
+    </div>
+  </div>
+
+  <span class="small ld" style="--d:5">Free, for good. No account, no trackers.</span>
+  <span class="credit ld" style="--d:5">by Eóin Forker</span>
 </div>
 
 <script>
 (function () {
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tabs = [].slice.call(document.querySelectorAll('[role="tab"]'));
+  var ind = document.querySelector('.ind');
+  var phone = document.getElementById('phone'), flip = document.getElementById('flip');
+  var touched = false;
+
+  function setMode(m) {
+    phone.classList.toggle('calm', m === 'after');
+    flip.classList.toggle('calm', m === 'after');
+    document.getElementById(m === 'after' ? 'm-a' : 'm-b').checked = true;
+  }
+  flip.addEventListener('change', function (e) { touched = true; setMode(e.target.value); });
+
+  function place(tab) { ind.style.width = tab.offsetWidth + 'px'; ind.style.transform = 'translateX(' + tab.offsetLeft + 'px)'; }
   function show(tab, focus) {
     tabs.forEach(function (t) {
       var on = t === tab, p = document.getElementById(t.getAttribute('aria-controls'));
       t.setAttribute('aria-selected', on ? 'true' : 'false');
       t.tabIndex = on ? 0 : -1;
-      p.hidden = !on;
-      p.classList.toggle('on', on);
+      p.hidden = !on; p.classList.toggle('on', on);
     });
+    place(tab);
     if (focus) tab.focus();
     var id = tab.id.slice(2);
+    if (id === 'goes') { touched = true; setMode('before'); }
+    if (id === 'stays') { touched = true; setMode('after'); }
     try { history.replaceState(null, '', id === 'idyll' ? location.pathname : '#' + id); } catch (e) {}
   }
   tabs.forEach(function (t, i) {
@@ -181,8 +355,27 @@ dd { margin: 0; color: var(--mid); }
       else if (n) { e.preventDefault(); show(tabs[(i + n + tabs.length) % tabs.length], true); }
     });
   });
-  var start = document.getElementById('t-' + location.hash.slice(1));
-  if (start) show(start);
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function (e) { e.preventDefault(); show(document.getElementById(b.getAttribute('data-tab'))); });
+  });
+  var start = document.getElementById('t-' + location.hash.slice(1)) || tabs[0];
+  show(start);
+  ind.style.transition = 'none'; place(start); ind.offsetWidth; ind.style.transition = '';
+  if (document.fonts) document.fonts.ready.then(function () { place(document.querySelector('[aria-selected="true"]')); });
+  addEventListener('resize', function () { place(document.querySelector('[aria-selected="true"]')); });
+
+  /* the phone changes its mind once, then waits for you */
+  if (reduce) setMode('after');
+  else setTimeout(function () { if (!touched) setMode('after'); }, 3200);
+
+  /* a slight lean toward the cursor */
+  if (!reduce && matchMedia('(pointer: fine)').matches) {
+    var raf = 0, rx = 0, ry = 0;
+    addEventListener('pointermove', function (e) {
+      rx = (e.clientY / innerHeight - .5) * -6; ry = (e.clientX / innerWidth - .5) * 8;
+      if (!raf) raf = requestAnimationFrame(function () { raf = 0; phone.style.setProperty('--rx', rx.toFixed(2) + 'deg'); phone.style.setProperty('--ry', ry.toFixed(2) + 'deg'); });
+    }, { passive: true });
+  }
 })();
 </script>
 </body>
