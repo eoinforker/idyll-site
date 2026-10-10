@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<link rel="icon" href="../img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="stylesheet" href="../fonts.css">
+<style>
+/* One quiet column of thick cotton paper; type pressed in, not printed on. */
+:root {
+  --paper: #f2ede4;
+  --ink: #2b2925;
+  --press: #a79c8a;
+  --muted: #7a7266;
+  --rule: #dcd4c6;
+  --serif: "Timeless Serif", Georgia, serif;
+  --sans: "Timeless Sans", -apple-system, system-ui, sans-serif;
+  --mono: "Paper Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font: 17px/1.6 var(--sans);
+  background-color: var(--paper);
+  /* Faint cotton fibre. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4  0 0 0 0 .36  0 0 0 0 .3  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  -webkit-font-smoothing: antialiased;
+}
+.page { max-width: 640px; margin: 0 auto; padding-inline: 24px; padding-block: 72px 96px; }
+.label { font: 400 12.5px/1.4 var(--mono); color: var(--muted); letter-spacing: .02em; }
+.pressed {
+  color: var(--press);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .75), 0 -1px 0 rgba(60, 50, 35, .18);
+}
+header { display: flex; justify-content: space-between; align-items: baseline; }
+.word { font: 400 26px/1 var(--serif); letter-spacing: -.01em; }
+.hero { text-align: center; padding-block: 88px 72px; }
+.hero img { width: 148px; height: 148px; border-radius: 33px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.04), 0 1px 1px rgba(255,255,255,.8), 0 10px 30px rgba(80, 64, 40, .12); }
+h1 {
+  margin: 40px 0 0;
+  font: 400 clamp(46px, 9vw, 76px)/1.02 var(--serif);
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.hero p { margin: 24px auto 0; max-width: 30em; color: var(--muted); font-size: 18px; }
+.soon { margin-top: 32px; }
+section { padding-block: 44px; border-top: 1px solid var(--rule); }
+h2 { margin: 0 0 18px; font: 400 30px/1.15 var(--serif); letter-spacing: -.01em; }
+h2 em { font-style: italic; }
+dl { display: grid; grid-template-columns: 112px 1fr; gap: 14px 20px; margin: 0; }
+dt { padding-top: 3px; }
+dd { margin: 0; }
+dd s { color: var(--muted); text-decoration-color: var(--press); }
+.kept { color: var(--ink); }
+p { margin: 0 0 12px; }
+.free { text-align: center; padding-block: 64px; }
+.free h2 { font-size: 40px; }
+footer { display: flex; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--rule); }
+@media (max-width: 520px) { dl { grid-template-columns: 1fr; gap: 4px; } dd { margin-bottom: 12px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <span class="word">idyll</span>
+    <span class="label">free, for good</span>
+  </header>
+
+  <div class="hero">
+    <img src="../img/icon.png" alt="The Idyll icon: a baby mute swan pressed into paper">
+    <h1>Social, without <span class="pressed">the scroll.</span></h1>
+    <p>Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Your messages, your search and whatever friends send you stay.</p>
+    <p class="label soon">iPhone · Android · Chrome &amp; Mac · coming soon</p>
+  </div>
+
+  <section>
+    <h2>What changes</h2>
+    <dl>
+      <dt class="label">youtube</dt><dd><s>Video ads</s>, <s>Shorts</s>, <s>the recommended feed</s>. <span class="kept">Your subscriptions and search stay.</span></dd>
+      <dt class="label">instagram</dt><dd><s>Sponsored posts</s>, <s>the Reels feed</s>, <s>the Explore grid</s>. <span class="kept">Messages, search and the reel a friend sent you stay.</span></dd>
+      <dt class="label">facebook</dt><dd><s>Reels</s>, <s>Watch</s>, <s>the algorithmic feed</s>. <span class="kept">Friends, in order, groups and Marketplace stay.</span></dd>
+      <dt class="label">x</dt><dd><s>For you</s>, <s>promoted posts</s>, <s>trends</s>. <span class="kept">Following stays.</span></dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Idyll <em>can’t</em> read your pages.</h2>
+    <p>On iPhone, Idyll hands Safari a list of rules and Safari does the rest; iOS shows it can’t read or send anything from the pages you visit. You log in to the real sites and the real apps, never inside Idyll. There’s no account and nothing leaves your phone.</p>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <dl>
+      <dt class="label">iphone</dt><dd>A Safari blocker cleans up the websites. The real apps get a daily allowance: messages and notifications keep working until it runs out, then Screen Time pauses them until midnight.</dd>
+      <dt class="label">android</dt><dd>A clean browser for each site, and a feed guard inside the real apps that skips video ads and stops a swipe to the next Short or Reel.</dd>
+      <dt class="label">chrome &amp; mac</dt><dd>The same rules on your laptop.</dd>
+    </dl>
+  </section>
+
+  <section class="free">
+    <h2>Free, for good.</h2>
+    <p class="label">no subscription · no ads · no data sold · ever</p>
+  </section>
+
+  <section>
+    <h2>What Idyll can’t do</h2>
+    <p>No app can change what’s inside the official YouTube or Instagram apps on iPhone; Apple keeps apps sealed off from each other. Anyone who says otherwise is shipping a modified copy of those apps, which can get your account flagged. So Idyll cleans up the websites, and gives the apps a daily limit instead.</p>
+  </section>
+
+  <footer>
+    <span class="word">idyll</span>
+    <span class="label">© 2026</span>
+  </footer>
+</div>
+</body>
+</html>

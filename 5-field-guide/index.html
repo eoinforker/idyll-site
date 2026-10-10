@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<link rel="icon" href="../img/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../fonts.css">
+<style>
+/* A plate from a naturalist's field guide: the cygnet as the specimen,
+   Latin names in italic, specimen data in mono, notes in the margin. */
+:root {
+  --paper: #f1ead9;
+  --plate: #f7f2e6;
+  --ink: #26221c;
+  --muted: #776d5e;
+  --rule: #b9ac93;
+  --sepia: #8a5a3c;
+  --serif: "Timeless Serif", Georgia, serif;
+  --sans: "Timeless Sans", -apple-system, system-ui, sans-serif;
+  --mono: "Paper Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.6 var(--serif); -webkit-font-smoothing: antialiased; }
+.book { max-width: 980px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; }
+.mono { font: 400 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--muted); text-transform: uppercase; }
+header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+
+.plate { margin-top: 36px; background: var(--plate); border: 1px solid var(--rule); outline: 1px solid var(--rule); outline-offset: 6px; padding: 48px 48px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.plate .no { grid-column: 1 / -1; display: flex; justify-content: space-between; margin-bottom: -20px; }
+.specimen { text-align: center; }
+.specimen img { width: 100%; max-width: 340px; border-radius: 6px; filter: sepia(.25) contrast(1.05); }
+.specimen figcaption { margin-top: 12px; font-style: italic; color: var(--muted); }
+h1 { margin: 0; font: 400 clamp(56px, 9vw, 104px)/.95 var(--serif); letter-spacing: -.03em; }
+.latin { margin: 8px 0 0; font-style: italic; font-size: 22px; color: var(--sepia); }
+.intro { margin: 22px 0 0; font-size: 19px; }
+table { width: 100%; border-collapse: collapse; margin-top: 26px; font: 400 13.5px/1.45 var(--mono); }
+td { padding: 7px 0; border-top: 1px dotted var(--rule); vertical-align: top; }
+td:first-child { width: 34%; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-size: 11.5px; padding-top: 9px; }
+
+h2 { margin: 0 0 14px; font: 400 34px/1.1 var(--serif); letter-spacing: -.01em; }
+h2 i { color: var(--sepia); }
+.entry { display: grid; grid-template-columns: 180px 1fr; gap: 36px; padding-block: 44px; border-bottom: 1px solid var(--rule); }
+.entry p { margin: 0 0 12px; max-width: 36em; }
+.habitats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 32px; }
+.habitats h3 { margin: 0 0 4px; font: italic 400 21px/1.2 var(--serif); }
+.habitats p { margin: 0; font-size: 16px; }
+.habitats s { color: var(--muted); text-decoration-color: var(--sepia); }
+.margin { font-style: italic; color: var(--sepia); font-size: 16px; }
+footer { display: flex; justify-content: space-between; padding-top: 22px; }
+
+@media (max-width: 780px) {
+  .plate { grid-template-columns: 1fr; padding: 32px 22px; gap: 28px; }
+  .entry { grid-template-columns: 1fr; gap: 8px; }
+  .habitats { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="book">
+  <header><span class="mono">A field guide to quieter social</span><span class="mono">Free, for good</span></header>
+
+  <div class="plate">
+    <div class="no"><span class="mono">Plate I</span><span class="mono">Juvenile, actual size of a phone screen</span></div>
+    <figure class="specimen">
+      <img src="../img/icon.png" alt="The Idyll icon: a baby mute swan pressed into paper">
+      <figcaption>The cygnet, pressed.</figcaption>
+    </figure>
+    <div>
+      <h1>Idyll</h1>
+      <p class="latin">Cygnus olor, the mute swan, young</p>
+      <p class="intro">A small, quiet app that takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and leaves your friends exactly where they were.</p>
+      <table>
+        <tr><td>Call</td><td>None. Named for the mute swan.</td></tr>
+        <tr><td>Habitat</td><td>iPhone, Android, Chrome and Mac. Arriving soon.</td></tr>
+        <tr><td>Diet</td><td>Messages, search, and whatever friends send you.</td></tr>
+        <tr><td>Avoids</td><td>The feed, the autoplay, the sponsored post.</td></tr>
+        <tr><td>Cost to observe</td><td>Nothing, for good.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="entry">
+    <p class="mono">Range</p>
+    <div>
+      <h2>Where it lives, <i>and what it leaves behind</i></h2>
+      <div class="habitats">
+        <div><h3>YouTube</h3><p><s>Video ads</s>, <s>Shorts</s>, <s>the home feed</s>. Subscriptions and search remain.</p></div>
+        <div><h3>Instagram</h3><p><s>Sponsored posts</s>, <s>Reels</s>, <s>Explore</s>. Messages and the reel a friend sent remain.</p></div>
+        <div><h3>Facebook</h3><p><s>Reels</s>, <s>Watch</s>, <s>the algorithm</s>. Friends, in order, remain.</p></div>
+        <div><h3>X</h3><p><s>For you</s>, <s>promoted posts</s>, <s>trends</s>. Following remains.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <p class="mono">Behaviour</p>
+    <div>
+      <h2>Shy by nature. <i>It can’t read your pages.</i></h2>
+      <p>On iPhone, Idyll hands Safari a list of rules and keeps its distance; iOS shows it can’t read or send anything from the pages you visit. You log in to the real sites and the real apps, never inside Idyll. No account. Nothing leaves your phone.</p>
+      <p class="margin">Observed carrying: 0 trackers.</p>
+    </div>
+  </div>
+
+  <div class="entry">
+    <p class="mono">Field notes</p>
+    <div>
+      <h2>How to spot it</h2>
+      <p><strong>On iPhone</strong>, as a Safari blocker that cleans the websites, and a daily allowance for the real apps: messages and notifications keep arriving until it runs out.</p>
+      <p><strong>On Android</strong>, as a clean browser, and a feed guard inside the real apps that skips ads and stops a swipe to the next Short or Reel.</p>
+      <p><strong>On Chrome and Mac</strong>, as the same rules, on your laptop.</p>
+    </div>
+  </div>
+
+  <div class="entry">
+    <p class="mono">Limits</p>
+    <div>
+      <h2>What it won’t do</h2>
+      <p>No app can change what’s inside the official YouTube or Instagram apps on iPhone; Apple keeps apps sealed off from each other. Idyll cleans up the websites, and gives the apps a daily limit instead.</p>
+    </div>
+  </div>
+
+  <footer><span class="mono">Idyll · Plate I of I</span><span class="mono">© 2026</span></footer>
+</div>
+</body>
+</html>
