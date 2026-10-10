@@ -13,7 +13,7 @@
   --sheet:#e8ebe3;
   --grid:rgba(70,95,90,.085);
   --print:#3b4a46;
-  --print-soft:#5d6c67;
+  --print-soft:#5a6964;
   --ink:#1e2622;
   --die:#fffdf7;
   --moss:#355443;
@@ -24,12 +24,16 @@
   --sky:#a9c3cf;
   --navy:#22324a;
   --cream:#f6efdf;
+  --ease:cubic-bezier(.2,.7,.1,1);
+  --spring:cubic-bezier(.34,1.45,.5,1);
   --serif:"Timeless Serif", "Iowan Old Style", Georgia, serif;
   --sans:"Timeless Sans", "Helvetica Neue", Arial, sans-serif;
   --mono:"Paper Mono", ui-monospace, Menlo, monospace;
+  --stk-shadow:0 0 0 .5px rgba(60,50,30,.12), 0 1px 1px rgba(40,30,10,.16), 0 3px 7px -3px rgba(40,30,10,.28);
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:90px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{
   margin:0;
   background:var(--desk);
@@ -40,11 +44,43 @@ body{
   font-family:var(--sans);
   font-size:15px;
   line-height:1.5;
-  padding:clamp(14px,4vw,64px) clamp(10px,3vw,48px) clamp(40px,6vw,96px);
+  padding:12px clamp(10px,3vw,48px) clamp(40px,6vw,96px);
   overflow-x:hidden;
 }
 a{color:inherit}
-:focus-visible{outline:2px solid var(--tomato);outline-offset:3px;border-radius:3px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px dashed var(--tomato);outline-offset:4px;border-radius:6px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- nav: a sticker strip that follows you ---------- */
+.nav{
+  position:sticky;top:12px;z-index:50;
+  max-width:1160px;margin:0 auto 14px;
+  display:flex;align-items:center;gap:clamp(10px,2.4vw,28px);
+  padding:8px 8px 8px 18px;
+  background:var(--die);
+  border-radius:999px;
+  box-shadow:var(--stk-shadow);
+  transition:padding .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease), max-width .45s var(--ease);
+}
+.nav.small{max-width:900px;padding:5px 5px 5px 14px;box-shadow:0 0 0 .5px rgba(60,50,30,.14), 0 10px 26px -10px rgba(40,30,10,.4)}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-size:21px;font-weight:500;color:var(--ink);text-decoration:none;margin-right:auto;border-radius:8px}
+.brand .m{width:28px;height:17px;background:var(--ink);-webkit-mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;transition:transform .5s var(--spring)}
+.brand:hover .m{transform:rotate(-8deg) translateY(-1px)}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.nav ul a{display:block;text-decoration:none;font-size:14px;padding:7px 12px;border-radius:999px;color:var(--print);transition:background .2s, color .2s}
+.nav ul a:hover{background:#eef0e9;color:var(--ink)}
+.nav ul a:active{transform:translateY(1px)}
+.soon-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  text-decoration:none;font-size:14px;font-weight:600;letter-spacing:-.01em;
+  background:var(--moss);color:var(--moss-ink);
+  padding:9px 16px 10px;border-radius:999px;
+  transition:transform .3s var(--spring), background .2s;
+}
+.soon-btn:hover{transform:rotate(-2deg) scale(1.03);background:#2c4838}
+.soon-btn:active{transform:scale(.97)}
+.soon-btn i{width:7px;height:7px;border-radius:50%;background:var(--mustard);box-shadow:0 0 0 3px rgba(224,176,79,.25)}
 
 /* ---------- the sheet ---------- */
 .sheet{
@@ -64,10 +100,8 @@ a{color:inherit}
     0 1px 2px rgba(50,40,25,.22),
     0 14px 40px -12px rgba(50,40,25,.35),
     0 40px 80px -40px rgba(50,40,25,.3);
-  padding:clamp(22px,4.5vw,64px) clamp(18px,4.5vw,64px) clamp(26px,4vw,52px);
-  transform:rotate(-.35deg);
+  padding:clamp(26px,4.5vw,64px) clamp(18px,4.5vw,64px) clamp(26px,4vw,48px);
 }
-/* registration marks in the corners */
 .reg{position:absolute;width:18px;height:18px;opacity:.55}
 .reg::before,.reg::after{content:"";position:absolute;background:var(--print-soft)}
 .reg::before{left:8.5px;top:0;width:1px;height:18px}
@@ -75,371 +109,621 @@ a{color:inherit}
 .reg i{position:absolute;inset:4px;border:1px solid var(--print-soft);border-radius:50%}
 .reg.tl{top:10px;left:10px}.reg.tr{top:10px;right:10px}.reg.bl{bottom:10px;left:10px}.reg.br{bottom:10px;right:10px}
 
-.tiny{font-family:var(--mono);font-size:11.5px;letter-spacing:.01em;color:var(--print-soft);line-height:1.45}
+.tiny{font-family:var(--mono);font-size:11.5px;letter-spacing:.01em;color:var(--print-soft);line-height:1.5}
 
-/* label strip */
-.strip{
-  display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px;
-  padding-bottom:14px;margin-bottom:clamp(28px,5vw,56px);
-  border-bottom:1px solid rgba(59,74,70,.28);
-}
-.strip .brand{display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:500;margin-right:auto}
-.strip .brand span.m{width:30px;height:18px;background:var(--ink);-webkit-mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;transform:translateY(1px)}
-
-/* ---------- stickers, the shared craft ---------- */
+/* ---------- stickers, shared craft ---------- */
 .stk{
   --r:0deg;
-  position:relative;
-  display:inline-block;
-  padding:7px;
-  background:var(--die);
-  border-radius:999px;
+  position:relative;display:inline-block;
+  padding:7px;background:var(--die);border-radius:999px;
   transform:rotate(var(--r));
-  box-shadow:
-    0 0 0 .5px rgba(60,50,30,.12),
-    0 1px 1px rgba(40,30,10,.16),
-    0 3px 7px -3px rgba(40,30,10,.28);
+  box-shadow:var(--stk-shadow);
 }
 .face{
-  display:block;
-  border-radius:999px;
+  display:block;border-radius:999px;
   padding:.28em .85em .38em;
   background-color:var(--c, var(--cream));
   background-image:linear-gradient(165deg, rgba(255,255,255,.32), rgba(255,255,255,0) 45%, rgba(0,0,0,.04));
   color:var(--fc, var(--ink));
   font-family:var(--serif);
-  font-size:clamp(24px,2.9vw,34px);
-  line-height:1.05;
-  letter-spacing:-.01em;
-  white-space:nowrap;
+  font-size:clamp(23px,2.7vw,32px);
+  line-height:1.05;letter-spacing:-.01em;white-space:nowrap;
 }
 .face.it{font-style:italic}
-.face.sans{font-family:var(--sans);font-weight:600;letter-spacing:-.025em;font-size:clamp(21px,2.5vw,29px)}
+.face.sans{font-family:var(--sans);font-weight:600;letter-spacing:-.025em;font-size:clamp(20px,2.4vw,28px)}
 
 /* ---------- hero ---------- */
 .hero{
   display:grid;
-  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
-  gap:clamp(24px,4vw,56px);
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:clamp(28px,5vw,72px);
   align-items:center;
-  margin-bottom:clamp(48px,8vw,104px);
+  margin-bottom:clamp(64px,9vw,120px);
 }
+.kicker{display:inline-flex;align-items:center;gap:10px;margin-bottom:22px}
 h1{
-  font-family:var(--serif);
-  font-weight:400;
-  color:var(--ink);
-  font-size:clamp(44px,7.2vw,98px);
-  line-height:.94;
-  letter-spacing:-.035em;
-  margin:0 0 .38em;
+  font-family:var(--serif);font-weight:400;color:var(--ink);
+  font-size:clamp(46px,7vw,100px);line-height:.93;letter-spacing:-.038em;
+  margin:0 0 .36em;
 }
 h1 em{font-style:italic;font-weight:300;display:block;color:var(--moss)}
-.lede{font-family:var(--serif);font-size:clamp(17px,1.6vw,20px);line-height:1.5;color:var(--print);max-width:31em;margin:0 0 14px}
-.hero .tiny{max-width:40em}
+.lede{font-family:var(--serif);font-size:clamp(17px,1.6vw,20.5px);line-height:1.5;color:var(--print);max-width:29em;margin:0 0 26px}
+.works{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-top:16px;border-top:1px solid rgba(59,74,70,.22);max-width:31em}
+.works .tiny{margin-right:4px}
+.works ul{display:flex;gap:18px;list-style:none;margin:0;padding:0}
+.bm{display:block;width:20px;height:20px;background:var(--ink);opacity:.82;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.bm.yt{--m:url(../../img/brands/youtube.svg)}
+.bm.ig{--m:url(../../img/brands/instagram.svg)}
+.bm.fb{--m:url(../../img/brands/facebook.svg)}
+.bm.x{--m:url(../../img/brands/x.svg)}
 
-.art{position:relative;aspect-ratio:1/1;width:min(100%,430px);justify-self:center}
-.icon-stk{
-  position:absolute;left:6%;top:6%;width:76%;
-  padding:clamp(9px,1.2vw,14px);
-  border-radius:24%;
-  background:var(--die);
-  transform:rotate(-5deg);
-  box-shadow:
-    0 0 0 .5px rgba(60,50,30,.14),
-    0 2px 2px rgba(40,30,10,.14),
-    0 10px 22px -8px rgba(40,30,10,.38);
+/* phone as a giant glossy sticker */
+.demo{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px}
+.phone-stk{
+  position:relative;
+  padding:13px;border-radius:3.7em;background:var(--die);
+  font-size:16px;
+  transform:rotate(-2.5deg);
+  box-shadow:0 0 0 .5px rgba(60,50,30,.14), 0 2px 2px rgba(40,30,10,.12), 0 28px 50px -22px rgba(40,30,10,.5);
 }
-.icon-stk img{display:block;width:100%;height:auto;border-radius:22.5%;}
-.icon-stk::after{ /* gloss */
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(130deg, rgba(255,255,255,.45), rgba(255,255,255,0) 32%);
+.phone-stk::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(125deg, rgba(255,255,255,.5), rgba(255,255,255,0) 24%, rgba(255,255,255,0) 70%, rgba(255,255,255,.18) 82%, rgba(255,255,255,0) 90%);z-index:30}
+.demo .icon-stk{
+  position:absolute;left:-58px;bottom:96px;width:118px;z-index:31;
+  padding:8px;border-radius:26%;background:var(--die);
+  transform:rotate(-11deg);
+  box-shadow:0 0 0 .5px rgba(60,50,30,.14), 0 2px 2px rgba(40,30,10,.14), 0 10px 20px -8px rgba(40,30,10,.4);
 }
-.swan-stk{
-  position:absolute;right:-2%;bottom:6%;width:44%;aspect-ratio:640/380;
-  transform:rotate(7deg);
-  filter:
-    drop-shadow(3px 0 0 var(--die)) drop-shadow(-3px 0 0 var(--die))
-    drop-shadow(0 3px 0 var(--die)) drop-shadow(0 -3px 0 var(--die))
-    drop-shadow(2px 2px 0 var(--die)) drop-shadow(-2px -2px 0 var(--die))
-    drop-shadow(0 .5px 0 rgba(60,50,30,.25))
-    drop-shadow(0 5px 5px rgba(40,30,10,.25));
-}
-.swan-stk span{display:block;width:100%;height:100%;background:var(--moss);-webkit-mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;mask:url(../../img/cygnet-mark.svg) center/contain no-repeat}
-.free-stk{
-  position:absolute;right:4%;top:0;
-  width:clamp(96px,11vw,128px);aspect-ratio:1;
-  border-radius:50%;padding:6px;
-  transform:rotate(12deg);
-}
-.free-stk .face{
-  height:100%;border-radius:50%;padding:0;
-  display:grid;place-content:center;text-align:center;
-  --c:var(--tomato);--fc:#fff7ec;
-  font-size:clamp(17px,1.8vw,21px);line-height:1;white-space:normal;
-}
-.free-stk .face b{font-weight:500;font-size:1.25em;display:block}
+.icon-stk img{display:block;width:100%;height:auto;border-radius:22.5%}
+.demo .free-stk{position:absolute;right:-62px;top:-14px;z-index:31;width:108px;aspect-ratio:1;border-radius:50%;padding:6px;--r:13deg}
+.free-stk .face{height:100%;border-radius:50%;padding:0;display:grid;place-content:center;text-align:center;--c:var(--tomato);--fc:#fff7ec;font-size:18px;line-height:1;white-space:normal}
+.free-stk .face b{font-weight:500;font-size:1.3em;display:block}
 .free-stk .face i{font-size:.85em}
 
-/* ---------- section headings printed on the sheet ---------- */
-.sec{margin-bottom:clamp(48px,7vw,92px)}
-.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;margin-bottom:clamp(20px,3vw,34px)}
-h2{font-family:var(--serif);font-weight:400;font-size:clamp(28px,3.4vw,42px);letter-spacing:-.025em;line-height:1;color:var(--ink);margin:0}
+/* the switch, a two-part sticker */
+.switch{
+  position:relative;display:inline-grid;grid-template-columns:1fr 1fr;
+  padding:6px;border-radius:999px;background:var(--die);box-shadow:var(--stk-shadow);
+  transform:rotate(1.2deg);
+}
+.switch .thumb{
+  position:absolute;top:6px;bottom:6px;left:6px;width:calc(50% - 6px);border-radius:999px;
+  background:var(--tomato);
+  transition:transform .55s var(--spring), background .4s;
+}
+.switch[data-v="after"] .thumb{transform:translateX(100%);background:var(--moss)}
+.switch button{
+  position:relative;z-index:1;border:0;background:none;cursor:pointer;
+  padding:10px 18px 11px;border-radius:999px;font-family:var(--serif);font-size:17px;white-space:nowrap;
+  color:var(--print);transition:color .35s;
+}
+.switch button[aria-pressed="true"]{color:#fff8ee}
+.switch button:not([aria-pressed="true"]):hover{color:var(--ink)}
+.switch button:active{transform:scale(.97)}
+.switch button i{font-style:italic}
+
+/* ---------- the phone (em based, so it scales) ---------- */
+.phone{
+  position:relative;width:18.6em;height:40.4em;border-radius:3.05em;
+  background:linear-gradient(145deg,#3c3c41,#17171a 38%,#2a2a2e 70%,#141416);
+  padding:.52em;
+  box-shadow:inset 0 0 0 .08em #6a6a70, inset 0 0 0 .3em #0b0b0d;
+}
+.phone::before,.phone::after{content:"";position:absolute;width:.2em;border-radius:.1em;background:linear-gradient(90deg,#2b2b2f,#47474c)}
+.phone::before{left:-.17em;top:7.4em;height:2.3em;box-shadow:0 3em 0 #3a3a3e}
+.phone::after{right:-.17em;top:9.6em;height:3.6em}
+.screen{position:relative;height:100%;border-radius:2.55em;overflow:hidden;background:#fbf9f4;isolation:isolate;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.island{position:absolute;top:.62em;left:50%;width:6em;height:1.72em;margin-left:-3em;background:#000;border-radius:1em;z-index:22}
+.glare{position:absolute;inset:0;z-index:21;pointer-events:none;background:linear-gradient(118deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 32%)}
+.status{position:absolute;top:0;left:0;right:0;height:2.95em;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:.2em 1.75em 0 2em;font-size:.85em;font-weight:650;color:#fff;transition:color .5s}
+.status .ic{display:flex;gap:.3em;align-items:center}
+.status .ic b{display:block;width:1.05em;height:.62em;border-radius:.12em;border:1.5px solid currentColor;position:relative}
+.status .ic b::after{content:"";position:absolute;inset:1.5px;right:30%;background:currentColor;border-radius:1px}
+.status .ic s{display:block;width:1em;height:.66em;background:linear-gradient(currentColor,currentColor) 0 100%/18% 35% no-repeat,linear-gradient(currentColor,currentColor) 33% 100%/18% 55% no-repeat,linear-gradient(currentColor,currentColor) 66% 100%/18% 78% no-repeat,linear-gradient(currentColor,currentColor) 100% 100%/18% 100% no-repeat}
+.phone[data-state="after"] .status{color:#151515}
+
+/* before: the endless feed */
+.v-before{position:absolute;inset:0;background:#000;color:#fff;z-index:5;transition:opacity .5s var(--ease) .18s, visibility 0s linear 0s}
+.phone[data-state="after"] .v-before{opacity:0;visibility:hidden;transition:opacity .45s var(--ease) .22s, visibility 0s linear .7s}
+.stage{position:absolute;inset:0;overflow:hidden;transition:transform .6s var(--ease), opacity .5s var(--ease), border-radius .6s var(--ease)}
+.phone[data-state="after"] .stage{transform:scale(.82) translateY(-4%);opacity:0;border-radius:2em}
+.track{height:100%;display:flex;flex-direction:column;animation:reels 15s var(--ease) infinite}
+.phone[data-state="after"] .track, .phone.paused .track{animation-play-state:paused}
+@keyframes reels{
+  0%,17%{transform:translateY(0)}
+  20%,37%{transform:translateY(-100%)}
+  40%,57%{transform:translateY(-200%)}
+  60%,77%{transform:translateY(-300%)}
+  80%,97%{transform:translateY(-400%)}
+  100%{transform:translateY(-500%)}
+}
+.reel{position:relative;flex:0 0 100%;overflow:hidden}
+.reel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 55%, rgba(0,0,0,.72) 100%)}
+.reel .meta{position:absolute;left:1em;right:4em;bottom:5.6em;z-index:2;font-size:.82em;line-height:1.35}
+.who{display:flex;align-items:center;gap:.5em;font-weight:650;margin-bottom:.45em}
+.av{display:inline-grid;place-items:center;width:2.1em;height:2.1em;border-radius:50%;background:var(--a,#d9cbb2);color:#2a241b;font-weight:700;font-size:.82em;flex:none}
+.follow{border:1px solid rgba(255,255,255,.75);border-radius:.4em;padding:.1em .5em;font-size:.9em;font-weight:600}
+.reel .cap{opacity:.9}
+.spons{display:inline-block;font-size:.85em;opacity:.85;margin-top:.15em}
+.shop{display:block;margin-top:.6em;background:rgba(255,255,255,.95);color:#111;text-align:left;padding:.55em .8em;border-radius:.45em;font-weight:650}
+.acts{position:absolute;right:.75em;bottom:6em;z-index:2;display:flex;flex-direction:column;gap:1.15em;align-items:center}
+.acts svg{width:1.55em;height:1.55em;display:block;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.topbar{position:absolute;top:3.1em;left:0;right:0;z-index:6;display:flex;justify-content:center;gap:1.4em;font-size:.95em;font-weight:650;transition:transform .5s var(--ease), opacity .4s}
+.topbar span{opacity:.6}
+.topbar span.on{opacity:1;border-bottom:2px solid #fff;padding-bottom:.25em}
+.prog{position:absolute;left:0;right:0;bottom:3.95em;height:.16em;background:rgba(255,255,255,.25);z-index:6}
+.prog::after{content:"";display:block;height:100%;width:100%;background:#fff;transform-origin:left;animation:prog 3s linear infinite}
+@keyframes prog{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.phone[data-state="after"] .prog::after,.phone.paused .prog::after{animation-play-state:paused}
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:3.95em;z-index:6;display:flex;justify-content:space-around;align-items:flex-start;padding-top:.75em;background:#000;transition:transform .5s var(--ease), opacity .4s}
+.tabbar i{width:1.35em;height:1.35em;border:1.8px solid currentColor;border-radius:.35em;opacity:.85}
+.tabbar i.c{border-radius:50%}
+.tabbar i.on{background:currentColor}
+.phone[data-state="after"] .topbar{transform:translateY(-1.5em);opacity:0}
+.phone[data-state="after"] .tabbar{transform:translateY(1.5em);opacity:0}
+.phone[data-state="after"] .acts{opacity:0;transform:translateX(1em);transition:transform .45s var(--ease), opacity .3s}
+
+/* after: the calm inbox */
+.v-after{position:absolute;inset:0;z-index:4;padding:3.25em 1.05em 0;color:#151515;display:flex;flex-direction:column;gap:.85em}
+.v-after > *{transition:transform .65s var(--ease), opacity .5s var(--ease);transition-delay:calc(var(--i,0) * 70ms + 380ms)}
+.phone[data-state="before"] .v-after > *{opacity:0;transform:translateY(1.4em);transition-delay:0s}
+.ahead{display:flex;justify-content:space-between;align-items:center}
+.ahead b{font-size:1.32em;font-weight:700;letter-spacing:-.02em}
+.ahead svg{width:1.35em;height:1.35em;fill:none;stroke:#151515;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.search{display:flex;align-items:center;gap:.5em;background:#efebe2;border-radius:.75em;padding:.55em .8em;color:#7a746a;font-size:.88em}
+.search svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.sent{display:flex;gap:.8em;align-items:center;background:#fff;border-radius:1em;padding:.6em;box-shadow:0 0 0 1px rgba(0,0,0,.05), 0 .4em 1em -.5em rgba(0,0,0,.2)}
+.sent .vid{position:relative;flex:none;width:3.6em;height:5.4em;border-radius:.55em;overflow:hidden}
+.sent .vid img{width:100%;height:100%;object-fit:cover;display:block}
+.sent .vid::after{content:"";position:absolute;left:50%;top:50%;margin:-.55em 0 0 -.3em;border-left:.85em solid #fff;border-top:.55em solid transparent;border-bottom:.55em solid transparent;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))}
+.sent p{margin:0;font-size:.82em;line-height:1.35}
+.sent p b{display:block;font-size:1.05em}
+.sent p span{color:#6f695f}
+.sent em{display:inline-block;margin-top:.45em;font-style:normal;font-weight:650;font-size:.92em;background:#151515;color:#fff;border-radius:.45em;padding:.25em .65em}
+.lbl{font-size:.78em;font-weight:650;color:#6f695f;margin:.2em 0 -.3em}
+.rows{display:flex;flex-direction:column;gap:.85em}
+.row{display:flex;align-items:center;gap:.7em;font-size:.82em;line-height:1.3}
+.row .av{width:2.85em;height:2.85em;font-size:.95em}
+.row div{flex:1;min-width:0}
+.row b{display:block;font-weight:650}
+.row div span{color:#6f695f;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row i{width:.55em;height:.55em;border-radius:50%;background:#3d6cf0;flex:none}
+.row.unread div span{color:#151515;font-weight:600}
+.end{margin-top:auto;margin-bottom:4.6em;text-align:center;font-family:var(--serif);font-style:italic;font-size:.9em;color:#7a746a}
+.atab{position:absolute;left:0;right:0;bottom:0;height:3.6em;display:flex;justify-content:space-around;align-items:flex-start;padding-top:.75em;border-top:1px solid #ece7dc;background:#fbf9f4;color:#151515}
+.atab i{width:1.3em;height:1.3em;border:1.8px solid currentColor;border-radius:.35em}
+.atab i.c{border-radius:50%}
+.atab i.on{background:currentColor}
+
+/* ---------- section heads ---------- */
+.sec{margin-bottom:clamp(64px,9vw,120px);position:relative}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin-bottom:clamp(24px,3.4vw,40px)}
+h2{font-family:var(--serif);font-weight:400;font-size:clamp(32px,4.2vw,54px);letter-spacing:-.03em;line-height:1;color:var(--ink);margin:0}
 h2 em{font-weight:300}
 
-/* ---------- removed: slots with ghosts ---------- */
+/* ---------- removed: scroll peels them ---------- */
 .slots{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(176px,1fr));
-  gap:clamp(30px,4vw,48px) clamp(16px,2.4vw,28px);
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(30px,4vw,48px) clamp(14px,2.2vw,28px);
 }
-.slot{display:flex;flex-direction:column;align-items:flex-start;gap:30px}
+.slot{display:flex;flex-direction:column;align-items:flex-start;gap:34px}
 .cut{position:relative;display:inline-block;margin:6px 0 0 4px}
-.ghost{
-  position:absolute;inset:0;border-radius:999px;
-  border:1px solid rgba(59,74,70,.32);
-  background:linear-gradient(160deg, rgba(255,255,255,.55), rgba(255,255,255,.18));
-  box-shadow:inset 0 1px 2px rgba(59,74,70,.08);
-}
+.ghost{position:absolute;inset:0;border-radius:999px;border:1px solid rgba(59,74,70,.32);background:linear-gradient(160deg, rgba(255,255,255,.6), rgba(255,255,255,.2));box-shadow:inset 0 1px 2px rgba(59,74,70,.08)}
 .ghost.sq{border-radius:12px}
-.ghost-word{
-  position:absolute;inset:0;display:grid;place-items:center;
-  font-family:var(--mono);font-size:11px;color:rgba(59,74,70,.45);
-}
 .cut .stk.off{
-  transform:translate(var(--x,0), var(--y,0)) rotate(var(--r));
-  transition:transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
-  box-shadow:
-    0 0 0 .5px rgba(60,50,30,.12),
-    0 2px 2px rgba(40,30,10,.12),
-    0 9px 16px -6px rgba(40,30,10,.32);
+  --k:1;--lift:0px;
+  transform:translate(calc(var(--x,0px) * var(--k)), calc(var(--y,0px) * var(--k) + var(--lift))) rotate(calc(var(--r) * var(--k)));
+  transition:transform .3s var(--ease), box-shadow .3s;
+  box-shadow:0 0 0 .5px rgba(60,50,30,.12), 0 2px 2px rgba(40,30,10,.12), 0 calc(2px + 8px * var(--k)) calc(4px + 14px * var(--k)) -6px rgba(40,30,10,.32);
 }
-.cut .stk.gone{visibility:hidden}
-.slot p{margin:0;max-width:24em;font-size:14px;line-height:1.45;color:var(--print)}
+.cut .stk.away{opacity:calc(1.15 - var(--k) * 1.15)}
+.slot p{margin:0;max-width:22em;font-size:14px;line-height:1.45;color:var(--print)}
 .slot p b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:16px;color:var(--ink)}
-
-/* peeling corner: the sticker is clipped, the flap is its pale back */
 .peel{
-  --s:36px;
+  --k:1;--lift:0px;--s:calc(6px + 30px * var(--k));
   display:inline-block;
-  transform:translate(var(--x,0), var(--y,0)) rotate(var(--r,0deg));
-  transition:transform .35s cubic-bezier(.2,.8,.2,1), filter .35s;
+  transform:translate(calc(var(--x,0px) * var(--k)), calc(var(--y,0px) * var(--k) + var(--lift))) rotate(calc(var(--r,0deg) * var(--k)));
+  transition:transform .3s var(--ease), filter .3s;
   filter:drop-shadow(0 .5px .5px rgba(40,30,10,.25)) drop-shadow(0 6px 8px rgba(40,30,10,.18));
 }
-.peel .stk{
-  border-radius:12px;box-shadow:none;transform:none;
-  clip-path:polygon(0 0,100% 0,100% calc(100% - var(--s)),calc(100% - var(--s)) 100%,0 100%);
-}
+.peel .stk{border-radius:12px;box-shadow:none;transform:none;clip-path:polygon(0 0,100% 0,100% calc(100% - var(--s)),calc(100% - var(--s)) 100%,0 100%)}
 .peel .face{border-radius:7px}
-.peel .stk::before{ /* shadow the flap casts on the face */
-  content:"";position:absolute;right:0;bottom:0;width:calc(var(--s) + 14px);height:calc(var(--s) + 14px);
-  background:linear-gradient(135deg, rgba(30,25,15,0) 40%, rgba(30,25,15,.22) 70%);
-  clip-path:polygon(0 0,100% 0,0 100%);
-  transform:translate(0,0);
-}
-.peel .stk::after{ /* the flap */
-  content:"";position:absolute;right:0;bottom:0;width:var(--s);height:var(--s);
-  background:linear-gradient(315deg, #f2efe7 0%, #fffefa 38%, #e3dfd4 70%, #cfcabd 100%);
-  clip-path:polygon(0 0,100% 0,0 100%);
-}
-
+.peel .stk::before{content:"";position:absolute;right:0;bottom:0;width:calc(var(--s) + 14px);height:calc(var(--s) + 14px);background:linear-gradient(135deg, rgba(30,25,15,0) 40%, rgba(30,25,15,.22) 70%);clip-path:polygon(0 0,100% 0,0 100%)}
+.peel .stk::after{content:"";position:absolute;right:0;bottom:0;width:var(--s);height:var(--s);background:linear-gradient(315deg, #f2efe7 0%, #fffefa 38%, #e3dfd4 70%, #cfcabd 100%);clip-path:polygon(0 0,100% 0,0 100%)}
 @media (hover:hover) and (prefers-reduced-motion:no-preference){
-  .cut .stk.off:hover{
-    transform:translate(var(--x,0), calc(var(--y,0px) - 7px)) rotate(calc(var(--r) - 1.5deg)) scale(1.03);
-    box-shadow:
-      0 0 0 .5px rgba(60,50,30,.12),
-      0 4px 4px rgba(40,30,10,.1),
-      0 22px 26px -10px rgba(40,30,10,.34);
-  }
-  .peel:hover{
-    transform:translate(var(--x,0), calc(var(--y,0px) - 7px)) rotate(calc(var(--r,0deg) - 1.5deg)) scale(1.03);
-    filter:drop-shadow(0 1px 1px rgba(40,30,10,.2)) drop-shadow(0 18px 16px rgba(40,30,10,.22));
-  }
+  .cut .stk.off:hover,.peel:hover{--lift:-8px}
+  .cut .stk.off:hover{box-shadow:0 0 0 .5px rgba(60,50,30,.12), 0 4px 4px rgba(40,30,10,.1), 0 22px 26px -10px rgba(40,30,10,.34)}
+  .peel:hover{filter:drop-shadow(0 1px 1px rgba(40,30,10,.2)) drop-shadow(0 18px 16px rgba(40,30,10,.22))}
 }
 
-/* ---------- kept ---------- */
-.kept{
-  display:flex;flex-wrap:wrap;align-items:center;
-  gap:clamp(18px,2.6vw,30px) clamp(16px,2.4vw,28px);
-  margin-bottom:22px;
-}
-.friend .face{
-  white-space:normal;border-radius:18px;padding:.5em .7em .6em;
-  display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;
-  font-size:clamp(22px,2.4vw,28px);
-}
-.friend{border-radius:24px}
-.friend .thumb{
-  grid-row:span 2;width:54px;aspect-ratio:9/14;border-radius:8px;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(20,30,40,.35)),
-    radial-gradient(circle at 60% 40%, #f0cf8e 0 14%, transparent 15%),
-    linear-gradient(180deg,#a9c3cf 0 55%,#6f8d77 55% 100%);
-  position:relative;
-}
-.friend .thumb::after{content:"";position:absolute;left:50%;top:50%;width:0;height:0;border-left:10px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent;transform:translate(-35%,-50%)}
-.friend small{font-family:var(--sans);font-style:normal;font-size:13px;letter-spacing:0;opacity:.75}
-.smalls .face{font-size:clamp(18px,1.9vw,22px)}
-
-/* ---------- directions: small print columns ---------- */
-.print{
+/* ---------- kept: photo stickers ---------- */
+.board{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(24px,3vw,40px) clamp(24px,3.5vw,48px);
-  border-top:1px solid rgba(59,74,70,.28);
-  padding-top:22px;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  grid-auto-rows:minmax(20px,auto);
+  gap:clamp(22px,3vw,34px) clamp(14px,2vw,24px);
+  align-items:start;
 }
-.print h3{font-family:var(--serif);font-weight:500;font-size:19px;letter-spacing:-.01em;color:var(--ink);margin:0 0 6px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
-.print p{margin:0 0 8px;font-size:14.5px;line-height:1.5}
-.soon{
-  font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--tomato);
-  border:1px solid currentColor;border-radius:3px;padding:1px 6px 2px;transform:rotate(-2deg);display:inline-block;letter-spacing:.02em
+.pst{
+  --r:0deg;position:relative;padding:8px;background:var(--die);border-radius:18px;
+  transform:rotate(var(--r));box-shadow:0 0 0 .5px rgba(60,50,30,.13), 0 2px 2px rgba(40,30,10,.12), 0 12px 22px -12px rgba(40,30,10,.45);
+  transition:transform .45s var(--spring);
 }
-.wide{grid-column:span 3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:inherit;border-top:1px dashed rgba(59,74,70,.3);padding-top:22px}
-.price p:first-of-type{font-family:var(--serif);font-size:19px;line-height:1.35;color:var(--ink)}
+.pst img{display:block;width:100%;height:auto;object-fit:cover;border-radius:11px}
+.pst.round{border-radius:50%}.pst.round img{border-radius:50%}
+.pst .tag{position:absolute;left:14px;bottom:-18px;z-index:2;padding:5px;--r:-4deg}
+.pst .tag .face{font-size:clamp(17px,1.7vw,21px);padding:.3em .8em .4em}
+.pst .play{position:absolute;left:50%;top:44%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,253,247,.92);box-shadow:0 6px 16px -6px rgba(0,0,0,.45)}
+.pst .play::after{content:"";position:absolute;left:22px;top:17px;border-left:17px solid var(--ink);border-top:11px solid transparent;border-bottom:11px solid transparent}
+.pst .from{position:absolute;right:-12px;top:22px;padding:5px;--r:7deg}
+.pst .from .face{font-family:var(--sans);font-size:13.5px;font-weight:600;padding:.4em .75em .45em;--c:var(--mustard)}
+.bubble{display:block;padding:8px;background:var(--die);border-radius:26px 26px 26px 8px;box-shadow:var(--stk-shadow)}
+.bubble .face{white-space:normal;border-radius:20px 20px 20px 4px;padding:.65em .85em .7em;font-size:clamp(18px,1.8vw,22px);line-height:1.25;display:flex;gap:.55em;align-items:flex-start}
+.bubble .av{font-family:var(--sans);font-size:13px;width:34px;height:34px;--a:#f3e3c4}
+.bubble small{display:block;font-family:var(--sans);font-size:12px;opacity:.7;margin-bottom:2px}
+.srch .face{display:flex;align-items:center;gap:.5em;font-family:var(--sans);font-size:clamp(17px,1.7vw,20px);padding:.55em 1em .6em}
+.srch svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;flex:none}
+.srch .face span{opacity:.6}
+.grp .face{display:flex;align-items:center;gap:.4em;padding:.35em .9em .4em .4em}
+.grp .av{width:1.5em;height:1.5em;font-size:14px;font-family:var(--sans);margin-right:-.75em;border:2px solid var(--c)}
+.grp .av:nth-child(3){margin-right:.15em}
+.p-reel{grid-column:1 / span 4;grid-row:1 / span 3;--r:-3deg}
+.p-msg{grid-column:5 / span 4;grid-row:1;--r:2deg;align-self:end;justify-self:start}
+.p-srch{grid-column:9 / span 4;grid-row:1;--r:-2deg;align-self:center;justify-self:start}
+.p-subs{grid-column:5 / span 4;grid-row:2 / span 2;--r:-1.5deg;margin-top:10px}
+.p-dog{grid-column:9 / span 3;grid-row:2 / span 2;--r:5deg;margin-top:-6px}
+.p-cafe{grid-column:2 / span 3;grid-row:4;--r:4deg;margin-top:20px}
+.p-grp{grid-column:5 / span 4;grid-row:4;align-self:center;justify-self:center;--r:-3deg;margin-top:26px}
+.p-note{grid-column:9 / span 4;grid-row:4;align-self:center;margin-top:20px}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .board .pst:hover{transform:rotate(0deg) translateY(-6px) scale(1.02)}
+}
 
-.foot{
-  display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;
-  margin-top:clamp(40px,6vw,72px);padding-top:12px;border-top:1px solid rgba(59,74,70,.28);
+/* ---------- site by site table ---------- */
+.sites{border-top:1px solid rgba(59,74,70,.3)}
+.site{display:grid;grid-template-columns:minmax(150px,.7fr) 1fr 1fr;gap:10px clamp(18px,3vw,40px);padding:20px 0;border-bottom:1px solid rgba(59,74,70,.18);align-items:baseline;transition:background .25s}
+.site:hover{background:linear-gradient(90deg, rgba(255,255,255,.5), rgba(255,255,255,0))}
+.site h3{display:flex;align-items:center;gap:12px;margin:0;font-family:var(--serif);font-weight:400;font-size:clamp(22px,2.2vw,27px);letter-spacing:-.015em;color:var(--ink)}
+.site h3 .bm{transform:translateY(1px)}
+.site .tiny{display:block;margin-bottom:4px}
+.site p{margin:0;font-size:15px;line-height:1.5}
+.site .gone p{text-decoration:line-through;text-decoration-color:rgba(201,87,63,.75);text-decoration-thickness:1.5px;color:var(--print-soft)}
+.site .stays p{color:var(--ink)}
+.disclaim{margin-top:14px}
+
+/* ---------- directions ---------- */
+.print{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,40px) clamp(24px,3.5vw,48px);border-top:1px solid rgba(59,74,70,.28);padding-top:22px}
+.print h3{font-family:var(--serif);font-weight:500;font-size:20px;letter-spacing:-.01em;color:var(--ink);margin:0 0 8px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.print p{margin:0 0 8px;font-size:14.5px;line-height:1.55}
+.soon{font-family:var(--mono);font-size:10.5px;font-weight:500;color:var(--tomato);border:1px solid currentColor;border-radius:3px;padding:1px 6px 2px;transform:rotate(-2deg);display:inline-block;letter-spacing:.02em}
+.wide{grid-column:span 3;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:inherit;border-top:1px dashed rgba(59,74,70,.3);padding-top:22px}
+.price .big{font-family:var(--serif);font-size:30px;line-height:1.1;letter-spacing:-.02em;color:var(--ink);margin-bottom:10px}
+
+/* ---------- footer ---------- */
+.foot{margin-top:clamp(56px,8vw,96px);border-top:1px solid rgba(59,74,70,.32);padding-top:28px;display:grid;grid-template-columns:1.4fr repeat(3,minmax(0,1fr));gap:28px clamp(20px,3vw,40px)}
+.foot .brand{font-size:26px;margin-bottom:10px}
+.foot h4{margin:0 0 10px;font-family:var(--mono);font-weight:500;font-size:11.5px;color:var(--print-soft)}
+.foot ul{list-style:none;margin:0;padding:0;font-size:14px;line-height:2}
+.foot ul span{font-family:var(--mono);font-size:10px;color:var(--tomato);margin-left:6px}
+.foot .fine{grid-column:1 / -1;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px;padding-top:16px;border-top:1px dashed rgba(59,74,70,.3)}
+.foot .fine .bm{width:15px;height:15px;opacity:.6;background:var(--print)}
+.foot .fine ul{display:flex;gap:12px;align-items:center;line-height:1}
+
+/* ---------- the cursor trail ---------- */
+.trail{
+  position:absolute;z-index:40;pointer-events:none;
+  padding:4px;border-radius:999px;background:var(--die);
+  box-shadow:0 0 0 .5px rgba(60,50,30,.14), 0 4px 8px -3px rgba(40,30,10,.35);
+  transform:translate(-50%,-50%) rotate(var(--r)) scale(.3);opacity:0;
+  animation:trail 1.8s var(--ease) forwards;
 }
+.trail span{position:relative;display:block;border-radius:999px;padding:.18em .7em .26em;font-family:var(--serif);font-size:16px;line-height:1.1;white-space:nowrap;background:var(--c);color:var(--fc,var(--ink))}
+.trail span::after{content:"";position:absolute;left:.5em;right:.5em;top:52%;height:2px;background:currentColor;border-radius:2px;transform:scaleX(0);transform-origin:left;animation:strike .3s var(--ease) .38s forwards}
+@keyframes strike{to{transform:scaleX(1)}}
+@keyframes trail{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--r)) scale(.3)}
+  12%{opacity:1;transform:translate(-50%,-50%) rotate(var(--r)) scale(1.08)}
+  20%{transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}
+  58%{opacity:1;transform:translate(-50%,-50%) rotate(var(--r)) scale(1)}
+  100%{opacity:0;transform:translate(-30%,-140%) rotate(calc(var(--r) + 28deg)) scale(.8) skewX(-8deg)}
+}
+
+/* ---------- reveals ---------- */
+.js [data-rv]{transition:transform .9s var(--spring), opacity .6s var(--ease);transition-delay:calc(var(--d,0) * 80ms)}
+.js [data-rv]:not(.in){opacity:0;transform:translateY(18px) rotate(var(--rr,0deg)) scale(1.04)}
+.js .pst[data-rv].in{transform:rotate(var(--r))}
 
 /* ---------- narrow ---------- */
-@media (max-width:820px){
+@media (max-width:980px){
   .hero{grid-template-columns:1fr}
-  .art{width:min(86%,360px);order:-1}
+  .demo{margin:0 auto}
+  .slots{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .nav ul{display:none}
+  .board{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .p-reel{grid-column:1 / span 3;grid-row:1 / span 2}
+  .p-msg{grid-column:4 / span 3;grid-row:1}
+  .p-srch{grid-column:4 / span 3;grid-row:2}
+  .p-subs{grid-column:1 / span 4;grid-row:3}
+  .p-dog{grid-column:5 / span 2;grid-row:3}
+  .p-cafe{grid-column:1 / span 2;grid-row:4}
+  .p-grp{grid-column:3 / span 4;grid-row:4}
+  .p-note{grid-column:1 / -1;grid-row:5}
   .print,.wide{grid-template-columns:1fr}
   .wide{grid-column:auto}
+  .foot{grid-template-columns:1fr 1fr}
+  .foot > div:first-child{grid-column:1 / -1}
 }
-@media (max-width:480px){
-  .slots{grid-template-columns:1fr 1fr;gap:28px 14px}
+@media (max-width:600px){
+  body{padding-left:8px;padding-right:8px}
+  .phone-stk{font-size:13.5px;padding:10px}
+  .demo .icon-stk{width:84px;left:-14px;bottom:70px}
+  .demo .free-stk{width:84px;right:-14px;top:-8px}
+  .free-stk .face{font-size:14px}
+  .slots{grid-template-columns:1fr 1fr;gap:30px 14px}
   .slot p{font-size:13px}
-  .face{font-size:22px}
-  .face.sans{font-size:19px}
-  .peel{--s:26px}
-  .sheet{transform:none}
+  .face{font-size:21px}
+  .face.sans{font-size:18px}
+  .board{display:flex;flex-wrap:wrap;gap:30px 16px;align-items:flex-start}
+  .board > *{grid-column:auto!important;grid-row:auto!important;margin-top:0!important}
+  .p-reel{width:56%}
+  .p-dog{width:calc(44% - 16px);margin-top:40px!important}
+  .p-msg,.p-srch,.p-note{width:100%}
+  .p-subs{width:100%}
+  .p-cafe{width:48%}
+  .p-grp{align-self:center}
+  .srch .face{font-size:16px;white-space:normal}
+  .pst .tag .face{font-size:15px}
+  .pst .from{right:-6px}
+  .pst .play{width:44px;height:44px;margin:-22px 0 0 -22px}
+  .pst .play::after{left:17px;top:13px;border-left-width:14px;border-top-width:9px;border-bottom-width:9px}
+  .site{grid-template-columns:1fr;gap:8px}
+  .switch button{padding:9px 13px 10px;font-size:15.5px}
+  .soon-btn{padding:8px 13px 9px;font-size:13px}
 }
-@media (max-width:360px){.slots{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  .track,.prog::after{animation:none}
+  .phone *,.switch .thumb,.cut .stk.off,.peel{transition:none!important}
+  .js [data-rv]:not(.in){opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
 
-<main class="sheet">
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="brand" href="#top"><span class="m" aria-hidden="true"></span>Idyll</a>
+  <ul>
+    <li><a href="#removed">What peels off</a></li>
+    <li><a href="#kept">What stays</a></li>
+    <li><a href="#sites">Site by site</a></li>
+    <li><a href="#directions">Free, for good</a></li>
+  </ul>
+  <a class="soon-btn" href="#directions"><i aria-hidden="true"></i>Coming soon</a>
+</nav>
+
+<main class="sheet" id="top">
   <span class="reg tl" aria-hidden="true"><i></i></span><span class="reg tr" aria-hidden="true"><i></i></span>
   <span class="reg bl" aria-hidden="true"><i></i></span><span class="reg br" aria-hidden="true"><i></i></span>
 
-  <header class="strip">
-    <div class="brand"><span class="m" aria-hidden="true"></span>Idyll</div>
-    <span class="tiny">sticker sheet no. 1</span>
-    <span class="tiny">social without the scroll</span>
-    <span class="tiny">free, for good</span>
-  </header>
-
   <section class="hero">
     <div>
-      <h1>Peel off the feed. <em>Keep your people.</em></h1>
-      <p class="lede">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and leaves the bits you actually came for: the people who message you.</p>
-      <p class="tiny">coming soon to iPhone, Android, Chrome and Mac. no account. nothing leaves your phone.</p>
+      <div class="kicker" data-rv><span class="tiny">sticker sheet no. 1, social without the scroll</span></div>
+      <h1 data-rv style="--d:1">Peel off the feed. <em>Keep your people.</em></h1>
+      <p class="lede" data-rv style="--d:2">Idyll takes the ads, Shorts, Reels and pushy feeds out of YouTube, Instagram, Facebook and X. What’s left is the reason you opened the app: the people who message you.</p>
+      <div class="works" data-rv style="--d:3">
+        <span class="tiny">works with</span>
+        <ul>
+          <li><span class="bm yt" role="img" aria-label="YouTube"></span></li>
+          <li><span class="bm ig" role="img" aria-label="Instagram"></span></li>
+          <li><span class="bm fb" role="img" aria-label="Facebook"></span></li>
+          <li><span class="bm x" role="img" aria-label="X"></span></li>
+        </ul>
+        <span class="tiny">coming soon to iPhone, Android, Chrome and Mac</span>
+      </div>
     </div>
-    <div class="art" role="img" aria-label="Stickers: the Idyll app icon, a cygnet pressed into warm paper; a die-cut cygnet; a round sticker saying free, for good.">
-      <span class="icon-stk"><img src="../../img/icon.png" alt="" width="1024" height="1024"></span>
-      <span class="swan-stk"><span></span></span>
-      <span class="stk free-stk"><span class="face"><b>free</b><i>for good</i></span></span>
+
+    <div class="demo">
+      <div class="phone-stk" data-rv style="--d:1;--rr:-6deg">
+        <div class="phone" id="phone" data-state="before" aria-live="polite">
+          <div class="screen">
+            <div class="island" aria-hidden="true"></div>
+            <div class="glare" aria-hidden="true"></div>
+            <div class="status" aria-hidden="true"><span>9:41</span><span class="ic"><s></s><b></b></span></div>
+
+            <div class="v-before" aria-label="Without Idyll: an endless feed of short videos, with a sponsored post and the For you tab.">
+              <div class="stage">
+                <div class="track">
+                  <div class="reel"><img src="../../img/photos/29.jpg" alt="" width="480" height="480"><div class="meta"><div class="who"><span class="av" style="--a:#cfe0e6">AL</span>alpine.lines <span class="follow">Follow</span></div><div class="cap">wait for the last one</div></div></div>
+                  <div class="reel"><img src="../../img/photos/102.jpg" alt="" width="480" height="480" loading="lazy"><div class="meta"><div class="who"><span class="av" style="--a:#f3d2c6">BF</span>berryfresh <span class="follow">Follow</span></div><span class="spons">Sponsored</span><span class="shop">Shop now</span></div></div>
+                  <div class="reel"><img src="../../img/photos/163.jpg" alt="" width="480" height="480" loading="lazy"><div class="meta"><div class="who"><span class="av" style="--a:#e7dcc3">CS</span>cafe.spotter <span class="follow">Follow</span></div><div class="cap">rating every café in the city, part 41</div></div></div>
+                  <div class="reel"><img src="../../img/photos/152.jpg" alt="" width="480" height="480" loading="lazy"><div class="meta"><div class="who"><span class="av" style="--a:#ddd2ec">PE</span>petal.edit <span class="follow">Follow</span></div><div class="cap">you won’t believe the colour</div></div></div>
+                  <div class="reel"><img src="../../img/photos/145.jpg" alt="" width="480" height="480" loading="lazy"><div class="meta"><div class="who"><span class="av" style="--a:#e5e1c9">TG</span>tonewood.guy <span class="follow">Follow</span></div><div class="cap">string change asmr, 2 hours</div></div></div>
+                  <div class="reel"><img src="../../img/photos/29.jpg" alt="" width="480" height="480" loading="lazy"><div class="meta"><div class="who"><span class="av" style="--a:#cfe0e6">AL</span>alpine.lines <span class="follow">Follow</span></div><div class="cap">wait for the last one</div></div></div>
+                </div>
+              </div>
+              <div class="topbar" aria-hidden="true"><span>Following</span><span class="on">For you</span></div>
+              <div class="acts" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-3.2-6.4L20 4l-.8 4.2A8 8 0 0 1 20 12z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M21 4 3 11l7 2 2 7z"/></svg>
+              </div>
+              <div class="prog" aria-hidden="true"></div>
+              <div class="tabbar" aria-hidden="true"><i></i><i class="c"></i><i class="on"></i><i></i><i class="c"></i></div>
+            </div>
+
+            <div class="v-after" aria-label="With Idyll: your messages, search, and the one video a friend sent.">
+              <div class="ahead" style="--i:0"><b>Messages</b><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg></div>
+              <div class="search" style="--i:1"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg>Search</div>
+              <div class="sent" style="--i:2">
+                <span class="vid"><img src="../../img/photos/184.jpg" alt="" width="480" height="480" loading="lazy"></span>
+                <p><b>Priya</b><span>sent you a reel: “the dunes, finally”</span><br><em>Watch</em></p>
+              </div>
+              <div class="lbl" style="--i:3">Today</div>
+              <div class="rows" style="--i:4">
+                <div class="row unread"><span class="av" style="--a:#f3e3c4">A</span><div><b>Aoife</b><span>still on for Saturday?</span></div><i></i></div>
+                <div class="row"><span class="av" style="--a:#d6e4da">C</span><div><b>Ciarán</b><span>sent a photo</span></div></div>
+                <div class="row"><span class="av" style="--a:#e8d6e6">N</span><div><b>Niamh</b><span>ha, exactly</span></div></div>
+                <div class="row"><span class="av" style="--a:#d7e1ec">T</span><div><b>Tom</b><span>voice message, 0:14</span></div></div>
+              </div>
+              <p class="end" style="--i:5">That’s everything. No feed down here.</p>
+              <div class="atab" aria-hidden="true"><i></i><i class="c on"></i><i class="c"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="icon-stk" aria-hidden="true"><img src="../../img/icon.png" alt="" width="1024" height="1024"></span>
+      <span class="stk free-stk" aria-hidden="true"><span class="face"><b>free</b><i>for good</i></span></span>
+
+      <div class="switch" id="switch" data-v="before" role="group" aria-label="Show the phone">
+        <span class="thumb" aria-hidden="true"></span>
+        <button type="button" data-v="before" aria-pressed="true">Without Idyll</button>
+        <button type="button" data-v="after" aria-pressed="false">With <i>Idyll</i></button>
+      </div>
     </div>
   </section>
 
-  <section class="sec" aria-labelledby="h-removed">
+  <section class="sec" id="removed" aria-labelledby="h-removed">
     <div class="sec-head">
-      <h2 id="h-removed">Already peeled off</h2>
-      <span class="tiny">the outlines are where they used to be</span>
+      <h2 id="h-removed" data-rv>Already peeled off</h2>
+      <span class="tiny" data-rv style="--d:1">scroll slowly. the outlines are where they used to be.</span>
     </div>
     <div class="slots">
-      <div class="slot">
+      <div class="slot" data-rv style="--d:0">
         <span class="cut">
           <span class="ghost" aria-hidden="true"></span>
-          <span class="stk off" style="--c:var(--blush);--r:-9deg;--x:16px;--y:10px"><span class="face it">reels</span></span>
+          <span class="stk off" style="--r:-9deg;--x:16px;--y:10px"><span class="face it" style="--c:var(--blush)">reels</span></span>
         </span>
         <p><b>reels.</b> The Reels feed on Instagram and Facebook, and Facebook Watch.</p>
       </div>
-      <div class="slot">
+      <div class="slot" data-rv style="--d:1">
         <span class="cut">
           <span class="ghost" aria-hidden="true"></span>
-          <span class="stk off" style="--c:var(--navy);--fc:#f3eee2;--r:6deg;--x:22px;--y:-4px"><span class="face sans">for you</span></span>
+          <span class="stk off" style="--r:6deg;--x:22px;--y:-4px"><span class="face sans" style="--c:var(--navy);--fc:#f3eee2">for you</span></span>
         </span>
-        <p><b>for you.</b> X’s For you, trends and who to follow. The YouTube home feed, Instagram’s Explore grid, Facebook’s algorithmic feed.</p>
+        <p><b>for you.</b> Every feed that picks for you: For you, Explore, the home feed.</p>
       </div>
-      <div class="slot">
+      <div class="slot" data-rv style="--d:2">
         <span class="cut">
           <span class="ghost sq" aria-hidden="true"></span>
           <span class="peel" style="--r:-3deg;--x:10px;--y:-6px"><span class="stk"><span class="face sans" style="--c:var(--mustard)">sponsored</span></span></span>
         </span>
-        <p><b>sponsored.</b> Sponsored posts on Instagram, promoted posts on X, video ads on YouTube.</p>
+        <p><b>sponsored.</b> Sponsored posts, promoted posts and YouTube’s video ads.</p>
       </div>
-      <div class="slot">
+      <div class="slot" data-rv style="--d:3">
         <span class="cut">
           <span class="ghost" aria-hidden="true"></span>
-          <span class="stk off" style="--c:var(--tomato);--fc:#fff6ea;--r:-11deg;--x:22px;--y:12px"><span class="face">shorts</span></span>
+          <span class="stk off" style="--r:-11deg;--x:22px;--y:12px"><span class="face" style="--c:var(--tomato);--fc:#fff6ea">shorts</span></span>
         </span>
-        <p><b>shorts.</b> YouTube Shorts. On iPhone, Idyll Plus opens a Short as a normal video instead.</p>
+        <p><b>shorts.</b> YouTube Shorts. With Idyll Plus on iPhone, a Short opens as a normal video.</p>
       </div>
-      <div class="slot">
+      <div class="slot" data-rv style="--d:4">
         <span class="cut">
-          <span class="ghost" aria-hidden="true"><span class="ghost-word">gone</span></span>
-          <span class="stk gone" style="--c:var(--sky)"><span class="face it">autoplay</span></span>
+          <span class="ghost" aria-hidden="true"></span>
+          <span class="stk off away" style="--r:24deg;--x:40px;--y:-90px"><span class="face it" style="--c:var(--sky)">autoplay</span></span>
         </span>
-        <p><b>autoplay.</b> Up next on YouTube, and the swipe into the next Short or Reel. Already in the bin.</p>
+        <p><b>autoplay.</b> Up next, and the swipe into the next Short or Reel. Already in the bin.</p>
       </div>
     </div>
   </section>
 
-  <section class="sec" aria-labelledby="h-kept">
+  <section class="sec" id="kept" aria-labelledby="h-kept">
     <div class="sec-head">
-      <h2 id="h-kept">Stays <em>firmly</em> stuck</h2>
-      <span class="tiny">whatever a friend sends you: one video, not the feed after it</span>
+      <h2 id="h-kept" data-rv>Stays <em>firmly</em> stuck</h2>
+      <span class="tiny" data-rv style="--d:1">whatever a friend sends you: one video, not the feed after it</span>
     </div>
-    <div class="kept">
-      <span class="stk" style="--c:var(--moss);--fc:var(--moss-ink);--r:-2deg"><span class="face it" style="--c:var(--moss);--fc:var(--moss-ink)">messages</span></span>
-      <span class="stk friend" style="--r:1.5deg"><span class="face" style="--c:var(--cream)"><span class="thumb" aria-hidden="true"></span><span>the reel your friend sent</span><small>from Priya, with a “you’ll like this”</small></span></span>
-      <span class="stk" style="--r:3deg"><span class="face sans" style="--c:#dfe7dc">search</span></span>
+    <div class="board">
+      <figure class="pst p-reel" data-rv style="--d:0;margin:0">
+        <img src="../../img/photos/184.jpg" alt="A photo of sand dunes at dusk, sent by a friend" width="480" height="480" loading="lazy" style="aspect-ratio:3/4">
+        <span class="play" aria-hidden="true"></span>
+        <span class="stk from"><span class="face">from Priya</span></span>
+        <span class="stk tag"><span class="face it" style="--c:var(--cream)">the reel your friend sent</span></span>
+      </figure>
+      <div class="p-msg" data-rv style="--d:1">
+        <span class="bubble" style="transform:rotate(2deg)"><span class="face" style="--c:var(--moss);--fc:var(--moss-ink)"><span class="av">A</span><span><small>Aoife, messages</small>still on for Saturday? I’ll bring the good biscuits</span></span></span>
+      </div>
+      <div class="p-srch" data-rv style="--d:2">
+        <span class="stk srch" style="--r:-2deg"><span class="face" style="--c:#dfe7dc"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4-4"/></svg>search <span>that pasta Sam meant</span></span></span>
+      </div>
+      <figure class="pst p-subs" data-rv style="--d:2;margin:0">
+        <img src="../../img/photos/250.jpg" alt="A video thumbnail of a vintage camera" width="480" height="480" loading="lazy" style="aspect-ratio:16/9">
+        <span class="stk tag"><span class="face" style="--c:#f3e3c4">subscriptions</span></span>
+      </figure>
+      <figure class="pst round p-dog" data-rv style="--d:3;margin:0">
+        <img src="../../img/photos/237.jpg" alt="A friend’s photo of a black puppy" width="480" height="480" loading="lazy" style="aspect-ratio:1">
+        <span class="stk tag" style="left:50%;margin-left:-70px;bottom:-12px"><span class="face" style="--c:var(--blush)">friends, in order</span></span>
+      </figure>
+      <figure class="pst p-cafe" data-rv style="--d:1;margin:0">
+        <img src="../../img/photos/42.jpg" alt="A coffee on a long wooden café table" width="480" height="480" loading="lazy" style="aspect-ratio:1">
+        <span class="stk tag"><span class="face it" style="--c:var(--sky)">Following</span></span>
+      </figure>
+      <div class="p-grp" data-rv style="--d:2">
+        <span class="stk grp" style="--r:-3deg"><span class="face sans" style="--c:#e9e2f0"><span class="av" style="--a:#f3e3c4">N</span><span class="av" style="--a:#d6e4da">T</span><span class="av" style="--a:#d7e1ec">S</span>groups</span></span>
+      </div>
+      <p class="tiny p-note" data-rv style="--d:3">messages, search, YouTube subscriptions, X Following, your Facebook friends in order, and your groups. the good stuff is staying put.</p>
     </div>
-    <div class="kept smalls">
-      <span class="stk" style="--r:-3deg"><span class="face" style="--c:#f3e3c4">subscriptions</span></span>
-      <span class="stk" style="--r:2deg"><span class="face it" style="--c:var(--sky)">Following</span></span>
-      <span class="stk" style="--r:-1deg"><span class="face" style="--c:var(--blush)">friends, in order</span></span>
-      <span class="stk" style="--r:4deg"><span class="face sans" style="--c:#e9e2f0">groups</span></span>
-    </div>
-    <p class="tiny">YouTube subscriptions, X Following, your Facebook friends in order, and your groups.</p>
   </section>
 
-  <section aria-labelledby="h-dir">
+  <section class="sec" id="sites" aria-labelledby="h-sites">
     <div class="sec-head">
-      <h2 id="h-dir">Directions <em>for use</em></h2>
-      <span class="tiny">every platform is coming soon. nothing to download yet.</span>
+      <h2 id="h-sites" data-rv>Site <em>by</em> site</h2>
+      <span class="tiny" data-rv style="--d:1">the full contents of this sheet</span>
+    </div>
+    <div class="sites">
+      <div class="site" data-rv>
+        <h3><span class="bm yt" aria-hidden="true"></span>YouTube</h3>
+        <div class="gone"><span class="tiny">peels off</span><p>Video ads, Shorts, the recommended home feed, Up next.</p></div>
+        <div class="stays"><span class="tiny">stays</span><p>Your subscriptions, search, and any video a friend sends.</p></div>
+      </div>
+      <div class="site" data-rv>
+        <h3><span class="bm ig" aria-hidden="true"></span>Instagram</h3>
+        <div class="gone"><span class="tiny">peels off</span><p>Sponsored posts, the Reels feed, the Explore grid.</p></div>
+        <div class="stays"><span class="tiny">stays</span><p>Messages, search, and the reel your friend sent you.</p></div>
+      </div>
+      <div class="site" data-rv>
+        <h3><span class="bm fb" aria-hidden="true"></span>Facebook</h3>
+        <div class="gone"><span class="tiny">peels off</span><p>Reels, Watch, the algorithmic feed.</p></div>
+        <div class="stays"><span class="tiny">stays</span><p>Your friends, in order. Groups. Messages.</p></div>
+      </div>
+      <div class="site" data-rv>
+        <h3><span class="bm x" aria-hidden="true"></span>X</h3>
+        <div class="gone"><span class="tiny">peels off</span><p>For you, promoted posts, trends, who to follow.</p></div>
+        <div class="stays"><span class="tiny">stays</span><p>Following. Messages. Search.</p></div>
+      </div>
+    </div>
+    <p class="tiny disclaim">Idyll is independent. It isn’t made by, or affiliated with, any of these companies.</p>
+  </section>
+
+  <section id="directions" aria-labelledby="h-dir">
+    <div class="sec-head">
+      <h2 id="h-dir" data-rv>Directions <em>for use</em></h2>
+      <span class="tiny" data-rv style="--d:1">every platform is coming soon. nothing to download yet.</span>
     </div>
     <div class="print">
-      <div>
+      <div data-rv>
         <h3>iPhone <span class="soon">coming soon</span></h3>
         <p>A Safari content blocker cleans the websites. Safari applies the rules itself, and iOS shows that Idyll can’t read or send anything from the pages you visit.</p>
         <p>Idyll Plus, if you want it, also skips video ads and turns Shorts into normal videos. The real apps get a daily allowance through Screen Time: they work, notifications and all, until the minutes run out, then pause until midnight.</p>
       </div>
-      <div>
+      <div data-rv style="--d:1">
         <h3>Android <span class="soon">coming soon</span></h3>
         <p>A clean built-in browser for each site. Inside the real apps, a feed guard presses “Skip ad” for you and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
       </div>
-      <div>
+      <div data-rv style="--d:2">
         <h3>Chrome and Mac <span class="soon">coming soon</span></h3>
-        <p>The same rules, on a laptop.</p>
+        <p>The same rules, on a laptop. Same stickers, bigger sheet.</p>
       </div>
       <div class="wide">
-        <div>
+        <div data-rv>
           <h3>Adhesive</h3>
           <p>Sticks to nothing of yours. You log in to the real sites and apps, never inside Idyll. No account. Nothing leaves your phone. Zero trackers.</p>
         </div>
-        <div>
+        <div data-rv style="--d:1">
           <h3>Caution</h3>
           <p>No app can change what’s inside the official YouTube or Instagram apps on iPhone; Apple keeps apps sealed off. Anyone who says otherwise ships a modified copy that can get accounts flagged. Idyll cleans the websites and gives the apps a daily limit instead.</p>
         </div>
-        <div class="price">
+        <div class="price" data-rv style="--d:2">
           <h3>Price</h3>
-          <p>Free, for good.</p>
+          <p class="big">Free, for good.</p>
           <p>No subscription, no trial that turns into one, no ads, no data sold. Idyll will never charge. We’d rather say it plainly than print it small.</p>
         </div>
       </div>
@@ -447,10 +731,132 @@ h2 em{font-weight:300}
   </section>
 
   <footer class="foot">
-    <span class="tiny">Idyll. social without the scroll.</span>
-    <span class="tiny">sheet 1 of 1. keep away from feeds.</span>
+    <div>
+      <a class="brand" href="#top"><span class="m" aria-hidden="true"></span>Idyll</a>
+      <p class="tiny">social without the scroll.<br>sheet 1 of 1. keep away from feeds.</p>
+    </div>
+    <div>
+      <h4>product</h4>
+      <ul><li>iPhone<span>soon</span></li><li>Android<span>soon</span></li><li>Chrome<span>soon</span></li><li>Mac<span>soon</span></li></ul>
+    </div>
+    <div>
+      <h4>promises</h4>
+      <ul><li>No account</li><li>Zero trackers</li><li>Nothing leaves your phone</li><li>Free, for good</li></ul>
+    </div>
+    <div>
+      <h4>small print</h4>
+      <ul><li>Privacy</li><li>Terms</li><li>Press kit</li><li>Contact</li></ul>
+    </div>
+    <div class="fine">
+      <span class="tiny">© 2026 Idyll. Free, for good.</span>
+      <ul aria-label="Works with">
+        <li class="tiny">works with</li>
+        <li><span class="bm yt" role="img" aria-label="YouTube"></span></li>
+        <li><span class="bm ig" role="img" aria-label="Instagram"></span></li>
+        <li><span class="bm fb" role="img" aria-label="Facebook"></span></li>
+        <li><span class="bm x" role="img" aria-label="X"></span></li>
+      </ul>
+    </div>
   </footer>
 </main>
 
+<script>
+(function(){
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.documentElement.classList.add('js');
+
+  /* nav condenses */
+  var nav = document.getElementById('nav');
+  function onNav(){ nav.classList.toggle('small', scrollY > 40); }
+
+  /* reveals, with a fallback so nothing stays hidden */
+  var rv = [].slice.call(document.querySelectorAll('[data-rv]'));
+  if (reduce || !('IntersectionObserver' in window)) { rv.forEach(function(e){e.classList.add('in');}); }
+  else {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {rootMargin:'0px 0px -8% 0px'});
+    rv.forEach(function(e){ io.observe(e); });
+    setTimeout(function(){ rv.forEach(function(e){ if (e.getBoundingClientRect().top < innerHeight) e.classList.add('in'); }); }, 1800);
+    setTimeout(function(){ rv.forEach(function(e){ e.classList.add('in'); }); }, 6000);
+  }
+
+  /* before and after */
+  var phone = document.getElementById('phone'), sw = document.getElementById('switch');
+  var touched = false;
+  function setV(v){
+    phone.dataset.state = v; sw.dataset.v = v;
+    [].forEach.call(sw.querySelectorAll('button'), function(b){ b.setAttribute('aria-pressed', b.dataset.v === v ? 'true' : 'false'); });
+  }
+  sw.addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    touched = true; setV(b.dataset.v);
+  });
+  if ('IntersectionObserver' in window){
+    var played = false;
+    new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        phone.classList.toggle('paused', !e.isIntersecting);
+        if (e.isIntersecting && e.intersectionRatio > .5 && !played && !reduce){
+          played = true;
+          setTimeout(function(){ if (!touched) setV('after'); }, 3400);
+        }
+      });
+    }, {threshold:[0,.55]}).observe(phone);
+  }
+
+  /* scroll peels the removed stickers */
+  var sec = document.getElementById('removed');
+  var peelers = [].slice.call(sec.querySelectorAll('.stk.off, .peel'));
+  function onPeel(){
+    var r = sec.getBoundingClientRect(), vh = innerHeight;
+    var p = Math.min(1, Math.max(0, (vh * .92 - r.top) / (vh * .7)));
+    peelers.forEach(function(el, i){
+      var k = Math.min(1, Math.max(0, (p - i * .1) / .5));
+      el.style.setProperty('--k', k.toFixed(3));
+    });
+  }
+
+  var ticking = false;
+  function frame(){ ticking = false; onNav(); if (!reduce) onPeel(); }
+  addEventListener('scroll', function(){ if (!ticking){ ticking = true; requestAnimationFrame(frame); } }, {passive:true});
+  addEventListener('resize', frame);
+  frame();
+
+  /* cursor trail: die-cut feed words that get struck through and peel away */
+  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches){
+    var sheet = document.querySelector('.sheet');
+    var words = [
+      ['reels','var(--blush)'],['for you','var(--navy)','#f3eee2'],['sponsored','var(--mustard)'],
+      ['autoplay','var(--sky)'],['shorts','var(--tomato)','#fff6ea']
+    ];
+    var live = [], n = 0, last = {x:-999,y:-999};
+    sheet.addEventListener('pointermove', function(e){
+      if (e.target.closest('a, button, .demo, .switch')) return;
+      var b = sheet.getBoundingClientRect();
+      var x = e.clientX - b.left, y = e.clientY - b.top;
+      if (Math.hypot(x - last.x, y - last.y) < 70) return;
+      var w = words[n % words.length];
+      var bw = 34 + w[0].length * 9, bh = 34;
+      var box = {l:x - bw/2 - 6, r:x + bw/2 + 6, t:y - bh/2 - 6, b:y + bh/2 + 6};
+      for (var i = 0; i < live.length; i++){
+        var o = live[i];
+        if (box.l < o.r && box.r > o.l && box.t < o.b && box.b > o.t) return;
+      }
+      if (live.length >= 6) return;
+      n++; last = {x:x, y:y};
+      var el = document.createElement('span');
+      el.className = 'trail'; el.setAttribute('aria-hidden','true');
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+      el.style.setProperty('--r', (Math.random() * 20 - 10).toFixed(1) + 'deg');
+      var s = document.createElement('span'); s.textContent = w[0];
+      s.style.setProperty('--c', w[1]); if (w[2]) s.style.setProperty('--fc', w[2]);
+      el.appendChild(s); sheet.appendChild(el);
+      live.push(box);
+      setTimeout(function(){ el.remove(); live.splice(live.indexOf(box), 1); }, 1850);
+    });
+  }
+})();
+</script>
 </body>
 </html>
