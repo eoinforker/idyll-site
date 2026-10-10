@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* One bit. Two values exist on this sheet: ink and paper. No greys, no
+   tints, no shadows: anything softer has to be made from dots. */
+:root {
+  --ink: #161512;
+  --paper: #e2ded4;
+  --mono: "Paper Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --gut: clamp(16px, 3.4vw, 44px);
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 400 14px/1.55 var(--mono); font-feature-settings: "zero" 1;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+p, h1, h2, h3, dl, dd, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+::selection { background: var(--ink); color: var(--paper); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.sheet { max-width: 1320px; margin: 0 auto; padding: var(--gut); }
+
+/* A label is always small, lowercase, preceded by a hairline tick. */
+.lbl { display: block; font-size: 11px; line-height: 1.3; letter-spacing: .02em; margin-bottom: 6px; }
+.lbl::before { content: ""; display: inline-block; width: 7px; height: 1px; background: var(--ink); vertical-align: middle; margin: -2px 6px 0 0; }
+
+/* Header: a row of fields. */
+.fields { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.fields > div { padding: 10px 14px 12px 0; }
+.fields > div + div { padding-left: 14px; border-left: 1px solid var(--ink); }
+.fields b { font-weight: 600; }
+
+/* Plate: the dithered figure and the title block. */
+.plate { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--gut); padding-top: var(--gut); }
+.fig { position: relative; padding: 26px 26px 0 34px; }
+.frame { position: relative; line-height: 0; }
+.frame canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+#lens { position: absolute; left: 0; top: 0; pointer-events: none; }
+/* Crop marks. */
+.frame i { position: absolute; width: 18px; height: 18px; border: 0 solid var(--ink); }
+.frame i:nth-of-type(1) { left: -24px; top: -24px; border-right-width: 1px; border-bottom-width: 1px; }
+.frame i:nth-of-type(2) { right: -24px; top: -24px; border-left-width: 1px; border-bottom-width: 1px; }
+.frame i:nth-of-type(3) { left: -24px; bottom: -24px; border-right-width: 1px; border-top-width: 1px; }
+.frame i:nth-of-type(4) { right: -24px; bottom: -24px; border-left-width: 1px; border-top-width: 1px; }
+/* Rulers along the top and left edge, labelled in source pixels. */
+.ruler { position: absolute; font-size: 10px; line-height: 1; }
+.ruler.x { left: 0; right: 0; top: -20px; height: 14px; display: flex; justify-content: space-between;
+  background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat; }
+.ruler.y { top: 0; bottom: 0; left: -30px; width: 22px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+  background: linear-gradient(var(--ink), var(--ink)) right / 1px 100% no-repeat; }
+.ruler span { position: relative; }
+.ruler.x span { padding-bottom: 5px; }
+.ruler.x span::after { content: ""; position: absolute; left: 0; bottom: 0; width: 1px; height: 4px; background: var(--ink); }
+.ruler.x span:last-child::after { left: auto; right: 0; }
+.ruler.y span { padding-right: 5px; }
+.ruler.y span::after { content: ""; position: absolute; right: 0; top: 0; width: 4px; height: 1px; background: var(--ink); }
+.ruler.y span:last-child::after { top: auto; bottom: 0; }
+
+.cap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; margin-top: 38px; font-size: 12px; }
+.cap .k { white-space: nowrap; }
+.readout { font-variant-numeric: tabular-nums; }
+
+.title h1 { font: 700 clamp(72px, 11vw, 150px)/.86 var(--mono); letter-spacing: -.06em; margin: 8px 0 0 -.04em; }
+.title .sub { margin-top: 14px; font: 500 clamp(19px, 2vw, 26px)/1.2 var(--mono); letter-spacing: -.02em; }
+.title .lede { margin-top: 26px; font-size: 15px; max-width: 34em; }
+.title dl { margin-top: 30px; border-top: 1px solid var(--ink); }
+.title dl > div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 12px; padding: 8px 0; border-bottom: 1px dotted var(--ink); }
+.title dt { font-size: 11px; padding-top: 2px; }
+.title dd { font-size: 13px; }
+
+/* Resolution study: the same bird at four settings. */
+.study { margin-top: calc(var(--gut) * 1.6); border-top: 2px solid var(--ink); padding-top: 12px; }
+.study ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gut); margin-top: 14px; }
+.study li { line-height: 0; }
+.study canvas { width: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+.study p { font-size: 11px; line-height: 1.4; margin-top: 8px; display: flex; justify-content: space-between; gap: 8px; }
+
+/* Sections: a number column, then the content. */
+.sec { display: grid; grid-template-columns: 12em minmax(0, 1fr); gap: var(--gut); margin-top: calc(var(--gut) * 1.6); border-top: 2px solid var(--ink); padding-top: 12px; }
+.sec h2 { font: 600 13px/1.3 var(--mono); }
+.sec h2 .lbl { margin-bottom: 4px; font-weight: 400; }
+.sec .note { font-size: 12px; margin-top: 10px; max-width: 18em; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 400; font-size: 11px; padding: 0 12px 8px 0; border-bottom: 1px solid var(--ink); vertical-align: bottom; }
+td { padding: 10px 12px 10px 0; border-bottom: 1px dotted var(--ink); vertical-align: top; }
+td.site { font-weight: 600; width: 8.5em; }
+td ul li + li { margin-top: 2px; }
+.gone li { text-decoration: line-through; text-decoration-thickness: 1px; }
+
+/* Pending: a tiny checkerboard, the 1-bit version of grey. */
+.pend { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pend.wrap { white-space: normal; align-items: baseline; }
+.pend::before { flex: none; content: ""; width: 10px; height: 10px; border: 1px solid var(--ink);
+  background: repeating-conic-gradient(var(--ink) 0 25%, transparent 0 50%) 0 0 / 2px 2px; }
+
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--gut); }
+.kv > div { display: grid; grid-template-columns: 11em minmax(0, 1fr); gap: 12px; padding: 9px 0; border-bottom: 1px dotted var(--ink); }
+.kv dt { font-size: 11px; padding-top: 2px; }
+.kv dd { font-size: 13px; }
+.kv dd.big { font: 600 22px/1.1 var(--mono); }
+
+.price { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px var(--gut); align-items: end; }
+.price .n { font: 700 clamp(96px, 16vw, 220px)/.8 var(--mono); letter-spacing: -.07em; }
+.price p { font-size: 15px; max-width: 30em; }
+.price p strong { font-weight: 600; }
+
+.limit { font-size: 14px; max-width: 46em; }
+.limit p + p { margin-top: 10px; }
+
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; margin-top: calc(var(--gut) * 1.6); padding: 10px 0 0; border-top: 1px solid var(--ink); font-size: 11px; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (max-width: 960px) {
+  .plate { grid-template-columns: 1fr; }
+  .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fields > div:nth-child(3) { padding-left: 0; border-left: 0; }
+  .fields > div:nth-child(n+3) { border-top: 1px solid var(--ink); }
+  .sec { grid-template-columns: 1fr; gap: 14px; }
+  .sec .note { max-width: none; }
+  .cols { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .study ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fig { padding: 24px 0 0 30px; }
+  .frame i:nth-of-type(2), .frame i:nth-of-type(4) { display: none; }
+  .ruler span:nth-child(2n) { visibility: hidden; }
+  table, thead, tbody, tr, td { display: block; }
+  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  tr { padding: 10px 0; border-bottom: 1px dotted var(--ink); }
+  td { border: 0; padding: 2px 0; width: auto !important; }
+  td[data-k]::before { content: attr(data-k); display: block; font-size: 11px; margin-top: 6px; }
+  .kv > div { grid-template-columns: 8em minmax(0, 1fr); }
+  .title dl > div { grid-template-columns: 7.5em minmax(0, 1fr); }
+  .price { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<main class="sheet">
+
+  <header class="fields">
+    <div><span class="lbl">specimen</span><b>Idyll</b>, sheet 1 of 1</div>
+    <div><span class="lbl">subject</span>a cygnet, sitting on still water</div>
+    <div><span class="lbl">status</span><span class="pend wrap">coming soon, every platform</span></div>
+    <div><span class="lbl">price</span><b>£0</b>, for good</div>
+  </header>
+
+  <section class="plate" aria-labelledby="t">
+    <figure class="fig" style="margin:0">
+      <div class="frame" id="frame">
+        <div class="ruler x" aria-hidden="true"><span>0</span><span>256</span><span>512</span><span>768</span><span>1024</span></div>
+        <div class="ruler y" aria-hidden="true"><span>0</span><span>256</span><span>512</span><span>768</span><span>1024</span></div>
+        <canvas id="plate" role="img" aria-label="The Idyll app icon, a cygnet pressed into paper, reduced to black and white dots"></canvas>
+        <canvas id="lens" aria-hidden="true"></canvas>
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <figcaption class="cap">
+        <span class="k lbl" style="margin:0">fig. 1</span><span>The app icon, 1024 by 1024 px, reduced to one bit by Atkinson diffusion.</span>
+        <span class="k lbl" style="margin:0">grid</span><span class="readout" id="grid">loading</span>
+        <span class="k lbl" style="margin:0">lens</span><span class="readout" id="read">point at the plate to see the original</span>
+      </figcaption>
+    </figure>
+
+    <div class="title">
+      <span class="lbl">name</span>
+      <h1 id="t">Idyll</h1>
+      <p class="sub">Social without the scroll.</p>
+      <p class="lede">Idyll takes the ads, YouTube Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for: messages, search, your subscriptions, your friends, and whatever a friend sends you. One video, not the feed after it.</p>
+      <dl>
+        <div><dt>platforms</dt><dd>iPhone, Android, Chrome, Mac</dd></div>
+        <div><dt>account</dt><dd>none</dd></div>
+        <div><dt>trackers</dt><dd>0</dd></div>
+        <div><dt>leaves your phone</dt><dd>nothing</dd></div>
+        <div><dt>cost</dt><dd>nothing, ever</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="study" aria-label="Resolution study">
+    <span class="lbl">resolution study: the same bird, less information each time</span>
+    <ul>
+      <li><canvas data-n="160" data-m="atkinson" role="img" aria-label="The cygnet at 160 pixels, Atkinson dither"></canvas><p><span>atkinson</span><span>160 px</span></p></li>
+      <li><canvas data-n="80" data-m="atkinson" role="img" aria-label="The cygnet at 80 pixels, Atkinson dither"></canvas><p><span>atkinson</span><span>80 px</span></p></li>
+      <li><canvas data-n="40" data-m="atkinson" role="img" aria-label="The cygnet at 40 pixels, Atkinson dither"></canvas><p><span>atkinson</span><span>40 px</span></p></li>
+      <li><canvas data-n="80" data-m="bayer" role="img" aria-label="The cygnet at 80 pixels, ordered Bayer dither"></canvas><p><span>bayer 8 by 8</span><span>80 px</span></p></li>
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="s1">
+    <div>
+      <h2 id="s1"><span class="lbl">table a</span>What comes out, what stays</h2>
+      <p class="note">Struck lines are removed. Everything on the right is left exactly where you'd expect it.</p>
+    </div>
+    <table>
+      <thead><tr><th scope="col">site</th><th scope="col">removed</th><th scope="col">kept</th></tr></thead>
+      <tbody>
+        <tr><td class="site">YouTube</td>
+          <td data-k="removed"><ul class="gone"><li><span class="sr">removed: </span>video ads</li><li>Shorts</li><li>the recommended home feed</li><li>Up next</li></ul></td>
+          <td data-k="kept"><ul><li>your subscriptions</li><li>search</li><li>the one video a friend sends</li></ul></td></tr>
+        <tr><td class="site">Instagram</td>
+          <td data-k="removed"><ul class="gone"><li><span class="sr">removed: </span>sponsored posts</li><li>the Reels feed</li><li>the Explore grid</li></ul></td>
+          <td data-k="kept"><ul><li>messages</li><li>search</li><li>whatever a friend sends you</li></ul></td></tr>
+        <tr><td class="site">Facebook</td>
+          <td data-k="removed"><ul class="gone"><li><span class="sr">removed: </span>Reels</li><li>Watch</li><li>the algorithmic feed</li></ul></td>
+          <td data-k="kept"><ul><li>friends, in order</li><li>groups</li><li>messages</li></ul></td></tr>
+        <tr><td class="site">X</td>
+          <td data-k="removed"><ul class="gone"><li><span class="sr">removed: </span>For you</li><li>promoted posts</li><li>trends</li><li>who to follow</li></ul></td>
+          <td data-k="kept"><ul><li>Following</li><li>messages</li><li>search</li></ul></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" aria-labelledby="s2">
+    <div>
+      <h2 id="s2"><span class="lbl">table b</span>How it works, per device</h2>
+      <p class="note">No download yet. Every platform is in progress.</p>
+    </div>
+    <table>
+      <thead><tr><th scope="col">device</th><th scope="col">method</th><th scope="col">status</th></tr></thead>
+      <tbody>
+        <tr><td class="site">iPhone</td>
+          <td data-k="method"><p>A Safari content blocker cleans the websites. Safari applies the rules, and iOS shows that Idyll can't read or send anything from the pages.</p>
+            <p style="margin-top:8px">Optional: Idyll Plus, an extension that also skips video ads and turns Shorts into normal videos.</p>
+            <p style="margin-top:8px">The real apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p></td>
+          <td data-k="status"><span class="pend">coming soon</span></td></tr>
+        <tr><td class="site">Android</td>
+          <td data-k="method"><p>A clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops a swipe to the next Short or Reel. The one a friend sent still plays.</p></td>
+          <td data-k="status"><span class="pend">coming soon</span></td></tr>
+        <tr><td class="site">Chrome, Mac</td>
+          <td data-k="method"><p>The same rules on a laptop.</p></td>
+          <td data-k="status"><span class="pend">coming soon</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" aria-labelledby="s3">
+    <div>
+      <h2 id="s3"><span class="lbl">table c</span>Privacy</h2>
+    </div>
+    <div class="cols">
+      <dl class="kv">
+        <div><dt>where you log in</dt><dd>on the real sites and apps, never inside Idyll</dd></div>
+        <div><dt>account</dt><dd>none to make</dd></div>
+      </dl>
+      <dl class="kv">
+        <div><dt>data leaving your phone</dt><dd>none</dd></div>
+        <div><dt>trackers</dt><dd class="big">0</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="s4">
+    <div>
+      <h2 id="s4"><span class="lbl">table d</span>Price</h2>
+    </div>
+    <div class="price">
+      <div class="n" aria-hidden="true">£0</div>
+      <p><strong>Free, for good.</strong> No subscription, no trial that turns into one, no ads, no data sold. Idyll will never charge. We think something that gives you your time back shouldn't come with a bill.</p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="s5">
+    <div>
+      <h2 id="s5"><span class="lbl">note</span>Tolerances</h2>
+    </div>
+    <div class="limit">
+      <p>No app can change what's inside the official YouTube or Instagram apps on iPhone. Apple keeps apps sealed off from each other. Anyone claiming otherwise ships a modified copy, and that can get accounts flagged.</p>
+      <p>So on iPhone, Idyll cleans the websites and gives the apps a daily limit instead.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Idyll</span>
+    <span>set in Paper Mono</span>
+    <span>two values: #161512, #e2ded4</span>
+    <span>sheet 1 of 1</span>
+  </footer>
+</main>
+
+<script>
+(() => {
+  const INK = [0x16, 0x15, 0x12], PAPER = [0xe2, 0xde, 0xd4];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const src = new Image();
+  src.src = '../../img/icon.png';
+
+  // Luminance of the icon at n by n, stretched so the pale emboss reads as form.
+  function tones(n) {
+    const c = document.createElement('canvas');
+    c.width = c.height = n;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(src, 0, 0, n, n);
+    const d = g.getImageData(0, 0, n, n).data, out = new Float32Array(n * n);
+    for (let i = 0; i < n * n; i++) {
+      const L = .2126 * d[i * 4] + .7152 * d[i * 4 + 1] + .0722 * d[i * 4 + 2];
+      const v = Math.min(1, Math.max(0, (L - 176) / (250 - 176)));
+      out[i] = Math.pow(v, 1.15);
+    }
+    return out;
+  }
+
+  function atkinson(t, n) {
+    const e = t.slice(), bit = new Uint8Array(n * n);
+    const add = (x, y, v) => { if (x >= 0 && x < n && y < n) e[y * n + x] += v; };
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const i = y * n + x, o = e[i] < .5 ? 0 : 1, q = (e[i] - o) / 8;
+      bit[i] = o;
+      add(x + 1, y, q); add(x + 2, y, q); add(x - 1, y + 1, q);
+      add(x, y + 1, q); add(x + 1, y + 1, q); add(x, y + 2, q);
+    }
+    return bit;
+  }
+
+  const B8 = [0,32,8,40,2,34,10,42,48,16,56,24,50,18,58,26,12,44,4,36,14,46,6,38,60,28,52,20,62,30,54,22,3,35,11,43,1,33,9,41,51,19,59,27,49,17,57,25,15,47,7,39,13,45,5,37,63,31,55,23,61,29,53,21];
+  function bayer(t, n) {
+    const bit = new Uint8Array(n * n);
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++)
+      bit[y * n + x] = t[y * n + x] > (B8[(y & 7) * 8 + (x & 7)] + .5) / 64 ? 1 : 0;
+    return bit;
+  }
+
+  function paint(canvas, bit, n) {
+    canvas.width = canvas.height = n;
+    const g = canvas.getContext('2d'), im = g.createImageData(n, n);
+    for (let i = 0; i < n * n; i++) {
+      const c = bit[i] ? PAPER : INK;
+      im.data[i * 4] = c[0]; im.data[i * 4 + 1] = c[1]; im.data[i * 4 + 2] = c[2]; im.data[i * 4 + 3] = 255;
+    }
+    g.putImageData(im, 0, 0);
+  }
+
+
+  const plate = document.getElementById('plate'), lens = document.getElementById('lens');
+  const frame = document.getElementById('frame'), grid = document.getElementById('grid'), read = document.getElementById('read');
+  let N = 0, size = 0, timer;
+
+  function drawPlate(animate) {
+    const avail = frame.parentElement.clientWidth - (innerWidth < 640 ? 38 : 66);
+    if (avail < 100) return false;
+    const dpr = window.devicePixelRatio || 1;
+    const px = Math.max(2, Math.round(avail * dpr / 240));
+    N = Math.min(320, Math.floor(avail * dpr / px));
+    size = N * px / dpr;
+    plate.style.width = plate.style.height = size + 'px';
+    frame.style.width = size + 'px';
+    const steps = animate && !reduce ? [16, 24, 36, 56, 88, 136, N].filter(s => s < N).concat(N) : [N];
+    clearTimeout(timer);
+    let k = 0;
+    (function step() {
+      const n = steps[k];
+      paint(plate, atkinson(tones(n), n), n);
+      grid.textContent = `${n} by ${n} dots, ${(1024 / n).toFixed(1)} source px each`;
+      if (++k < steps.length) timer = setTimeout(step, 150);
+    })();
+    lens.width = lens.height = Math.round(size * (window.devicePixelRatio || 1));
+    lens.style.width = lens.style.height = size + 'px';
+  }
+
+  function drawStudy() {
+    document.querySelectorAll('.study canvas').forEach(c => {
+      const n = +c.dataset.n, t = tones(n);
+      paint(c, c.dataset.m === 'bayer' ? bayer(t, n) : atkinson(t, n), n);
+      c.style.width = '';
+    });
+  }
+
+  // The lens: a small circle where the one bit gives way to the original.
+  const fine = matchMedia('(pointer: fine)').matches;
+  function lensAt(x, y) {
+    const g = lens.getContext('2d'), s = lens.width / size, r = 64;
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.clearRect(0, 0, lens.width, lens.height);
+    if (x == null) { read.textContent = 'point at the plate to see the original'; return; }
+    g.setTransform(s, 0, 0, s, 0, 0);
+    g.save();
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.clip();
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(src, 0, 0, size, size);
+    g.restore();
+    g.strokeStyle = 'rgb(22,21,18)'; g.lineWidth = 1 / s * Math.max(1, Math.round(s));
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke();
+    g.beginPath(); g.moveTo(x - 6, y); g.lineTo(x + 6, y); g.moveTo(x, y - 6); g.lineTo(x, y + 6); g.stroke();
+    const sx = Math.round(x / size * 1024), sy = Math.round(y / size * 1024);
+    read.textContent = `x ${String(sx).padStart(4, '0')}  y ${String(sy).padStart(4, '0')}, original, 24 bit`;
+  }
+  if (fine) {
+    frame.addEventListener('pointermove', e => {
+      const b = plate.getBoundingClientRect();
+      const x = e.clientX - b.left, y = e.clientY - b.top;
+      if (x < 0 || y < 0 || x > b.width || y > b.height) return lensAt();
+      lensAt(x, y);
+    });
+    frame.addEventListener('pointerleave', () => lensAt());
+  } else {
+    read.textContent = 'on a computer, point at the plate to see the original';
+  }
+
+  // Draw once the image is in and the figure has a width; redraw if it changes.
+  let settled = false, lastW = 0, rt;
+  function maybe() {
+    const w = frame.parentElement.clientWidth;
+    if (!src.complete || !src.naturalWidth || w === lastW) return;
+    if (drawPlate(!settled) === false) return;
+    lastW = w; settled = true;
+  }
+  src.onload = () => { drawStudy(); maybe(); };
+  new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(maybe, settled ? 150 : 0); }).observe(frame.parentElement);
+})();
+</script>
+</body>
+</html>
