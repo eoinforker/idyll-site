@@ -1,229 +1,743 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Idyll</title>
-<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for. Free, for good.">
 <link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
 <link rel="stylesheet" href="../../fonts.css">
 <style>
-/* Things-led: the icon is the hero, the app is shown tilted and real,
-   every section opens with a small glyph and a bold centred heading. */
 :root {
-  --bg: #f4f5f7;
+  --bg: #f5f4f1;
   --card: #ffffff;
   --ink: #1d1d1f;
+  --ink-2: #424245;
   --muted: #6e6e73;
-  --line: #e6e6ea;
-  --blue: #2f6fe4;
+  --line: #e4e2dd;
+  --accent: #2468d8;
   --lake: #2f6487;
-  --gone: #b8b8bd;
+  --paper: #efe8da;
   --sans: "Timeless Sans", -apple-system, system-ui, sans-serif;
   --serif: "Timeless Serif", Georgia, serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+  --ease-io: cubic-bezier(.65, 0, .25, 1);
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 70px; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-a { color: var(--blue); text-decoration: none; }
-a:hover { text-decoration: underline; }
-.wrap { max-width: 1040px; margin: 0 auto; padding-inline: 20px; }
-nav { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; font-size: 14px; color: var(--muted); }
-nav .brand { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; }
-nav .brand img { width: 22px; height: 22px; border-radius: 5px; }
-nav div { display: flex; gap: 22px; }
-nav div a { color: var(--muted); }
-
+img { display: block; max-width: 100%; }
+a { color: var(--accent); text-decoration: none; }
+:focus-visible { outline: 2.5px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 24px; }
 .center { text-align: center; }
-.hero { padding-block: 56px 0; }
-.icon { width: 132px; height: 132px; border-radius: 30px; box-shadow: 0 1px 1px rgba(0,0,0,.06), 0 14px 32px rgba(40, 32, 20, .18), 0 2px 4px rgba(40,32,20,.12); }
-h1 { margin: 22px 0 0; font: 700 44px/1.1 var(--sans); letter-spacing: -.02em; }
-.hero p { max-width: 27em; margin: 18px auto 0; color: #45454a; font-size: 19px; }
-.hero .link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 18px; font-weight: 500; }
-.hero .link::after { content: "›"; font-size: 22px; line-height: 1; }
 
-/* The tilted strip of app, the Things signature. */
-.tilt { position: relative; height: 420px; margin-top: 40px; overflow: hidden; perspective: 1400px; }
-.sheet { position: absolute; left: 50%; top: 40px; width: 1180px; margin-left: -560px; display: grid; grid-template-columns: 300px 1fr; background: var(--card); border-radius: 18px; box-shadow: 0 40px 80px rgba(30, 30, 40, .14); transform: rotateX(38deg) rotateZ(-13deg); transform-origin: 50% 0; }
-.side { padding: 30px 26px; border-right: 1px solid var(--line); }
-.dots { display: flex; gap: 8px; margin-bottom: 26px; }
-.dots i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #c9c9ce; }
-.side p { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font: 600 24px/1 var(--sans); }
-.side p span { width: 24px; height: 24px; border-radius: 7px; flex: none; }
-.side p.off { color: var(--gone); text-decoration: line-through; font-weight: 500; }
-.main { padding: 34px 40px; }
-.main h3 { display: flex; align-items: center; gap: 12px; margin: 0; font: 700 34px/1.1 var(--sans); }
-.main h3 img { width: 34px; height: 34px; border-radius: 8px; }
-.main > p { margin: 10px 0 0; color: var(--muted); font-size: 20px; max-width: 28em; }
-.row { display: flex; align-items: center; gap: 14px; margin-top: 18px; font-size: 20px; }
-.row i { width: 20px; height: 20px; border-radius: 50%; border: 1.6px solid #c9c9ce; flex: none; }
-.row.kept i { border-color: var(--lake); background: var(--lake) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4l2.6 2.6L13 6.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100%; }
-.row.gone { color: var(--gone); text-decoration: line-through; }
+.mark { display: inline-block; width: 22px; height: 22px; background: currentColor; flex: none; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+.m-yt { --m: url(../../img/brands/youtube.svg); } .m-ig { --m: url(../../img/brands/instagram.svg); }
+.m-fb { --m: url(../../img/brands/facebook.svg); } .m-x { --m: url(../../img/brands/x.svg); }
 
-section { padding-block: 88px; }
-.glyph { width: 40px; height: 40px; margin: 0 auto 12px; display: block; }
-h2 { margin: 0; font: 700 34px/1.15 var(--sans); letter-spacing: -.02em; }
-.lead { max-width: 30em; margin: 14px auto 0; color: #45454a; font-size: 18px; }
+/* reveal */
+.js .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform 1.1s var(--ease); transition-delay: calc(var(--d, 0) * 80ms); }
+.js .rv.in { opacity: 1; transform: none; }
+
+/* ---------- Nav ---------- */
+.nav { position: sticky; top: 0; z-index: 50; background: rgba(245, 244, 241, 0); transition: background-color .35s, box-shadow .35s; }
+.nav .wrap { display: flex; align-items: center; gap: 26px; height: 64px; transition: height .45s var(--ease); }
+.nav.cond { background: rgba(245, 244, 241, .97); box-shadow: 0 1px 0 var(--line); }
+.nav.cond .wrap { height: 52px; }
+.nav .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 650; font-size: 16px; }
+.nav .brand img { width: 24px; height: 24px; border-radius: 22.5%; box-shadow: 0 0 0 .5px rgba(0,0,0,.1); transition: transform .5s var(--ease), opacity .3s; }
+.nav:not(.cond) .brand img { opacity: 0; transform: translateY(6px) scale(.8); }
+.nav ul { display: flex; gap: 24px; margin: 0 0 0 auto; padding: 0; list-style: none; font-size: 14px; }
+.nav ul a { color: var(--ink-2); transition: color .2s; }
+.nav ul a:hover { color: var(--ink); }
+.cta { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 14px; border-radius: 16px; background: var(--ink); color: #fff; font-size: 13.5px; font-weight: 550; transition: transform .2s var(--ease), background-color .2s; }
+.cta:hover { background: #000; transform: translateY(-1px); }
+.cta:active { transform: scale(.97); }
+
+/* ---------- Hero ---------- */
+.hero { padding-top: 40px; }
+.foil { width: 172px; height: 172px; margin: 0 auto; perspective: 800px; position: relative; }
+.foil::after { content: ""; position: absolute; left: 12%; right: 12%; bottom: -16px; height: 30px; border-radius: 50%; background: rgba(60, 45, 20, .32); filter: blur(14px); transform: translate(calc(var(--ry, 0) * -0.9px), 0); z-index: -1; }
+.tile { position: relative; width: 100%; height: 100%; border-radius: 22.5%; overflow: hidden; transform: rotateX(calc(var(--rx, 0) * 1deg)) rotateY(calc(var(--ry, 0) * 1deg)); will-change: transform;
+  box-shadow: 0 1px 1px rgba(0,0,0,.08), calc(var(--ry, 0) * -0.6px) calc(10px + var(--rx, 0) * 0.6px) 26px rgba(60, 45, 20, .2), inset 0 0 0 .5px rgba(0,0,0,.08); }
+.tile img { width: 100%; height: 100%; }
+.tile .sheen { position: absolute; inset: -40%; pointer-events: none; mix-blend-mode: soft-light;
+  background: linear-gradient(110deg, transparent 38%, rgba(255,255,255,.9) 47%, rgba(255,246,225,.55) 51%, transparent 60%);
+  transform: translateX(calc(var(--sx, -40) * 1%)); }
+.tile .brush { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: overlay; opacity: .55;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 1px, rgba(0,0,0,.05) 1px 2px, transparent 2px 3px);
+  -webkit-mask: radial-gradient(60% 80% at calc(50% + var(--sx, -40) * 1%) 40%, #000, transparent 70%); mask: radial-gradient(60% 80% at calc(50% + var(--sx, -40) * 1%) 40%, #000, transparent 70%); }
+.tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 1px 0 rgba(255,255,255,.7), inset 0 -1px 0 rgba(0,0,0,.06); pointer-events: none; }
+h1 { margin: 30px 0 0; font: 700 56px/1.02 var(--sans); letter-spacing: -.03em; }
+.hero .sub { margin: 10px 0 0; font: 400 26px/1.25 var(--serif); color: var(--ink-2); }
+.hero .lead { max-width: 30em; margin: 18px auto 0; color: var(--muted); font-size: 18px; }
+.more { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-size: 17px; font-weight: 550; }
+.more::after { content: ""; width: 7px; height: 7px; border: solid currentColor; border-width: 2px 2px 0 0; transform: rotate(45deg); transition: transform .3s var(--ease); }
+.more:hover::after { transform: translateX(4px) rotate(45deg); }
+.status { margin-top: 12px; font: 400 12.5px/1 var(--mono); color: var(--muted); }
+
+/* tilted window strip */
+.tilt { position: relative; height: 520px; margin-top: 30px; perspective: 1600px; overflow: hidden; -webkit-mask: linear-gradient(#000 78%, transparent); mask: linear-gradient(#000 78%, transparent); }
+.tilt .win { position: absolute; left: 50%; top: 40px; width: 1080px; margin-left: -540px; transform-origin: 50% 0;
+  transform: rotateX(calc(var(--t, 1) * 34deg)) rotateZ(calc(var(--t, 1) * -9deg)) translateY(calc(var(--t, 1) * 10px)); will-change: transform; }
+
+/* ---------- Device frames ---------- */
+.iphone { --w: 300px; font-size: calc(var(--w) / 30); width: var(--w); height: calc(var(--w) * 2.07); position: relative; flex: none; border-radius: 5.25em; padding: .36em;
+  background: linear-gradient(140deg, #d9d6d0 0%, #a9a59e 20%, #e7e4de 46%, #9d9992 72%, #cfccc5 100%);
+  box-shadow: inset 0 0 0 .07em rgba(255,255,255,.7), inset 0 0 .1em .2em rgba(0,0,0,.25), 0 3.4em 5em -2.4em rgba(40, 32, 20, .4), 0 1.2em 2.4em -1em rgba(40, 32, 20, .22); }
+.iphone .bz { position: absolute; inset: .36em; border-radius: 4.9em; background: #000; padding: .44em; box-shadow: inset 0 0 0 .06em #1d1d20; }
+.iphone .scr { position: relative; height: 100%; border-radius: 4.46em; overflow: hidden; background: #fff; isolation: isolate; transform: translateZ(0); }
+.iphone .scr::after, .droid .scr::after { content: ""; position: absolute; inset: 0; z-index: 40; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.06) 32%, rgba(255,255,255,0) 32.2%); }
+.iphone .di { position: absolute; z-index: 41; top: 1.1em; left: 50%; width: 9.6em; height: 2.8em; margin-left: -4.8em; border-radius: 1.4em; background: #000; }
+.iphone .di::after { content: ""; position: absolute; right: 1em; top: .85em; width: 1.1em; height: 1.1em; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #34406a, #05070d 62%); }
+.iphone .k { position: absolute; width: .34em; border-radius: .25em; background: linear-gradient(90deg, #a9a59e, #e2dfd9 60%, #b5b1aa); }
+.iphone .k1 { left: -.28em; top: 10em; height: 3em; } .iphone .k2 { left: -.28em; top: 15.6em; height: 5.6em; } .iphone .k3 { left: -.28em; top: 22.2em; height: 5.6em; }
+.iphone .k4 { right: -.28em; top: 17em; height: 8.8em; background: linear-gradient(270deg, #a9a59e, #e2dfd9 60%, #b5b1aa); }
+.sbar { position: absolute; z-index: 39; top: 0; left: 0; right: 0; height: 5em; display: flex; justify-content: space-between; align-items: center; padding: .4em 2.5em 0 3.2em; font: 600 1.42em/1 var(--sans); color: #000; transition: color .5s; }
+.sbar svg { width: 3.2em; height: auto; }
+.hbar { position: absolute; z-index: 39; bottom: .75em; left: 50%; width: 12em; height: .48em; margin-left: -6em; border-radius: 1em; background: #000; transition: background-color .5s; }
+
+.droid { --w: 260px; font-size: calc(var(--w) / 30); width: var(--w); height: calc(var(--w) * 2.12); position: relative; flex: none; border-radius: 3.8em; padding: .3em;
+  background: linear-gradient(150deg, #4a4d52, #1c1d20 40%, #3b3e43 70%, #222326);
+  box-shadow: inset 0 0 0 .06em rgba(255,255,255,.25), 0 3.4em 5em -2.4em rgba(40, 32, 20, .45), 0 1.2em 2.4em -1em rgba(40, 32, 20, .22); }
+.droid .bz { position: absolute; inset: .3em; border-radius: 3.5em; background: #000; padding: .6em; }
+.droid .scr { position: relative; height: 100%; border-radius: 3em; overflow: hidden; background: #fff; isolation: isolate; transform: translateZ(0); }
+.droid .cam { position: absolute; z-index: 41; top: 1.3em; left: 50%; width: 1.5em; height: 1.5em; margin-left: -.75em; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2b3350, #000 60%); }
+.droid .k { position: absolute; right: -.26em; width: .3em; border-radius: .2em; background: #2b2d31; }
+.droid .k1 { top: 14em; height: 3.4em; } .droid .k2 { top: 20em; height: 6.4em; }
+.droid .sbar { padding: .2em 2.2em 0 2.6em; height: 4.2em; font-weight: 500; font-size: 1.3em; }
+.droid .gbar { position: absolute; z-index: 39; bottom: .8em; left: 50%; width: 9em; height: .38em; margin-left: -4.5em; border-radius: 1em; background: #222; }
+
+.mbp { position: relative; width: 760px; flex: none; }
+.mbp .lid { position: relative; background: #0c0c0e; border-radius: 22px 22px 6px 6px; padding: 16px 16px 20px; box-shadow: 0 0 0 1.5px #c9cacf, 0 0 0 2.5px #9fa0a6, inset 0 0 0 1px #2a2a2d; }
+.mbp .notch { position: absolute; top: 15px; left: 50%; width: 92px; height: 14px; margin-left: -46px; border-radius: 0 0 8px 8px; background: #0c0c0e; z-index: 2; }
+.mbp .disp { position: relative; aspect-ratio: 16 / 10.3; border-radius: 6px; overflow: hidden; background: #fff; }
+.mbp .disp::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(120deg, rgba(255,255,255,.14), rgba(255,255,255,0) 40%); }
+.mbp .base { position: relative; height: 16px; margin: 0 -8%; border-radius: 2px 2px 16px 16px / 2px 2px 12px 12px; background: linear-gradient(#eceef1, #c4c6cb 60%, #9c9ea4); box-shadow: 0 30px 40px -18px rgba(40, 32, 20, .4); }
+.mbp .base::before { content: ""; position: absolute; top: 0; left: 50%; width: 15%; height: 6px; margin-left: -7.5%; border-radius: 0 0 8px 8px; background: linear-gradient(#b7b9be, #d8dade); }
+
+/* browser window */
+.win { border-radius: 12px; background: #fff; overflow: hidden; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 40px 80px -30px rgba(40, 32, 20, .35), 0 12px 24px -12px rgba(40, 32, 20, .18); font-size: 10px; }
+.mbp .win { border-radius: 0; box-shadow: none; height: 100%; }
+.wbar { position: relative; display: flex; align-items: center; gap: 7px; padding: 10px 12px; background: #f2f1ef; border-bottom: 1px solid #e3e1dc; }
+.wbar > i { width: 11px; height: 11px; border-radius: 50%; }
+.wbar > i:nth-child(1) { background: #ff5f57; } .wbar > i:nth-child(2) { background: #febc2e; } .wbar > i:nth-child(3) { background: #28c840; }
+.wbar .url { margin: 0 10px 0 16px; flex: 1; height: 24px; border-radius: 7px; background: #fff; box-shadow: inset 0 0 0 1px #e3e1dc; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; color: #555; }
+.wbar .url svg { width: 9px; height: 9px; opacity: .55; }
+.wbar .ext { width: 18px; height: 18px; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(0,0,0,.08); }
+.pop { position: absolute; z-index: 5; right: 8px; top: 40px; width: 230px; padding: 14px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 18px 40px -10px rgba(0,0,0,.25); font-size: 12px; text-align: left; }
+.pop header { display: flex; align-items: center; gap: 8px; font-weight: 650; font-size: 13px; margin-bottom: 10px; }
+.pop header img { width: 22px; height: 22px; border-radius: 22.5%; }
+.pop header span { margin-left: auto; font-weight: 500; font-size: 11px; color: #2a8a55; }
+.pop li { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid #f0efec; color: #444; }
+.pop li b { font-weight: 500; color: #999; text-decoration: line-through; }
+.pop ul { list-style: none; margin: 0; padding: 0; }
+.yt { display: grid; grid-template-columns: 150px 1fr; }
+.yt aside { padding: 16px 10px; display: grid; align-content: start; gap: 2px; font-size: 12px; color: #333; }
+.yt aside span { padding: 8px 12px; border-radius: 8px; }
+.yt aside span.on { background: #efefef; font-weight: 600; }
+.yt .main { padding: 16px 20px 22px 8px; }
+.yt h5 { margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+.yt .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 14px; }
+.yt figure { margin: 0; }
+.yt .tn { position: relative; aspect-ratio: 16 / 9; border-radius: 9px; overflow: hidden; background: #ddd; }
+.yt .tn img { width: 100%; height: 100%; object-fit: cover; }
+.yt .tn span { position: absolute; right: 5px; bottom: 5px; padding: 1px 5px; border-radius: 4px; background: rgba(0,0,0,.78); color: #fff; font-size: 10px; font-weight: 600; }
+.yt figcaption { display: grid; grid-template-columns: 24px 1fr; gap: 8px; margin-top: 8px; }
+.yt figcaption .av { width: 24px; height: 24px; font-size: 9px; }
+.yt figcaption b { display: block; font-size: 12.5px; line-height: 1.3; font-weight: 600; color: #111; }
+.yt figcaption span { display: block; font-size: 11px; color: #666; margin-top: 2px; }
+.av { width: 4.2em; height: 4.2em; border-radius: 50%; display: grid; place-items: center; font: 600 1em/1 var(--sans); color: rgba(0,0,0,.58); flex: none; font-style: normal; }
+
+/* app screens */
+.app { position: absolute; inset: 0; padding: 5.2em 0 0; background: #fff; color: #111; }
+.app .hd { display: flex; align-items: center; justify-content: space-between; padding: .6em 1.6em .8em; }
+.app .hd b { font: 700 2em/1 var(--sans); letter-spacing: -.02em; }
+.app .tabs { display: flex; border-bottom: 1px solid #ececec; font: 600 1.3em/1 var(--sans); }
+.app .tabs span { flex: 1; text-align: center; padding: .9em 0 .8em; color: #777; }
+.app .tabs span.on { color: #111; box-shadow: inset 0 -.2em 0 var(--accent); }
+.post { display: grid; grid-template-columns: 3.4em 1fr; gap: .9em; padding: 1.2em 1.6em; border-bottom: 1px solid #f0f0f0; font-size: 1.2em; line-height: 1.38; }
+.post .av { width: 3.4em; height: 3.4em; }
+.post .who { display: flex; gap: .35em; align-items: baseline; }
+.post .who span { color: #777; }
+.post p { margin: .2em 0 .5em; }
+.post .ph { border-radius: 1em; overflow: hidden; aspect-ratio: 4 / 3; margin: .3em 0 .5em; }
+.post .ph img { width: 100%; height: 100%; object-fit: cover; }
+.post .acts { display: flex; gap: 2.2em; color: #777; font-size: .92em; }
+.fbp { padding: 1.2em 0 .6em; border-bottom: .5em solid #f0f0f2; font-size: 1.2em; }
+.fbp .who { display: flex; align-items: center; gap: .8em; padding: 0 1.3em; }
+.fbp .who .av { width: 3.2em; height: 3.2em; }
+.fbp .who b { display: block; } .fbp .who span { display: block; color: #777; font-size: .9em; }
+.fbp p { margin: .7em 1.3em; line-height: 1.38; }
+.fbp .ph { aspect-ratio: 1 / 1; } .fbp .ph img { width: 100%; height: 100%; object-fit: cover; }
+.fbp .rx { display: flex; justify-content: space-between; padding: .7em 1.3em 0; color: #777; font-size: .9em; }
+.saf { position: absolute; z-index: 30; left: 0; right: 0; bottom: 0; height: 7.6em; padding: 1em 1.4em 0; background: rgba(250,250,250,.96); box-shadow: 0 -1px 0 rgba(0,0,0,.08); }
+.saf .addr { height: 3.6em; border-radius: 1.2em; background: #fff; box-shadow: 0 .2em .8em rgba(0,0,0,.12); display: flex; align-items: center; justify-content: center; gap: .6em; font: 500 1.3em/1 var(--sans); color: #222; }
+.saf .addr svg { width: .9em; height: .9em; opacity: .6; }
+.dark .saf { background: rgba(20,20,22,.92); box-shadow: 0 -1px 0 rgba(255,255,255,.06); }
+.dark .saf .addr { background: #2c2c2e; color: #eee; box-shadow: none; }
+
+/* Idyll's own Android browser */
+.ib { position: absolute; inset: 0; padding-top: 4.4em; background: #fff; color: #111; }
+.ib .top { display: flex; align-items: center; gap: .7em; padding: .6em 1.4em; font: 600 1.3em/1 var(--sans); }
+.ib .top img { width: 1.8em; height: 1.8em; border-radius: 22.5%; }
+.ib .chips { display: flex; gap: .5em; padding: .4em 1.4em 1em; border-bottom: 1px solid #eee; }
+.ib .chips span { padding: .5em .9em; border-radius: 2em; background: #f1f1f1; font-size: 1.1em; }
+.ib .chips span.on { background: #111; color: #fff; }
+.ib .v { padding: 1em 1.4em 0; font-size: 1.15em; }
+.ib .v .tn { aspect-ratio: 16 / 9; border-radius: .8em; overflow: hidden; }
+.ib .v .tn img { width: 100%; height: 100%; object-fit: cover; }
+.ib .v b { display: block; margin-top: .55em; font-weight: 600; line-height: 1.3; }
+.ib .v span { color: #777; font-size: .9em; }
+
+/* before / after */
+.ba .feed { position: absolute; inset: 0; z-index: 2; background: #000; color: #fff; transition: opacity .5s .45s, visibility 0s 1s; }
+.ba .clip { position: absolute; inset: 0; overflow: hidden; transition: transform .8s var(--ease-io), border-radius .8s var(--ease-io), opacity .6s .25s; }
+.ba .track { height: 100%; animation: feedloop 12s var(--ease-io) infinite; }
+.ba .fc { position: relative; height: 100%; margin: 0; }
+.ba .fc img { width: 100%; height: 100%; object-fit: cover; }
+.ba .fc::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 55%, rgba(0,0,0,.7) 100%); }
+.ba .fc figcaption { position: absolute; z-index: 1; left: 1.6em; right: 6em; bottom: 10.6em; font-size: 1.25em; line-height: 1.35; }
+.ba .fc figcaption b { display: flex; align-items: center; gap: .5em; margin-bottom: .35em; }
+.ba .fc figcaption b i { width: 2.2em; height: 2.2em; border-radius: 50%; background: #c9b9a0; flex: none; font-style: normal; font-size: .8em; display: grid; place-items: center; color: #2a2016; }
+.ba .fc .spon { font-weight: 400; opacity: .8; font-size: .9em; }
+.ba .fc .shop { display: block; margin-top: .7em; padding: .65em 0; border-radius: .5em; background: #fff; color: #000; text-align: center; font-weight: 600; }
+@keyframes feedloop { 0%, 20% { transform: translateY(0); } 25%, 45% { transform: translateY(-100%); } 50%, 70% { transform: translateY(-200%); } 75%, 95% { transform: translateY(-300%); } 100% { transform: translateY(-400%); } }
+.ba .ftop { position: absolute; z-index: 3; top: 5.4em; left: 0; right: 0; display: flex; justify-content: center; gap: 1.6em; font: 600 1.4em/1 var(--sans); transition: transform .6s var(--ease), opacity .4s; }
+.ba .ftop span { opacity: .6; padding-bottom: .35em; }
+.ba .ftop span.on { opacity: 1; box-shadow: inset 0 -.12em 0 #fff; }
+.ba .rail { position: absolute; z-index: 3; right: 1.2em; bottom: 11em; display: grid; gap: 1.5em; justify-items: center; font: 600 1.05em/1 var(--sans); transition: transform .6s var(--ease), opacity .4s; }
+.ba .rail div { display: grid; gap: .35em; justify-items: center; }
+.ba .rail svg { width: 2.6em; height: 2.6em; }
+.ba .prog { position: absolute; z-index: 3; left: 0; right: 0; bottom: 7.6em; height: .25em; background: rgba(255,255,255,.25); transition: opacity .3s; }
+.ba .prog i { display: block; height: 100%; background: #fff; transform-origin: left; animation: prog 3s linear infinite; }
+@keyframes prog { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.ba.on .feed { opacity: 0; visibility: hidden; }
+.ba.on .clip { transform: translateY(-14%) scale(.82); border-radius: 3em; opacity: 0; }
+.ba.on .track, .ba.on .prog i { animation-play-state: paused; }
+.ba.on .ftop { transform: translateY(-260%); opacity: 0; }
+.ba.on .rail { transform: translateX(160%); opacity: 0; }
+.ba.on .prog { opacity: 0; }
+.ba .sbar { color: #fff; } .ba.on .sbar { color: #000; }
+.ba .hbar { background: #fff; } .ba.on .hbar { background: #000; }
+.calm { position: absolute; inset: 0; z-index: 1; background: #fff; color: #111; padding: 5.4em 1.6em 0; }
+.calm .cs { opacity: 0; transform: translateY(1.8em); transition: opacity .35s, transform .6s var(--ease); }
+.ba.on .calm .cs { opacity: 1; transform: none; transition: opacity .7s var(--ease), transform .9s var(--ease); transition-delay: calc(.5s + var(--i) * 70ms); }
+.calm .ch { display: flex; justify-content: space-between; align-items: center; padding: .6em .2em .9em; }
+.calm .ch b { font: 700 2.3em/1 var(--sans); letter-spacing: -.02em; }
+.calm .ch svg { width: 2.2em; height: 2.2em; }
+.calm .search { display: flex; align-items: center; gap: .6em; height: 3.4em; padding: 0 1em; border-radius: 1em; background: #efefef; color: #8a8a8e; font-size: 1.3em; }
+.calm .search svg { width: 1.05em; height: 1.05em; }
+.calm .sent { margin: 1.4em 0 .6em; display: grid; grid-template-columns: 4.2em 1fr; gap: 1em; align-items: center; }
+.calm .sent .vid { position: relative; width: 4.2em; height: 5.6em; border-radius: .7em; overflow: hidden; }
+.calm .sent .vid img { width: 100%; height: 100%; object-fit: cover; }
+.calm .sent .vid::after { content: ""; position: absolute; left: 50%; top: 50%; margin: -.6em 0 0 -.4em; border: .6em solid transparent; border-left: .95em solid #fff; border-right: 0; filter: drop-shadow(0 0 .3em rgba(0,0,0,.4)); }
+.calm .sent b, .calm .th b { display: block; font-size: 1.32em; font-weight: 600; }
+.calm .sent span, .calm .th span { display: block; font-size: 1.15em; color: #6b6b70; }
+.calm .th { list-style: none; margin: 0; padding: 0; }
+.calm .th li { display: grid; grid-template-columns: 4.2em 1fr auto; gap: 1em; align-items: center; padding: .7em 0; }
+.calm .th time { font-size: 1.1em; color: #9a9aa0; }
+.calm .av { width: 3em; height: 3em; font-size: 1.4em; }
+
+/* ---------- Sections ---------- */
+section { padding-block: clamp(80px, 11vw, 140px); }
 .white { background: var(--card); }
+h2 { margin: 0; font: 700 clamp(32px, 4vw, 46px)/1.08 var(--sans); letter-spacing: -.025em; text-wrap: balance; }
+.lead { max-width: 32em; margin: 16px auto 0; color: var(--muted); font-size: 19px; }
+.kicker { display: block; margin-bottom: 14px; font: 400 12.5px/1 var(--mono); color: var(--accent); }
 
-/* Devices together. */
-.devices { display: flex; justify-content: center; align-items: flex-end; gap: 26px; margin-top: 48px; }
-.phone { width: 210px; aspect-ratio: 9 / 19.3; border-radius: 34px; background: #111; padding: 8px; box-shadow: 0 24px 50px rgba(30,30,40,.16); flex: none; }
-.screen { height: 100%; border-radius: 27px; background: var(--card); overflow: hidden; padding: 30px 12px 10px; text-align: left; font-size: 11px; }
-.screen b { display: block; margin: 0 2px 8px; font-size: 18px; }
-.screen .group { background: var(--bg); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px; }
-.tog { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); }
-.tog:last-child { border: 0; }
-.sw { width: 26px; height: 16px; border-radius: 8px; background: var(--lake); position: relative; flex: none; }
-.sw::after { content: ""; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
-.msg { display: flex; gap: 8px; align-items: center; padding: 7px 2px; border-bottom: 1px solid var(--line); }
-.msg span { width: 26px; height: 26px; border-radius: 50%; background: #e3e0da; flex: none; }
-.msg em { display: block; font-style: normal; color: var(--muted); font-size: 10px; }
-.mac { width: 460px; border-radius: 12px; background: var(--card); box-shadow: 0 24px 50px rgba(30,30,40,.16); overflow: hidden; text-align: left; flex: none; }
-.bar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: #ececef; border-bottom: 1px solid var(--line); }
-.bar i { width: 10px; height: 10px; border-radius: 50%; background: #d4d4d8; }
-.bar span { margin-left: 10px; flex: 1; padding: 3px 10px; border-radius: 6px; background: #fff; font-size: 11px; color: var(--muted); }
-.bar img { width: 16px; height: 16px; border-radius: 4px; }
-.page { padding: 18px 20px 22px; font-size: 12px; }
-.page b { font-size: 16px; }
-.subs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
-.subs div { aspect-ratio: 16 / 10; border-radius: 6px; background: linear-gradient(135deg, #e6e1d7, #d7d0c3); }
-.subs p { margin: 4px 0 0; font-size: 10.5px; color: var(--muted); }
+.works { padding-block: 10px 0; }
+.works .row { display: flex; justify-content: center; align-items: center; gap: clamp(18px, 4vw, 44px); flex-wrap: wrap; color: #8a8a8e; font-size: 14px; }
+.works .row > span:first-child { font: 400 12.5px/1 var(--mono); }
+.works .it { display: inline-flex; align-items: center; gap: 9px; color: #6e6e73; }
+.works .it .mark { width: 20px; height: 20px; color: #86868b; }
 
-/* Platform cards. */
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 900px; margin: 44px auto 0; }
-.card { background: var(--card); border-radius: 16px; padding: 22px 14px 18px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-.card svg { width: 64px; height: 48px; display: block; margin: 0 auto 10px; }
-.card h3 { margin: 0; font: 700 17px/1.2 var(--sans); }
-.card p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
-.card span { display: inline-block; padding: 6px 12px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 500; }
+/* switch */
+.sw { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+.sw .ph { display: flex; justify-content: center; position: relative; }
+.sw .ph::after { content: ""; position: absolute; bottom: -26px; left: 22%; right: 22%; height: 30px; border-radius: 50%; background: rgba(40, 32, 20, .22); filter: blur(16px); z-index: -1; }
+.sw .ph .iphone { --w: min(320px, 74vw); }
+.sw h2 { font-size: clamp(32px, 3.6vw, 44px); }
+.sw p { color: var(--ink-2); max-width: 28em; margin: 16px 0 26px; }
+.seg { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 10px; background: #e8e6e1; }
+.seg button { position: relative; z-index: 1; appearance: none; border: 0; background: none; cursor: pointer; font: 550 14.5px/1 var(--sans); color: var(--ink-2); padding: 10px 18px; border-radius: 8px; transition: color .3s, transform .15s; }
+.seg button:hover { color: var(--ink); }
+.seg button:active { transform: scale(.97); }
+.seg button[aria-pressed="true"] { color: var(--ink); }
+.seg .thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 8px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 3px 10px rgba(0,0,0,.08); transition: transform .55s var(--ease); }
+.seg[data-on="1"] .thumb { transform: translateX(100%); }
+.todo { list-style: none; margin: 30px 0 0; padding: 0; max-width: 380px; }
+.todo li { display: flex; align-items: center; gap: 14px; padding: 11px 2px; border-bottom: 1px solid var(--line); font-size: 16.5px; transition: color .5s; transition-delay: calc(var(--i) * 110ms + .3s); }
+.todo li i { position: relative; width: 20px; height: 20px; flex: none; border-radius: 50%; border: 1.6px solid #c4c2bd; transition: border-color .4s, background-color .4s; transition-delay: inherit; }
+.todo li i::after { content: ""; position: absolute; left: 6px; top: 2.5px; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0); transition: transform .45s var(--ease); transition-delay: inherit; }
+.todo li em { margin-left: auto; font: 400 11.5px/1 var(--mono); font-style: normal; color: var(--muted); opacity: 0; transform: translateX(-6px); transition: opacity .4s, transform .5s var(--ease); transition-delay: inherit; }
+.on-list .todo li { color: var(--muted); }
+.on-list .todo li i { border-color: var(--accent); background: var(--accent); }
+.on-list .todo li.keep i { border-color: var(--lake); background: var(--lake); }
+.on-list .todo li.keep { color: var(--ink); }
+.on-list .todo li i::after { transform: rotate(45deg) scale(1); }
+.on-list .todo li em { opacity: 1; transform: none; }
+.fine { font: 400 12px/1.5 var(--mono); color: var(--muted); margin-top: 18px; max-width: 34em; }
 
-.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; text-align: left; }
-.three div { background: var(--bg); border-radius: 16px; padding: 22px; }
-.three h3 { margin: 0 0 6px; font: 700 17px/1.3 var(--sans); }
-.three p { margin: 0; color: var(--muted); font-size: 15.5px; }
-.free h2 { font: 400 52px/1.05 var(--serif); letter-spacing: -.02em; }
-footer { display: flex; justify-content: space-between; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+/* devices together */
+.together { position: relative; height: 640px; margin-top: 64px; text-align: left; }
+.together > * { position: absolute; }
+.together .mbp { left: 50%; margin-left: -380px; top: 20px; }
+.together .iphone { --w: 230px; right: calc(50% - 470px); top: 150px; translate: 0 calc(var(--p, 0) * -40px); }
+.together .droid { --w: 210px; left: calc(50% - 460px); top: 190px; translate: 0 calc(var(--p, 0) * -70px); }
+.xw { display: grid; grid-template-columns: 150px 1fr 120px; height: calc(100% - 45px); font-size: 12px; }
+.xw nav { padding: 18px 16px; display: grid; align-content: start; gap: 14px; font-size: 13.5px; color: #333; }
+.xw nav b { font-weight: 700; }
+.xw .tl { border-inline: 1px solid #eee; }
+.xw .tl .tabs { display: flex; border-bottom: 1px solid #eee; font-weight: 600; font-size: 13px; }
+.xw .tl .tabs span { flex: 1; text-align: center; padding: 12px 0; box-shadow: inset 0 -3px 0 var(--accent); }
+.xw .post { font-size: 12.5px; padding: 12px 16px; grid-template-columns: 36px 1fr; gap: 10px; }
+.xw .post .av { width: 36px; height: 36px; font-size: 12px; }
+.xw .post .ph { aspect-ratio: 16 / 9; border-radius: 12px; }
 
-@media (max-width: 860px) {
-  .devices .mac { display: none; }
+/* allowance */
+.allow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+.allow p { color: var(--ink-2); max-width: 28em; }
+.meters { display: grid; gap: 14px; max-width: 420px; justify-self: center; width: 100%; }
+.meter { padding: 18px 20px; border-radius: 18px; background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 10px 30px -12px rgba(40,32,20,.2); }
+.meter header { display: flex; align-items: center; gap: 12px; font-weight: 600; }
+.meter header .ap { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700; }
+.meter header span:last-child { margin-left: auto; font: 400 12px/1 var(--mono); color: var(--muted); }
+.meter .bar { height: 6px; margin-top: 14px; border-radius: 3px; background: #eceae5; overflow: hidden; }
+.meter .bar i { display: block; height: 100%; border-radius: 3px; background: var(--lake); transform-origin: left; transform: scaleX(var(--v)); transition: transform 1.6s var(--ease) .3s; }
+.js .meters:not(.in) .bar i { transform: scaleX(0); }
+.meter.out .bar i { background: #b9b6af; }
+.meter.out p { margin: 10px 0 0; font-size: 13.5px; color: var(--muted); }
+
+/* platforms */
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 48px; text-align: left; }
+.card { position: relative; background: var(--card); border-radius: 20px; padding: 26px 22px 24px; box-shadow: 0 1px 2px rgba(0,0,0,.04); transition: transform .5s var(--ease), box-shadow .5s var(--ease); overflow: hidden; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 20px 40px -20px rgba(40,32,20,.3); }
+.card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, -40%), rgba(36,104,216,.08), transparent 60%); pointer-events: none; }
+.card svg { width: 72px; height: 56px; display: block; margin-bottom: 18px; }
+.card h3 { margin: 0; font: 700 19px/1.2 var(--sans); }
+.card p { margin: 8px 0 18px; color: var(--muted); font-size: 14.5px; line-height: 1.45; }
+.chip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 8px; background: var(--bg); font: 400 12px/1 var(--mono); color: var(--ink-2); }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #e9a23b; }
+
+/* trust */
+.trust { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-top: 56px; border-top: 1px solid var(--line); text-align: left; }
+.trust > div { padding: 32px 40px 0 0; }
+.trust > div + div { padding: 32px 0 0 40px; border-left: 1px solid var(--line); }
+.trust h3 { margin: 0 0 10px; font: 700 21px/1.25 var(--sans); letter-spacing: -.01em; }
+.trust p { margin: 0 0 .8em; color: var(--ink-2); font-size: 16.5px; }
+
+.free h2 { font: 400 clamp(56px, 9vw, 120px)/.95 var(--serif); letter-spacing: -.03em; }
+.free h2 em { font-style: italic; margin-left: .08em; }
+.free .lead { font-size: 20px; }
+
+footer { border-top: 1px solid var(--line); padding-block: 56px 36px; font-size: 14px; color: var(--muted); }
+.fgrid { display: grid; grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)); gap: 32px; }
+.fgrid .b { display: flex; gap: 12px; align-items: flex-start; color: var(--ink); }
+.fgrid .b img { width: 40px; height: 40px; border-radius: 22.5%; box-shadow: 0 0 0 .5px rgba(0,0,0,.1); }
+.fgrid .b strong { display: block; font-size: 16px; }
+.fgrid .b span { color: var(--muted); }
+.fgrid h4 { margin: 0 0 12px; font-size: 12.5px; font-weight: 650; color: var(--ink); }
+.fgrid ul { list-style: none; margin: 0; padding: 0; }
+.fgrid li { margin-bottom: 8px; }
+.fgrid a { color: var(--muted); transition: color .2s; }
+.fgrid a:hover { color: var(--ink); }
+.fgrid .marks { display: flex; gap: 14px; color: #86868b; }
+.fgrid .marks .mark { width: 18px; height: 18px; }
+.legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 12.5px; }
+
+@media (max-width: 1000px) {
+  .together { height: 560px; transform: scale(.8); transform-origin: 50% 0; margin-bottom: -110px; }
   .cards { grid-template-columns: 1fr 1fr; }
-  .three { grid-template-columns: 1fr; }
-  .tilt { height: 300px; }
-  .sheet { transform: rotateX(38deg) rotateZ(-13deg) scale(.7); }
 }
-@media (max-width: 520px) { nav div { display: none; } .devices .phone:nth-child(2) { display: none; } }
+@media (max-width: 860px) {
+  .sw, .allow { grid-template-columns: 1fr; }
+  .sw .txt { order: -1; }
+  .trust { grid-template-columns: 1fr; }
+  .trust > div + div { padding: 32px 0 0; border-left: 0; border-top: 1px solid var(--line); margin-top: 32px; }
+  .fgrid { grid-template-columns: 1fr 1fr; }
+  .fgrid .b { grid-column: 1 / -1; }
+  .tilt { height: 360px; }
+  .tilt .win { transform: scale(.62) rotateX(calc(var(--t, 1) * 34deg)) rotateZ(calc(var(--t, 1) * -9deg)); }
+}
+@media (max-width: 640px) {
+  .nav ul { display: none; }
+  .nav .cta { margin-left: auto; }
+  h1 { font-size: 46px; }
+  .hero .sub { font-size: 22px; }
+  .foil { width: 140px; height: 140px; }
+  .together { height: 600px; transform: none; margin-bottom: 0; }
+  .together .mbp { display: none; }
+  .together .droid { --w: 170px; left: calc(50% - 175px); top: 60px; }
+  .together .iphone { --w: 180px; right: calc(50% - 175px); top: 0; }
+  .cards { grid-template-columns: 1fr; }
+  .tilt { height: 260px; }
+  .tilt .win { transform: scale(.42) rotateX(calc(var(--t, 1) * 34deg)) rotateZ(calc(var(--t, 1) * -9deg)); top: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .rv { opacity: 1; transform: none; transition: none; }
+  .ba .track, .ba .prog i { animation: none; }
+  .ba *, .ba .feed, .seg .thumb, .todo li, .todo li *, .meter .bar i { transition-duration: .01s !important; transition-delay: 0s !important; }
+  .js .meters:not(.in) .bar i { transform: scaleX(var(--v)); }
+  .together .iphone, .together .droid { translate: none; }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <nav><span class="brand"><img src="../../img/icon.png" alt="">Idyll</span><div><a href="#features">Features</a><a href="#private">Privacy</a><a href="#get">Get Idyll</a></div></nav>
-</div>
+<script>document.documentElement.classList.add('js');</script>
 
-<div class="hero center">
-  <img class="icon" src="../../img/icon.png" alt="The Idyll icon: a baby mute swan pressed into paper">
-  <h1>Idyll</h1>
-  <p>Idyll keeps your friends, your messages and your search, and quietly takes away the ads, Shorts, Reels and algorithmic feeds on YouTube, Instagram, Facebook and X.</p>
-  <a class="link" href="#features">See how it works</a>
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="../../img/icon.png" width="24" height="24" alt="">Idyll</a>
+    <ul>
+      <li><a href="#switch">The difference</a></li>
+      <li><a href="#everywhere">Everywhere</a></li>
+      <li><a href="#private">Privacy</a></li>
+      <li><a href="#free">Free</a></li>
+    </ul>
+    <a class="cta" href="#get">Coming soon</a>
+  </div>
+</nav>
 
-  <div class="tilt" aria-hidden="true">
-    <div class="sheet">
-      <div class="side">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <p><span style="background:#2f6487"></span>Messages</p>
-        <p><span style="background:#e9a23b"></span>Following</p>
-        <p><span style="background:#3d9a6b"></span>Subscriptions</p>
-        <p><span style="background:#8f7ec4"></span>Search</p>
-        <p class="off"><span style="background:#e2e2e6"></span>Reels</p>
-        <p class="off"><span style="background:#e2e2e6"></span>For you</p>
+<header class="hero center" id="top">
+  <div class="wrap">
+    <div class="foil" id="foil"><div class="tile"><img src="../../img/icon.png" width="1024" height="1024" alt="The Idyll icon: a cygnet pressed into warm paper"><span class="sheen"></span><span class="brush"></span></div></div>
+    <h1>Idyll</h1>
+    <p class="sub">Social without the scroll.</p>
+    <p class="lead">Your friends, your messages and your search stay. The ads, Shorts, Reels and endless feeds quietly go, on YouTube, Instagram, Facebook and X.</p>
+    <a class="more" href="#switch">See the difference</a>
+    <div class="status">Coming soon to iPhone, Android, Chrome and Mac</div>
+  </div>
+
+  <div class="tilt" id="tilt" aria-hidden="true">
+    <div class="win">
+      <div class="wbar"><i></i><i></i><i></i><div class="url"><svg viewBox="0 0 10 12"><path d="M2 5V3.5a3 3 0 0 1 6 0V5M1 5h8v7H1z" fill="currentColor"/></svg>youtube.com/feed/subscriptions</div><img class="ext" src="../../img/icon.png" width="18" height="18" alt=""></div>
+      <div class="pop">
+        <header><img src="../../img/icon.png" width="22" height="22" alt="">Idyll<span>On</span></header>
+        <ul><li>Shorts <b>hidden</b></li><li>Home feed <b>hidden</b></li><li>Up next <b>hidden</b></li><li>Video ads <b>skipped</b></li></ul>
       </div>
-      <div class="main">
-        <h3><img src="../../img/icon.png" alt="">Instagram, quietly</h3>
-        <p>Everything you open Instagram for, and nothing it keeps you there with.</p>
-        <div class="row kept"><i></i>Messages from friends</div>
-        <div class="row kept"><i></i>The reel your sister sent</div>
-        <div class="row kept"><i></i>Search, for the recipe you came for</div>
-        <div class="row gone"><i></i>The Reels feed</div>
-        <div class="row gone"><i></i>Sponsored posts</div>
+      <div class="yt">
+        <aside><span class="on">Subscriptions</span><span>History</span><span>Playlists</span><span>Watch later</span><span>Liked videos</span></aside>
+        <div class="main"><h5>Subscriptions</h5>
+          <div class="grid">
+            <figure><div class="tn"><img src="../../img/photos/15.jpg" width="480" height="480" alt=""><span>22:14</span></div><figcaption><i class="av" style="background:#dfe6cf">FN</i><div><b>Walking the whole Mourne Wall in a day</b><span>Field Notes · 2 days ago</span></div></figcaption></figure>
+            <figure><div class="tn"><img src="../../img/photos/292.jpg" width="480" height="480" alt=""><span>14:02</span></div><figcaption><i class="av" style="background:#ecd3cf">SK</i><div><b>A week of sourdough, slowly</b><span>Small Kitchen · 3 days ago</span></div></figcaption></figure>
+            <figure><div class="tn"><img src="../../img/photos/250.jpg" width="480" height="480" alt=""><span>31:47</span></div><figcaption><i class="av" style="background:#cfdcea">BW</i><div><b>Bringing a 1970s rangefinder back</b><span>Bench Work · 5 days ago</span></div></figcaption></figure>
+            <figure><div class="tn"><img src="../../img/photos/225.jpg" width="480" height="480" alt=""><span>8:39</span></div><figcaption><i class="av" style="background:#e7d9c4">TL</i><div><b>Every tea we tried this winter</b><span>Tea Letters · 1 week ago</span></div></figcaption></figure>
+            <figure><div class="tn"><img src="../../img/photos/76.jpg" width="480" height="480" alt=""><span>18:20</span></div><figcaption><i class="av" style="background:#dcd5ec">OS</i><div><b>Fixing up an old town bike</b><span>Oil and Spokes · 1 week ago</span></div></figcaption></figure>
+            <figure><div class="tn"><img src="../../img/photos/145.jpg" width="480" height="480" alt=""><span>46:05</span></div><figcaption><i class="av" style="background:#f0e3c2">LR</i><div><b>Live in the back room, full set</b><span>Low Room · 2 weeks ago</span></div></figcaption></figure>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+</header>
+
+<div class="works">
+  <div class="wrap">
+    <div class="row rv" aria-label="Works with YouTube, Instagram, Facebook and X">
+      <span>Works with</span>
+      <span class="it"><span class="mark m-yt" aria-hidden="true"></span>YouTube</span>
+      <span class="it"><span class="mark m-ig" aria-hidden="true"></span>Instagram</span>
+      <span class="it"><span class="mark m-fb" aria-hidden="true"></span>Facebook</span>
+      <span class="it"><span class="mark m-x" aria-hidden="true"></span>X</span>
     </div>
   </div>
 </div>
 
-<section class="white center" id="features">
-  <div class="wrap">
-    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="20" r="11" fill="#2f6487" opacity=".9"/><circle cx="25" cy="20" r="11" fill="#e9a23b" opacity=".85"/></svg>
-    <h2>Simply quieter</h2>
-    <p class="lead">Each site loses the parts built to keep you scrolling, and keeps the parts you came for. Within a minute of setting it up, your phone just feels calmer.</p>
-    <div class="devices" aria-hidden="true">
-      <div class="phone"><div class="screen">
-        <b>Idyll</b>
-        <div class="group">
-          <div class="tog">Ads and sponsored <span class="sw"></span></div>
-          <div class="tog">YouTube Shorts <span class="sw"></span></div>
-          <div class="tog">Reels <span class="sw"></span></div>
-          <div class="tog">Algorithmic feeds <span class="sw"></span></div>
-        </div>
-        <div class="group"><div class="tog">Instagram app, daily <strong>15 min</strong></div><div class="tog">YouTube app, daily <strong>20 min</strong></div></div>
-        <div class="group"><div class="tog">Used today <strong>9 of 15 min</strong></div></div>
-        <div class="group"><div class="tog">Safari blocker <strong style="color:#3d9a6b">On</strong></div><div class="tog">Idyll Plus <strong style="color:#6e6e73">Off</strong></div></div>
-      </div></div>
-      <div class="mac">
-        <div class="bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span><img src="../../img/icon.png" alt=""></div>
-        <div class="page"><b>Subscriptions</b>
-          <div class="subs"><div></div><div></div><div></div></div>
-          <div class="subs"><p>Bread, slowly: a week of sourdough</p><p>Live at the Ulster Hall</p><p>How lino prints are made</p></div>
+<section class="white" id="switch" style="margin-top: clamp(64px, 8vw, 110px)">
+  <div class="wrap sw" id="swwrap">
+    <div class="ph rv">
+      <div class="iphone ba" id="phone" role="img" aria-label="An iPhone showing Instagram in Safari. Without Idyll: an endless Reels feed with a sponsored post. With Idyll: the messages inbox and one video from a friend.">
+        <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
+        <div class="bz"><div class="scr">
+          <div class="di"></div>
+          <div class="sbar"><span>9:41</span><svg viewBox="0 0 46 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx=".7"/><rect x="4.5" y="6" width="3" height="6" rx=".7"/><rect x="9" y="3.5" width="3" height="8.5" rx=".7"/><rect x="13.5" y="1" width="3" height="11" rx=".7"/><rect x="22.5" y=".5" width="19.5" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="24.5" y="2.5" width="13" height="7" rx="1.6"/><rect x="43" y="4" width="1.6" height="4" rx=".8" opacity=".45"/></g></svg></div>
+          <div class="calm">
+            <div class="cs ch" style="--i:0"><b>Messages</b><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16z"/></svg></div>
+            <div class="cs search" style="--i:1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"/><path d="M16 16l5 5"/></svg>Search</div>
+            <div class="cs sent" style="--i:2"><div class="vid"><img src="../../img/photos/237.jpg" width="480" height="480" alt="" loading="lazy"></div><div><b>Aoife sent you a video</b><span>Plays here. No feed after it.</span></div></div>
+            <ul class="th">
+              <li class="cs" style="--i:3"><i class="av" style="background:#e7d9c4">C</i><div><b>Ciarán</b><span>dinner sunday?</span></div><time>2m</time></li>
+              <li class="cs" style="--i:4"><i class="av" style="background:#cfdcea">N</i><div><b>Niamh</b><span>look at this view</span></div><time>1h</time></li>
+              <li class="cs" style="--i:5"><i class="av" style="background:#dfe6cf">BC</i><div><b>Book club</b><span>Tom: chapter nine done</span></div><time>3h</time></li>
+              <li class="cs" style="--i:6"><i class="av" style="background:#ecd3cf">P</i><div><b>Priya</b><span>sent a photo</span></div><time>Mon</time></li>
+              <li class="cs" style="--i:7"><i class="av" style="background:#dcd5ec">S</i><div><b>Sam</b><span>ha, perfect</span></div><time>Sun</time></li>
+            </ul>
+            <div class="saf"><div class="addr"><svg viewBox="0 0 10 12"><path d="M2 5V3.5a3 3 0 0 1 6 0V5M1 5h8v7H1z" fill="currentColor"/></svg>instagram.com</div></div>
+          </div>
+          <div class="feed dark">
+            <div class="clip"><div class="track">
+              <figure class="fc"><img src="../../img/photos/10.jpg" width="480" height="480" alt=""><figcaption><b><i>cw</i>coastal.walks</b>The view nobody asked for, part six</figcaption></figure>
+              <figure class="fc"><img src="../../img/photos/29.jpg" width="480" height="480" alt=""><figcaption><b><i>DO</i>Driftwood Outdoor <span class="spon">Sponsored</span></b>Gear for the long weekend<span class="shop">Shop now</span></figcaption></figure>
+              <figure class="fc"><img src="../../img/photos/200.jpg" width="480" height="480" alt=""><figcaption><b><i>dh</i>daily.hacks</b>Wait for the end</figcaption></figure>
+              <figure class="fc"><img src="../../img/photos/137.jpg" width="480" height="480" alt=""><figcaption><b><i>wa</i>wander.after</b>You won't believe where this tunnel goes</figcaption></figure>
+              <figure class="fc"><img src="../../img/photos/10.jpg" width="480" height="480" alt=""><figcaption><b><i>cw</i>coastal.walks</b>The view nobody asked for, part six</figcaption></figure>
+            </div></div>
+            <div class="ftop"><span>Following</span><span class="on">For you</span></div>
+            <div class="rail">
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>48.1K</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5z"/></svg>1,204</div>
+              <div><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"><path d="M21 4L10 14M21 4l-7 17-4-7-7-4z"/></svg></div>
+            </div>
+            <div class="prog"><i></i></div>
+            <div class="saf"><div class="addr"><svg viewBox="0 0 10 12"><path d="M2 5V3.5a3 3 0 0 1 6 0V5M1 5h8v7H1z" fill="currentColor"/></svg>instagram.com</div></div>
+          </div>
+          <div class="hbar"></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="txt">
+      <span class="kicker rv">The difference</span>
+      <h2 class="rv" style="--d:1">Same app. A different afternoon.</h2>
+      <p class="rv" style="--d:2">Without Idyll, Instagram opens on Reels, with an ad tucked between them. With Idyll, it opens on your messages, and the video Aoife sent plays on its own. Nothing queues up after it.</p>
+      <div class="rv" style="--d:3">
+        <div class="seg" id="seg" role="group" aria-label="Show Instagram" data-on="0">
+          <span class="thumb" aria-hidden="true"></span>
+          <button type="button" aria-pressed="true" data-v="0">Without Idyll</button>
+          <button type="button" aria-pressed="false" data-v="1">With Idyll</button>
         </div>
       </div>
-      <div class="phone"><div class="screen">
-        <b>Messages</b>
-        <div class="msg"><span></span><div>Aoife<em>sent a reel</em></div></div>
-        <div class="msg"><span></span><div>Ciarán<em>dinner sunday?</em></div></div>
-        <div class="msg"><span></span><div>Niamh<em>look at this view</em></div></div>
-        <div class="msg"><span></span><div>Book club<em>chapter 9 done</em></div></div>
-        <div class="msg"><span></span><div>Tom<em>see you at 7</em></div></div>
-        <div class="msg"><span></span><div>Priya<em>sent a photo</em></div></div>
-        <div class="msg"><span></span><div>Five-a-side<em>who has the bibs</em></div></div>
-        <div class="msg"><span></span><div>Sam<em>ha, perfect</em></div></div>
-      </div></div>
+      <ul class="todo rv" style="--d:4" aria-label="What Idyll changes on Instagram">
+        <li style="--i:0"><i></i>The Reels feed<em>hidden</em></li>
+        <li style="--i:1"><i></i>Sponsored posts<em>hidden</em></li>
+        <li style="--i:2"><i></i>The Explore grid<em>hidden</em></li>
+        <li class="keep" style="--i:3"><i></i>Messages and search<em>kept</em></li>
+        <li class="keep" style="--i:4"><i></i>The Reel a friend sends<em>kept</em></li>
+      </ul>
+      <p class="fine rv" style="--d:5">This is instagram.com in Safari on iPhone, cleaned by Idyll's content blocker.</p>
+    </div>
+  </div>
+</section>
+
+<section class="center" id="everywhere">
+  <div class="wrap">
+    <span class="kicker rv">Everywhere you scroll</span>
+    <h2 class="rv" style="--d:1">One set of rules on your phone and your laptop.</h2>
+    <p class="lead rv" style="--d:2">Following on X, without For you. Friends on Facebook, in order. Your YouTube subscriptions, without Shorts. However you get there.</p>
+
+    <div class="together" id="together" aria-hidden="true">
+      <div class="mbp rv" style="--d:2">
+        <div class="lid"><div class="notch"></div><div class="disp">
+          <div class="win">
+            <div class="wbar"><i></i><i></i><i></i><div class="url"><svg viewBox="0 0 10 12"><path d="M2 5V3.5a3 3 0 0 1 6 0V5M1 5h8v7H1z" fill="currentColor"/></svg>x.com/home</div><img class="ext" src="../../img/icon.png" width="18" height="18" alt=""></div>
+            <div class="xw">
+              <nav><b>Home</b><span>Search</span><span>Messages</span><span>Bookmarks</span><span>Profile</span></nav>
+              <div class="tl">
+                <div class="tabs"><span>Following</span></div>
+                <div class="post"><i class="av" style="background:#dfe6cf">T</i><div><div class="who"><b>Tom</b><span>@tomwalks · 8m</span></div><p>Ran the canal path before work. Nobody else out but the herons.</p></div></div>
+                <div class="post"><i class="av" style="background:#ecd3cf">P</i><div><div class="who"><b>Priya</b><span>@priya_reads · 40m</span></div><p>Our new kitchen table, finally.</p><div class="ph"><img src="../../img/photos/42.jpg" width="480" height="480" alt="" loading="lazy"></div></div></div>
+              </div>
+              <div></div>
+            </div>
+          </div>
+        </div></div>
+        <div class="base"></div>
+      </div>
+
+      <div class="droid rv" style="--d:4">
+        <i class="k k1"></i><i class="k k2"></i>
+        <div class="bz"><div class="scr"><div class="cam"></div>
+          <div class="sbar"><span>9:41</span><svg viewBox="0 0 46 12"><g fill="currentColor"><path d="M2 11L12 1v10z"/><rect x="24" y="1" width="9" height="11" rx="1.6"/></g></svg></div>
+          <div class="ib">
+            <div class="top"><img src="../../img/icon.png" width="40" height="40" alt="">Idyll</div>
+            <div class="chips"><span class="on">YouTube</span><span>Instagram</span><span>X</span></div>
+            <div class="v"><div class="tn"><img src="../../img/photos/28.jpg" width="480" height="480" alt="" loading="lazy"></div><b>Three days on the Causeway Coast</b><span>Field Notes · 4 days ago</span></div>
+            <div class="v"><div class="tn"><img src="../../img/photos/112.jpg" width="480" height="480" alt="" loading="lazy"></div><b>Harvest week on a tiny farm</b><span>Small Kitchen · 1 week ago</span></div>
+          </div>
+          <div class="gbar"></div>
+        </div></div>
+      </div>
+
+      <div class="iphone rv" style="--d:6">
+        <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
+        <div class="bz"><div class="scr"><div class="di"></div>
+          <div class="sbar"><span>9:41</span><svg viewBox="0 0 46 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx=".7"/><rect x="4.5" y="6" width="3" height="6" rx=".7"/><rect x="9" y="3.5" width="3" height="8.5" rx=".7"/><rect x="13.5" y="1" width="3" height="11" rx=".7"/><rect x="22.5" y=".5" width="19.5" height="11" rx="3.2" fill="none" stroke="currentColor" stroke-opacity=".45"/><rect x="24.5" y="2.5" width="13" height="7" rx="1.6"/></g></svg></div>
+          <div class="app">
+            <div class="hd"><b>Friends</b></div>
+            <div class="tabs"><span class="on">Friends</span><span>Groups</span><span>Messages</span></div>
+            <div class="fbp">
+              <div class="who"><i class="av" style="background:#e7d9c4">C</i><div><b>Ciarán</b><span>12 min</span></div></div>
+              <p>First swim of the year. Cold. Worth it.</p>
+              <div class="ph"><img src="../../img/photos/10.jpg" width="480" height="480" alt="" loading="lazy"></div>
+              <div class="rx"><span>Niamh and 6 others</span><span>3 comments</span></div>
+            </div>
+          </div>
+          <div class="saf"><div class="addr"><svg viewBox="0 0 10 12"><path d="M2 5V3.5a3 3 0 0 1 6 0V5M1 5h8v7H1z" fill="currentColor"/></svg>facebook.com</div></div>
+          <div class="hbar"></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="white">
+  <div class="wrap allow">
+    <div>
+      <span class="kicker rv">The real apps</span>
+      <h2 class="rv" style="--d:1">The apps get an allowance, not a ban.</h2>
+      <p class="rv" style="--d:2">On iPhone, Idyll gives the real apps a daily allowance through Screen Time. They work as usual, notifications and all, until the minutes run out. Then they pause until midnight.</p>
+      <p class="rv" style="--d:3">On Android, a feed guard works inside the real apps: it presses "Skip ad" for you and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
+    </div>
+    <div class="meters rv" style="--d:2" role="img" aria-label="Example allowances: Instagram 12 of 20 minutes used; YouTube 30 of 30 minutes used, paused until midnight">
+      <div class="meter"><header><span class="ap" style="background:#c06a8a">I</span>Instagram<span>12 of 20 min</span></header><div class="bar"><i style="--v:.6"></i></div></div>
+      <div class="meter"><header><span class="ap" style="background:#3d6fb6">F</span>Facebook<span>4 of 15 min</span></header><div class="bar"><i style="--v:.27"></i></div></div>
+      <div class="meter out"><header><span class="ap" style="background:#c9473d">Y</span>YouTube<span>30 of 30 min</span></header><div class="bar"><i style="--v:1"></i></div><p>Paused until midnight</p></div>
     </div>
   </div>
 </section>
 
 <section class="center" id="get">
   <div class="wrap">
-    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="4" width="32" height="32" rx="9" fill="#d8412b"/><path d="M20 11v13m-6-5l6 6 6-6M13 29h14" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <h2>Get Idyll</h2>
-    <p class="lead">Free on every device, for good. No account, no subscription, nothing to unlock.</p>
+    <span class="kicker rv">Get Idyll</span>
+    <h2 class="rv" style="--d:1">Coming to all your screens.</h2>
+    <p class="lead rv" style="--d:2">Free on every one of them, for good. No account to make.</p>
     <div class="cards">
-      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="22" y="4" width="20" height="40" rx="4" fill="none" stroke="#8e8e93" stroke-width="2"/></svg><h3>iPhone</h3><p>iOS 17 or later</p><span>Coming soon</span></div>
-      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="21" y="4" width="22" height="40" rx="5" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M28 8h8" stroke="#8e8e93" stroke-width="2" stroke-linecap="round"/></svg><h3>Android</h3><p>Android 8 or later</p><span>Coming soon</span></div>
-      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="6" y="8" width="52" height="34" rx="4" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M6 16h52" stroke="#8e8e93" stroke-width="2"/></svg><h3>Chrome</h3><p>Any computer</p><span>Coming soon</span></div>
-      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="12" y="6" width="40" height="28" rx="3" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M4 40h56" stroke="#8e8e93" stroke-width="2.5" stroke-linecap="round"/></svg><h3>Mac</h3><p>Safari, macOS 14 or later</p><span>Coming soon</span></div>
+      <div class="card rv" style="--d:2">
+        <svg viewBox="0 0 72 56" aria-hidden="true"><rect x="25" y="3" width="22" height="50" rx="6" fill="none" stroke="#1d1d1f" stroke-width="1.6"/><rect x="32" y="6.5" width="8" height="2.6" rx="1.3" fill="#1d1d1f"/></svg>
+        <h3>iPhone</h3><p>A Safari content blocker for the websites, Idyll Plus for video ads and Shorts, and a daily allowance for the apps.</p><span class="chip">Coming soon</span>
+      </div>
+      <div class="card rv" style="--d:3">
+        <svg viewBox="0 0 72 56" aria-hidden="true"><rect x="24" y="3" width="24" height="50" rx="5" fill="none" stroke="#1d1d1f" stroke-width="1.6"/><circle cx="36" cy="8" r="1.4" fill="#1d1d1f"/></svg>
+        <h3>Android</h3><p>A clean built-in browser for each site, and a feed guard inside the real apps.</p><span class="chip">Coming soon</span>
+      </div>
+      <div class="card rv" style="--d:4">
+        <svg viewBox="0 0 72 56" aria-hidden="true"><rect x="6" y="8" width="60" height="40" rx="5" fill="none" stroke="#1d1d1f" stroke-width="1.6"/><path d="M6 16h60" stroke="#1d1d1f" stroke-width="1.6"/><circle cx="11" cy="12" r="1.2" fill="#1d1d1f"/><circle cx="15" cy="12" r="1.2" fill="#1d1d1f"/><circle cx="19" cy="12" r="1.2" fill="#1d1d1f"/></svg>
+        <h3>Chrome</h3><p>The same rules in Chrome, on any laptop.</p><span class="chip">Coming soon</span>
+      </div>
+      <div class="card rv" style="--d:5">
+        <svg viewBox="0 0 72 56" aria-hidden="true"><rect x="12" y="6" width="48" height="32" rx="3" fill="none" stroke="#1d1d1f" stroke-width="1.6"/><path d="M4 44h64l-3 4H7z" fill="none" stroke="#1d1d1f" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <h3>Mac</h3><p>The same rules in Safari on your Mac.</p><span class="chip">Coming soon</span>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="white center" id="private">
-  <div class="wrap">
-    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><rect x="9" y="17" width="22" height="17" rx="5" fill="#3d9a6b"/><path d="M14 17v-4a6 6 0 0 1 12 0v4" stroke="#3d9a6b" stroke-width="3" fill="none"/></svg>
-    <h2>Private by design</h2>
-    <p class="lead">Idyll was built so that it never needs to see what you do.</p>
-    <div class="three">
-      <div><h3>It can’t read your pages</h3><p>On iPhone, Safari applies Idyll’s rules itself. iOS shows it can’t read or send anything from the pages you visit.</p></div>
-      <div><h3>You log in to the real thing</h3><p>In Safari or the real apps, never inside Idyll, so your password never passes through us.</p></div>
-      <div><h3>Nothing leaves your phone</h3><p>No account, no analytics, no servers that see what you watch.</p></div>
+<section class="white" id="private">
+  <div class="wrap center">
+    <span class="kicker rv">Privacy, and the honest part</span>
+    <h2 class="rv" style="--d:1">You never log in to Idyll.</h2>
+    <p class="lead rv" style="--d:2">You log in to the real sites and apps, the way you always have. No Idyll account, nothing leaves your phone, zero trackers.</p>
+    <div class="trust">
+      <div class="rv" style="--d:2">
+        <h3>It can't read your pages</h3>
+        <p>On iPhone, Safari applies Idyll's rules itself, and iOS shows that the blocker can't read or send anything from the pages you visit.</p>
+      </div>
+      <div class="rv" style="--d:3">
+        <h3>What no app can do on iPhone</h3>
+        <p>No app can change what's inside the official YouTube or Instagram apps on iPhone. Apple keeps apps sealed off. Anyone claiming otherwise ships a modified copy, and that can get your account flagged.</p>
+        <p>So Idyll cleans the websites and gives the apps a daily limit instead.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="center free">
+<section class="center free" id="free">
   <div class="wrap">
-    <h2>Free, for good.</h2>
-    <p class="lead">No subscription, no trial that turns into one, no ads, no data sold. Every feature, on every phone, for everyone.</p>
+    <h2 class="rv">Free, <em>for good.</em></h2>
+    <p class="lead rv" style="--d:1">No subscription. No trial that turns into one. No ads, and no data sold. Idyll will never charge, and we're proud to say so.</p>
   </div>
 </section>
 
-<div class="wrap"><footer><span>Idyll</span><span>© 2026</span></footer></div>
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="b"><img src="../../img/icon.png" width="40" height="40" alt="" loading="lazy"><div><strong>Idyll</strong><span>Social without the scroll.</span></div></div>
+      <div><h4>Idyll</h4><ul><li><a href="#switch">The difference</a></li><li><a href="#everywhere">Everywhere</a></li><li><a href="#get">iPhone, Android, Chrome, Mac</a></li></ul></div>
+      <div><h4>Promises</h4><ul><li><a href="#free">Free, for good</a></li><li><a href="#private">Privacy</a></li><li><a href="#private">The honest part</a></li></ul></div>
+      <div><h4>Works with</h4><div class="marks"><span class="mark m-yt" role="img" aria-label="YouTube"></span><span class="mark m-ig" role="img" aria-label="Instagram"></span><span class="mark m-fb" role="img" aria-label="Facebook"></span><span class="mark m-x" role="img" aria-label="X"></span></div><p style="font-size:12px; margin: 12px 0 0">Names and marks belong to their owners. Idyll isn't affiliated with them.</p></div>
+    </div>
+    <div class="legal"><span>Free, for good. No account, no trackers.</span><span>Coming soon</span></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+
+  /* reveals */
+  const rvs = document.querySelectorAll('.rv, .meters');
+  if ('IntersectionObserver' in window && !reduce) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    rvs.forEach(el => io.observe(el));
+  } else rvs.forEach(el => el.classList.add('in'));
+
+  /* before / after */
+  const phone = document.getElementById('phone'), seg = document.getElementById('seg'), wrapEl = document.getElementById('swwrap');
+  let on = false, touched = false;
+  function setOn(v, user) {
+    on = v; if (user) touched = true;
+    phone.classList.toggle('on', on); wrapEl.classList.toggle('on-list', on);
+    seg.dataset.on = on ? '1' : '0';
+    seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.v === '1') === on)));
+  }
+  seg.addEventListener('click', e => { const b = e.target.closest('button'); if (b) setOn(b.dataset.v === '1', true); });
+  if ('IntersectionObserver' in window && !reduce) {
+    const once = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { once.disconnect(); setTimeout(() => { if (!touched) setOn(true, false); }, 2600); }
+    }), { threshold: 0.55 });
+    once.observe(phone);
+  }
+
+  /* foil icon */
+  const foil = document.getElementById('foil'), tile = foil.querySelector('.tile');
+  let tx = 0, ty = 0, cx = -14, cy = 6, fr = 0;
+  function foilFrame() {
+    fr = 0;
+    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+    tile.style.setProperty('--ry', cx.toFixed(2));
+    tile.style.setProperty('--rx', cy.toFixed(2));
+    foil.style.setProperty('--ry', cx.toFixed(2));
+    tile.style.setProperty('--sx', (cx * 4.2).toFixed(1));
+    if (Math.abs(tx - cx) > 0.02 || Math.abs(ty - cy) > 0.02) fr = requestAnimationFrame(foilFrame);
+  }
+  const kickFoil = () => { if (!fr) fr = requestAnimationFrame(foilFrame); };
+  if (!reduce) {
+    window.addEventListener('pointermove', e => {
+      const r = foil.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / Math.max(320, innerWidth / 2);
+      const dy = (e.clientY - (r.top + r.height / 2)) / Math.max(320, innerHeight / 2);
+      tx = clamp(dx * 14, -14, 14); ty = clamp(-dy * 10, -10, 10); kickFoil();
+    }, { passive: true });
+    window.addEventListener('deviceorientation', e => {
+      if (e.gamma == null) return;
+      tx = clamp(e.gamma / 3, -12, 12); ty = clamp((e.beta - 45) / -4, -10, 10); kickFoil();
+    });
+    // one slow sweep on arrival
+    tx = 0; ty = 0; kickFoil();
+  } else { tile.style.setProperty('--sx', '-8'); }
+
+  /* scroll: nav, tilt flattening, device parallax */
+  const nav = document.getElementById('nav'), tilt = document.getElementById('tilt'), tog = document.getElementById('together');
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      nav.classList.toggle('cond', scrollY > 24);
+      if (reduce) { tilt.style.setProperty('--t', '0.55'); return; }
+      const r = tilt.getBoundingClientRect();
+      const p = clamp(1 - (innerHeight - r.top) / (innerHeight * 0.95), 0, 1);
+      tilt.style.setProperty('--t', (0.25 + 0.75 * p).toFixed(3));
+      const g = tog.getBoundingClientRect();
+      tog.style.setProperty('--p', clamp((innerHeight - g.top) / (innerHeight + g.height), 0, 1).toFixed(3));
+    });
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  onScroll();
+
+  /* cursor-aware light on cards */
+  document.querySelectorAll('.card').forEach(c => c.addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  }));
+})();
+</script>
 </body>
 </html>
