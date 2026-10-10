@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for. Free, for good.">
+<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Swiss: International Typographic Style. A 12 column grid, drawn on
+   the page, carries everything. One red. Flush left, ragged right. */
+:root {
+  --paper: #f1efe9;
+  --ink: #111111;
+  --grey: #6b6a66;
+  --line: rgba(17, 17, 17, .085);
+  --hair: #111111;
+  --red: #d7261e;
+  --sans: "Timeless Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --gutter: clamp(12px, 1.6vw, 24px);
+  --margin: clamp(16px, 3.4vw, 48px);
+  --cols: 12;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.42 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; }
+
+.page { position: relative; max-width: 1440px; margin: 0 auto; padding: 0 var(--margin); }
+
+/* The visible grid */
+.gridlines {
+  position: absolute; inset: 0 var(--margin);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  pointer-events: none;
+  z-index: 0;
+}
+.gridlines i { border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+
+.g {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+.rule { border-top: 2px solid var(--hair); }
+.thin { border-top: 1px solid var(--hair); }
+
+/* small type system: one size for labels, one for body */
+.label { font: 700 13px/1.25 var(--sans); letter-spacing: .005em; }
+.small { font: 400 13px/1.35 var(--sans); }
+.body { font: 400 clamp(16px, 1.25vw, 18px)/1.42 var(--sans); max-width: 34em; }
+.grey { color: var(--grey); }
+.red { color: var(--red); }
+
+/* ---------- Masthead strip ---------- */
+.mast { padding: 18px 0 14px; row-gap: 10px; }
+.mast > * { grid-column: span 3; }
+.mast .wordmark { font: 800 22px/1 var(--sans); letter-spacing: -.03em; }
+
+/* ---------- Headline ---------- */
+.hero { overflow: hidden; }
+h1 {
+  grid-column: 1 / -1;
+  font: 800 clamp(64px, 15.2vw, 228px)/.83 var(--sans);
+  letter-spacing: -.055em;
+  padding: clamp(28px, 4vw, 56px) 0 0;
+  margin-left: -.04em;
+}
+h1 > span { display: block; }
+h1 .indent { padding-left: calc((100% + var(--gutter)) / 12 * 4); }
+h1 .stop { color: var(--red); }
+
+.under { margin-top: clamp(28px, 4vw, 52px); align-items: start; }
+.under .intro { grid-column: 1 / span 4; padding-top: 12px; }
+.under .intro .body { font-size: clamp(19px, 1.6vw, 23px); line-height: 1.28; letter-spacing: -.01em; }
+.under .facts { grid-column: 1 / span 4; margin-top: 28px; }
+.facts dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--gutter); }
+.facts div { border-top: 1px solid var(--hair); padding: 8px 0 18px; }
+.facts dt { font: 700 13px/1.25 var(--sans); }
+.facts dd { margin: 2px 0 0; font: 400 13px/1.35 var(--sans); color: var(--grey); }
+
+/* The cygnet, a solid red form, cropped by the right edge of the grid */
+.markcell {
+  grid-column: 5 / -1;
+  grid-row: 1 / span 2;
+  position: relative;
+  aspect-ratio: 640 / 703;
+  overflow: hidden;
+  align-self: start;
+}
+.cygnet {
+  position: absolute;
+  top: 0; right: -38%;
+  width: 185%;
+  height: 100%;
+  background: var(--red);
+  -webkit-mask: url("../../img/cygnet-mark.svg") right bottom / contain no-repeat;
+  mask: url("../../img/cygnet-mark.svg") right bottom / contain no-repeat;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cygnet { animation: glide 1.6s cubic-bezier(.16, .8, .2, 1) both .15s; }
+  @keyframes glide { from { transform: translateX(6%); } to { transform: none; } }
+}
+
+/* ---------- Section rhythm ---------- */
+section { padding-top: clamp(64px, 8vw, 120px); }
+.sechead { padding-top: 10px; margin-bottom: clamp(28px, 3.4vw, 48px); }
+.sechead .label { grid-column: 1 / span 3; }
+.sechead h2 {
+  grid-column: 4 / -1;
+  font: 800 clamp(34px, 4.6vw, 68px)/.95 var(--sans);
+  letter-spacing: -.04em;
+}
+
+/* ---------- The table ---------- */
+.table { width: 100%; }
+.thead, .trow { padding: 10px 0 0; }
+.thead { border-top: 2px solid var(--hair); padding-bottom: 10px; }
+.thead .c1, .trow .c1 { grid-column: 1 / span 3; }
+.thead .c2, .trow .c2 { grid-column: 4 / span 5; }
+.thead .c3, .trow .c3 { grid-column: 9 / span 4; }
+.trow { border-top: 1px solid var(--hair); padding-bottom: clamp(22px, 2.6vw, 36px); }
+.trow h3 { font: 800 clamp(28px, 3.3vw, 48px)/1 var(--sans); letter-spacing: -.035em; }
+.trow ul { list-style: none; margin: 0; padding: 0; font: 400 clamp(16px, 1.35vw, 19px)/1.32 var(--sans); }
+.trow li { padding: 0 0 2px; }
+.trow .c2 li { text-decoration: line-through; text-decoration-thickness: 1.5px; color: var(--ink); }
+.trow .c3 li { font-weight: 600; }
+.mobile-k { display: none; }
+
+/* ---------- Platforms ---------- */
+.plat .col { grid-column: span 3; border-top: 2px solid var(--hair); padding-top: 10px; }
+.plat .col:first-child { grid-column: 4 / span 3; }
+.plat h3 { font: 800 clamp(22px, 2vw, 30px)/1.05 var(--sans); letter-spacing: -.025em; margin-bottom: 4px; }
+.plat .soon { font: 700 13px/1 var(--sans); color: var(--red); display: block; margin-bottom: 16px; }
+.plat .body + .body { margin-top: .8em; }
+.plat .body { font-size: 16px; }
+
+/* ---------- Privacy ---------- */
+.priv .big {
+  grid-column: 4 / span 8;
+  font: 700 clamp(28px, 3.6vw, 54px)/1.02 var(--sans);
+  letter-spacing: -.035em;
+}
+.priv .label { grid-column: 1 / span 3; padding-top: 10px; border-top: 2px solid var(--hair); align-self: start; }
+.priv .big { border-top: 2px solid var(--hair); padding-top: 8px; }
+
+/* ---------- Free ---------- */
+.free h2 {
+  grid-column: 1 / -1;
+  font: 800 clamp(70px, 17vw, 260px)/.8 var(--sans);
+  letter-spacing: -.06em;
+  margin-left: -.04em;
+}
+.free h2 > span { display: block; }
+.free h2 .indent { padding-left: calc((100% + var(--gutter)) / 12 * 3); }
+.free .text { grid-column: 4 / span 4; margin-top: clamp(40px, 5vw, 76px); }
+.free .text2 { grid-column: 9 / span 4; margin-top: clamp(40px, 5vw, 76px); }
+.free .text, .free .text2 { border-top: 1px solid var(--hair); padding-top: 10px; }
+
+/* ---------- The limit ---------- */
+.limit .label { grid-column: 1 / span 3; border-top: 2px solid var(--hair); padding-top: 10px; }
+.limit .body { grid-column: 4 / span 5; border-top: 2px solid var(--hair); padding-top: 10px; }
+.limit .body + .body { grid-column: 9 / span 4; }
+
+/* ---------- Footer ---------- */
+footer { padding: clamp(80px, 10vw, 150px) 0 28px; }
+footer .g > * { grid-column: span 3; padding-top: 10px; }
+footer .rule2 { grid-column: 1 / -1; border-top: 2px solid var(--hair); padding: 0; }
+footer .mini { width: 48px; height: 29px; background: var(--ink); -webkit-mask: url("../../img/cygnet-mark.svg") left center / contain no-repeat; mask: url("../../img/cygnet-mark.svg") left center / contain no-repeat; }
+
+/* ---------- Medium ---------- */
+@media (max-width: 1000px) {
+  .mast > * { grid-column: span 6; }
+  .under .intro, .under .facts { grid-column: 1 / span 6; }
+  .markcell { grid-column: 6 / -1; }
+  .plat .col, .plat .col:first-child { grid-column: span 4; }
+  .free .text { grid-column: 1 / span 6; }
+  .free .text2 { grid-column: 7 / span 6; }
+}
+
+/* ---------- Narrow: the grid drops to four columns ---------- */
+@media (max-width: 680px) {
+  :root { --cols: 4; }
+  .gridlines i:nth-child(n+5) { display: none; }
+  .mast > * { grid-column: span 2; }
+  .mast > .hide-s { display: none; }
+  h1 .indent { padding-left: calc((100% + var(--gutter)) / 4 * 1); }
+  .under .intro, .under .facts { grid-column: 1 / -1; }
+  .markcell { grid-column: 2 / -1; grid-row: auto; order: -1; margin-bottom: 24px; }
+  .sechead .label, .sechead h2 { grid-column: 1 / -1; }
+  .sechead h2 { margin-top: 10px; }
+  .thead { display: none; }
+  .trow .c1, .trow .c2, .trow .c3 { grid-column: 1 / -1; }
+  .trow .c2 { margin-top: 14px; }
+  .trow .c3 { margin-top: 12px; }
+  .mobile-k { display: block; font: 700 13px/1.25 var(--sans); color: var(--grey); margin-bottom: 4px; }
+  .plat .col, .plat .col:first-child { grid-column: 1 / -1; margin-bottom: 28px; }
+  .priv .label, .priv .big { grid-column: 1 / -1; }
+  .priv .big { border-top: 0; margin-top: 10px; }
+  .free h2 .indent { padding-left: calc((100% + var(--gutter)) / 4 * 1); }
+  .free .text, .free .text2 { grid-column: 1 / -1; }
+  .limit .label, .limit .body, .limit .body + .body { grid-column: 1 / -1; }
+  .limit .body { border-top: 0; }
+  footer .g > * { grid-column: span 2; margin-bottom: 18px; }
+  footer .g > .rule2 { grid-column: 1 / -1; margin: 0; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="gridlines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <header class="g mast rule">
+    <div class="wordmark">Idyll</div>
+    <div class="label">Social without<br>the scroll</div>
+    <div class="small hide-s">For YouTube, Instagram,<br>Facebook and X</div>
+    <div class="small hide-s">iPhone, Android, Chrome, Mac<br><span class="red">All coming soon</span></div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1><span>Social</span><span class="indent">without</span><span>the scroll<span class="stop">.</span></span></h1>
+
+      <div class="g under">
+        <div class="intro">
+          <p class="body">Idyll takes the ads, YouTube Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for.</p>
+        </div>
+        <div class="markcell"><div class="cygnet" role="img" aria-label="The Idyll cygnet, a young swan sitting on the water, in red"></div></div>
+        <div class="facts">
+          <dl>
+            <div><dt>Price</dt><dd>Free, for good</dd></div>
+            <div><dt>Account</dt><dd>None</dd></div>
+            <div><dt>Trackers</dt><dd>Zero</dd></div>
+            <div><dt>Status</dt><dd>Coming soon</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <section aria-labelledby="t-h">
+      <div class="g sechead">
+        <p class="label">Four sites</p>
+        <h2 id="t-h">What goes.<br>What stays.</h2>
+      </div>
+
+      <div class="table" role="table" aria-label="What Idyll removes and keeps on each site">
+        <div class="g thead" role="row">
+          <div class="c1 label" role="columnheader">Site</div>
+          <div class="c2 label" role="columnheader">Goes</div>
+          <div class="c3 label" role="columnheader">Stays</div>
+        </div>
+        <div class="g trow" role="row">
+          <h3 class="c1" role="rowheader">YouTube</h3>
+          <div class="c2" role="cell"><span class="mobile-k">Goes</span><ul><li>Video ads</li><li>Shorts</li><li>The recommended home feed</li><li>Up next</li></ul></div>
+          <div class="c3" role="cell"><span class="mobile-k">Stays</span><ul><li>Subscriptions</li><li>Search</li><li>The video a friend sends</li></ul></div>
+        </div>
+        <div class="g trow" role="row">
+          <h3 class="c1" role="rowheader">Instagram</h3>
+          <div class="c2" role="cell"><span class="mobile-k">Goes</span><ul><li>Sponsored posts</li><li>The Reels feed</li><li>The Explore grid</li></ul></div>
+          <div class="c3" role="cell"><span class="mobile-k">Stays</span><ul><li>Messages</li><li>Search</li><li>Whatever a friend sends you</li></ul></div>
+        </div>
+        <div class="g trow" role="row">
+          <h3 class="c1" role="rowheader">Facebook</h3>
+          <div class="c2" role="cell"><span class="mobile-k">Goes</span><ul><li>Reels</li><li>Watch</li><li>The algorithmic feed</li></ul></div>
+          <div class="c3" role="cell"><span class="mobile-k">Stays</span><ul><li>Friends, in order</li><li>Groups</li><li>Messages</li></ul></div>
+        </div>
+        <div class="g trow" role="row">
+          <h3 class="c1" role="rowheader">X</h3>
+          <div class="c2" role="cell"><span class="mobile-k">Goes</span><ul><li>For you</li><li>Promoted posts</li><li>Trends</li><li>Who to follow</li></ul></div>
+          <div class="c3" role="cell"><span class="mobile-k">Stays</span><ul><li>Following</li><li>Messages</li><li>Search</li></ul></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="p-h">
+      <div class="g sechead">
+        <p class="label">Where it runs</p>
+        <h2 id="p-h">One video, not the feed after it.</h2>
+      </div>
+      <div class="g plat">
+        <div class="col">
+          <h3>iPhone</h3>
+          <span class="soon">Coming soon</span>
+          <p class="body">A Safari content blocker cleans the websites. Safari applies the rules, and iOS shows that the blocker cannot read or send anything from the page.</p>
+          <p class="body">Idyll Plus, an optional extension, also skips video ads and turns Shorts into normal videos.</p>
+          <p class="body">The real apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p>
+        </div>
+        <div class="col">
+          <h3>Android</h3>
+          <span class="soon">Coming soon</span>
+          <p class="body">A clean built-in browser for each site.</p>
+          <p class="body">Inside the real apps, a feed guard presses &ldquo;Skip ad&rdquo; and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
+        </div>
+        <div class="col">
+          <h3>Chrome and Mac</h3>
+          <span class="soon">Coming soon</span>
+          <p class="body">The same rules, on a laptop.</p>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label="Privacy">
+      <div class="g priv">
+        <p class="label">Privacy</p>
+        <p class="big">You log in to the real sites and apps, never inside Idyll. No account. Nothing leaves your phone. Zero trackers.</p>
+      </div>
+    </section>
+
+    <section class="free" aria-labelledby="f-h">
+      <div class="g">
+        <h2 id="f-h"><span>Free,</span><span class="indent">for good<span class="red">.</span></span></h2>
+        <p class="body text">No subscription. No trial that turns into one. No ads. No data sold.</p>
+        <p class="body text2">Idyll will never charge. A tool for being sold to less should not be for sale itself. That was settled first, before anything else was built.</p>
+      </div>
+    </section>
+
+    <section aria-label="The honest limit">
+      <div class="g limit">
+        <p class="label">The honest limit</p>
+        <p class="body">No app can change what is inside the official YouTube or Instagram apps on iPhone. Apple keeps apps sealed off from each other. Anyone claiming otherwise ships a modified copy, which can get accounts flagged.</p>
+        <p class="body">So Idyll cleans the websites, and gives the apps a daily limit instead.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="g">
+      <div class="rule2" aria-hidden="true"></div>
+      <div><div class="mini" role="img" aria-label="Idyll cygnet mark"></div></div>
+      <div class="small"><b>Idyll</b><br>Social without the scroll</div>
+      <div class="small">Every platform is coming soon.<br>No download link yet, no mailing list.</div>
+      <div class="small">Free. No account.<br>Nothing leaves your phone.</div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

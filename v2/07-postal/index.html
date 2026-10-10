@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="A letter about Idyll: social without the scroll. Free, for good. Coming soon.">
+<link rel="icon" type="image/png" href="../../img/favicon-32.png">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+:root{
+  --desk:#3d4a41;
+  --env:#f4eee0;
+  --paper:#fbf8f0;
+  --text:#2a2620;
+  --soft:#6b6457;
+  --pen:#23355a;
+  --red:#b8443a;
+  --blue:#2b4a7c;
+  --serif:"Timeless Serif", "Iowan Old Style", Georgia, serif;
+  --sans:"Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono:"Paper Mono", ui-monospace, Menlo, monospace;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .33 0 0 0 0 .22 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --envw:min(880px, calc(100vw - 32px));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  background-color:var(--desk);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(255,240,210,.10), transparent 70%),
+    var(--noise);
+  color:var(--text);
+  font-family:var(--serif);
+  overflow-x:hidden;
+  padding:clamp(20px,5vw,72px) 16px clamp(48px,7vw,96px);
+}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+
+.desk{width:var(--envw);margin:0 auto;position:relative}
+
+/* ---------- envelope ---------- */
+.envelope{
+  position:relative;z-index:2;
+  width:100%;
+  aspect-ratio:1.62/1;
+  padding:12px;
+  border-radius:3px;
+  background:repeating-linear-gradient(-45deg,
+    var(--red) 0 16px, var(--env) 16px 24px, var(--blue) 24px 40px, var(--env) 40px 48px);
+  box-shadow:0 1px 1px rgba(0,0,0,.25), 0 18px 30px -12px rgba(0,0,0,.55), 0 50px 80px -40px rgba(0,0,0,.5);
+  transform:rotate(-1.2deg);
+}
+.env-in{
+  position:relative;height:100%;
+  background-color:var(--env);
+  background-image:
+    linear-gradient(170deg, rgba(255,255,255,.4), transparent 40%),
+    var(--noise);
+  padding:clamp(16px,3.4vw,36px) clamp(16px,3.6vw,40px);
+  display:grid;
+  grid-template-columns:1fr auto;
+  grid-template-rows:auto 1fr;
+  gap:0 16px;
+}
+.from{font-family:var(--sans);font-size:clamp(11px,1.25vw,13px);line-height:1.45;color:var(--soft)}
+.from b{font-family:var(--serif);font-weight:500;font-size:1.35em;color:var(--text);display:block;letter-spacing:-.01em}
+.airmail{
+  display:inline-block;margin-top:clamp(10px,1.8vw,18px);
+  font-family:var(--sans);font-weight:600;font-size:clamp(10px,1.1vw,12px);letter-spacing:.06em;
+  color:var(--blue);border:1.5px solid var(--blue);padding:4px 9px 5px;border-radius:2px;
+  background:rgba(255,255,255,.35);
+}
+.airmail i{font-family:var(--serif);font-weight:400;letter-spacing:0;font-size:1.2em;margin-left:1px}
+
+.franking{--w:132px;--h:156px;position:relative;grid-column:2;grid-row:1 / span 2;align-self:start}
+.stamp{
+  position:relative;width:var(--w);height:var(--h);
+  padding:12px 12px 10px;
+  background:#fffcf4;
+  -webkit-mask:
+    linear-gradient(#000 0 0) center/calc(100% - 10px) calc(100% - 10px) no-repeat,
+    radial-gradient(circle at 50% 50%, transparent 3.6px, #000 4px) -6px -6px/12px 12px;
+  mask:
+    linear-gradient(#000 0 0) center/calc(100% - 10px) calc(100% - 10px) no-repeat,
+    radial-gradient(circle at 50% 50%, transparent 3.6px, #000 4px) -6px -6px/12px 12px;
+  transform:rotate(2.5deg);
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));
+}
+.stamp-in{
+  height:100%;display:flex;flex-direction:column;
+  background:#efe6d2;border:1px solid rgba(80,60,30,.25);
+  padding:5px;
+}
+.stamp img{display:block;width:100%;aspect-ratio:1;object-fit:cover}
+.stamp .den{display:flex;justify-content:space-between;align-items:baseline;margin-top:auto;padding:0 2px;line-height:1}
+.stamp .den b{font-style:italic;font-weight:500;font-size:22px;color:var(--red)}
+.stamp .den span{font-family:var(--sans);font-size:9px;letter-spacing:.08em;color:var(--soft);font-weight:600}
+.postmark{
+  --pm:clamp(210px,28vw,330px);
+  position:absolute;left:calc(var(--pm) / -3 + 6px);top:calc(var(--h) - var(--pm) / 3 - 8px);
+  width:var(--pm);height:auto;
+  transform:rotate(-11deg);
+  mix-blend-mode:multiply;
+  color:#2b2b3a;opacity:.72;
+  pointer-events:none;
+}
+
+.to{
+  grid-column:1;grid-row:2;align-self:end;
+  margin:0 0 clamp(2px,2vw,24px) clamp(0px,16%,160px);
+  font-style:italic;color:var(--pen);
+  font-size:clamp(17px,2.5vw,27px);line-height:1.38;
+}
+.to .you{font-size:1.75em;line-height:1;display:block;margin-bottom:.12em;font-weight:400;letter-spacing:-.01em}
+.to .line{display:block;border-bottom:1px solid rgba(35,53,90,.18);padding-bottom:1px;width:max-content;max-width:100%}
+
+/* ---------- the letter ---------- */
+.letter{
+  position:relative;z-index:1;
+  width:min(720px, calc(100% - 28px));
+  margin:-96px auto 0;
+  padding:calc(96px + clamp(28px,5vw,64px)) clamp(22px,6.5vw,80px) clamp(36px,6vw,72px);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(180deg, transparent calc(33.3% - 1px), rgba(90,70,40,.10) 33.3%, rgba(255,255,255,.7) calc(33.3% + 1px), transparent calc(33.3% + 14px)),
+    linear-gradient(180deg, transparent calc(66.6% - 1px), rgba(90,70,40,.10) 66.6%, rgba(255,255,255,.7) calc(66.6% + 1px), transparent calc(66.6% + 14px)),
+    var(--noise);
+  box-shadow:0 1px 1px rgba(0,0,0,.18), 0 22px 40px -18px rgba(0,0,0,.55);
+  transform:rotate(.5deg);
+  font-size:clamp(17.5px,1.55vw,19.5px);
+  line-height:1.62;
+}
+@media (prefers-reduced-motion:no-preference){
+  .letter{animation:slide 1.5s cubic-bezier(.22,.75,.18,1) .45s both}
+  @keyframes slide{
+    from{transform:translateY(calc(var(--envw) * -.38)) rotate(0deg)}
+    to{transform:translateY(0) rotate(.5deg)}
+  }
+}
+.letterhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:clamp(28px,4vw,44px)}
+.letterhead .mark{width:58px;height:36px;background:#b9ab8f;-webkit-mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;opacity:.9}
+.letterhead .date{font-style:italic;color:var(--pen);font-size:1.05em;text-align:right;line-height:1.3}
+.letterhead .date small{display:block;font-style:normal;font-family:var(--sans);font-size:12px;color:var(--soft);letter-spacing:.02em}
+
+.letter h1{font-weight:400;font-style:italic;color:var(--pen);font-size:clamp(30px,3.6vw,40px);letter-spacing:-.015em;line-height:1.1;margin:0 0 .6em}
+.letter h1 span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.letter p{margin:0 0 1.05em;hyphens:manual}
+.letter p.open::first-line{}
+.hand{font-style:italic;color:var(--pen)}
+
+.struck{
+  margin:1.4em 0 1.6em;padding:1.1em 1.2em 1em;
+  border-left:2px solid rgba(184,68,58,.35);
+  background:rgba(184,68,58,.04);
+  font-size:.95em;line-height:1.55;
+}
+.struck dt{font-style:italic;color:var(--pen);font-size:1.02em}
+.struck dd{margin:0 0 .55em}
+.struck s{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:1.7px;color:#5a5348}
+.struck .note{font-style:italic;color:var(--red);font-size:.92em;margin-top:.3em;display:block;transform:rotate(-1deg);transform-origin:left}
+
+.kept{font-style:italic;color:var(--pen)}
+
+.sign{margin-top:1.8em;display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.sign .love{display:block;font-style:italic;color:var(--pen)}
+.sign .name{display:block;font-style:italic;color:var(--pen);font-size:2.4em;line-height:1;letter-spacing:-.02em;font-weight:300}
+.sign .swan{width:64px;height:38px;background:var(--pen);-webkit-mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;mask:url(../../img/cygnet-mark.svg) center/contain no-repeat;transform:rotate(-6deg) translateY(-6px);opacity:.85}
+
+.ps{
+  margin-top:2.2em;padding-top:1.2em;border-top:1px dashed rgba(90,70,40,.25);
+  font-style:italic;color:var(--pen);
+}
+.ps p{margin-bottom:.7em}
+.platforms{list-style:none;padding:0;margin:.6em 0 0;display:flex;flex-wrap:wrap;gap:10px 12px;font-style:normal}
+.platforms li{
+  font-family:var(--sans);font-size:14px;color:var(--text);
+  border:1px solid rgba(42,38,32,.25);border-radius:2px;padding:5px 10px 6px;
+  background:rgba(255,255,255,.5);
+}
+.platforms li span{font-family:var(--mono);font-size:10.5px;color:var(--red);margin-left:8px;letter-spacing:.02em}
+
+.footnote{
+  width:min(720px, calc(100% - 28px));margin:28px auto 0;
+  font-family:var(--sans);font-size:12.5px;color:rgba(240,233,216,.62);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 20px;
+}
+
+/* ---------- narrow ---------- */
+@media (max-width:640px){
+  .envelope{aspect-ratio:auto;padding:9px;
+    background:repeating-linear-gradient(-45deg, var(--red) 0 11px, var(--env) 11px 16px, var(--blue) 16px 27px, var(--env) 27px 32px);}
+  .env-in{grid-template-columns:1fr auto;grid-template-rows:auto auto;min-height:290px;padding:16px}
+  .franking{--w:96px;--h:120px}
+  .stamp{padding:10px 10px 8px}
+  .stamp .den b{font-size:17px}
+  .stamp .den span{font-size:7.5px}
+  .postmark{--pm:170px;top:calc(var(--h) - var(--pm) / 3 + 16px);left:calc(var(--pm) / -3 - 4px)}
+  .to{grid-column:1 / span 2;margin:70px 0 4px 4%}
+  .letter{margin-top:-60px;padding-top:calc(60px + 28px);width:calc(100% - 16px)}
+  .letterhead .mark{width:44px;height:28px}
+}
+@media (max-width:400px){
+  .to{margin-left:4%}
+}
+</style>
+</head>
+<body>
+
+<div class="desk">
+  <div class="envelope" role="img" aria-label="An airmail envelope addressed to you, with a perforated stamp showing the Idyll cygnet, valued free, and a round postmark reading free, for good, 2026.">
+    <div class="env-in">
+      <div class="from" aria-hidden="true">
+        <b>Idyll</b>
+        social without the scroll
+        <br>
+        <span class="airmail">BY AIRMAIL<i>, or better</i></span>
+      </div>
+
+      <div class="franking" aria-hidden="true">
+        <div class="stamp">
+          <div class="stamp-in">
+            <img src="../../img/icon.png" alt="" width="1024" height="1024">
+            <div class="den"><span>IDYLL</span><b>free</b></div>
+          </div>
+        </div>
+        <svg class="postmark" viewBox="0 0 300 200" aria-hidden="true">
+          <defs>
+            <path id="arcTop" d="M 50 100 A 50 50 0 0 1 150 100"/>
+            <path id="arcBot" d="M 42 100 A 58 58 0 0 0 158 100"/>
+          </defs>
+          <g fill="none" stroke="currentColor">
+            <circle cx="100" cy="100" r="68" stroke-width="2.4"/>
+            <circle cx="100" cy="100" r="62" stroke-width="1"/>
+            <path stroke-width="2.2" d="M174 74 q 15 -8 30 0 t 30 0 t 30 0 t 30 0"/>
+            <path stroke-width="2.2" d="M174 90 q 15 -8 30 0 t 30 0 t 30 0 t 30 0"/>
+            <path stroke-width="2.2" d="M176 106 q 15 -8 30 0 t 30 0 t 30 0 t 30 0"/>
+            <path stroke-width="2.2" d="M174 122 q 15 -8 30 0 t 30 0 t 30 0 t 30 0"/>
+          </g>
+          <g fill="currentColor" font-family="Timeless Sans, Helvetica, sans-serif" font-weight="600" letter-spacing="2.2" font-size="11.5">
+            <text><textPath href="#arcTop" startOffset="50%" text-anchor="middle">FREE, FOR GOOD</textPath></text>
+            <text font-size="10" letter-spacing="3"><textPath href="#arcBot" startOffset="50%" text-anchor="middle">IDYLL POST</textPath></text>
+          </g>
+          <text x="100" y="110" text-anchor="middle" fill="currentColor" font-family="Timeless Serif, Georgia, serif" font-size="27" font-weight="500">2026</text>
+          <line x1="70" y1="120" x2="130" y2="120" stroke="currentColor" stroke-width="1"/>
+          <line x1="70" y1="84" x2="130" y2="84" stroke="currentColor" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <div class="to" aria-hidden="true">
+        <span class="you">you,</span>
+        <span class="line">who only went in to reply to one message,</span>
+        <span class="line">still on the sofa an hour later,</span>
+        <span class="line">somewhere mid-scroll</span>
+      </div>
+    </div>
+  </div>
+
+  <article class="letter" aria-labelledby="dear">
+    <div class="letterhead">
+      <span class="mark" aria-hidden="true"></span>
+      <p class="date">Autumn, 2026<small>Idyll: social without the scroll</small></p>
+    </div>
+
+    <h1 id="dear">Dear you,<span> a letter about Idyll, social without the scroll</span></h1>
+
+    <p>I’ve been meaning to write. You know when you open Instagram to answer one message, and twenty minutes later you’re watching a stranger make pasta in a field? I made something about that. It’s called Idyll, and it’s social without the scroll.</p>
+
+    <p>It takes the ads, the Shorts, the Reels and the feeds that decide what you watch next out of YouTube, Instagram, Facebook and X. I went through them with a red pen:</p>
+
+    <dl class="struck">
+      <dt>YouTube</dt>
+      <dd><s>video ads</s>, <s>Shorts</s>, <s>the recommended home feed</s>, <s>Up next</s></dd>
+      <dt>Instagram</dt>
+      <dd><s>sponsored posts</s>, <s>the Reels feed</s>, <s>the Explore grid</s></dd>
+      <dt>Facebook</dt>
+      <dd><s>Reels</s>, <s>Watch</s>, <s>the algorithmic feed</s></dd>
+      <dt>X</dt>
+      <dd><s>For you</s>, <s>promoted posts</s>, <s>trends</s>, <s>who to follow</s>
+        <span class="note">(that felt good)</span></dd>
+    </dl>
+
+    <p>What stays is the reason you went in. <span class="kept">Your messages. Search. Whatever a friend sends you</span>: if Sam sends you a video, you get that one video, and the feed after it never turns up. Your YouTube subscriptions stay, X Following stays, your Facebook friends stay in order, and so do your groups.</p>
+
+    <p>On your iPhone, it’s a Safari content blocker that tidies the websites. Safari applies the rules itself, and iOS will show you that Idyll can’t read or send anything from the pages you visit. If you like, Idyll Plus also skips video ads and turns Shorts back into normal videos. The apps themselves get a daily allowance through Screen Time: they work as usual, notifications and all, until your minutes run out, and then they rest until midnight.</p>
+
+    <p>On Android you get a clean built-in browser for each site, and a feed guard inside the real apps that presses “Skip ad” for you and stops the swipe to the next Short or Reel. The one your friend sent still plays. On Chrome and a Mac, the same rules work on your laptop.</p>
+
+    <p>A word on privacy, because you’d ask. You log in to the real sites and apps, never inside Idyll. There’s no account. Nothing leaves your phone. There are no trackers, not one.</p>
+
+    <p>And I should be honest about the limits, because a friend would be. No app can change what’s inside the official YouTube or Instagram apps on an iPhone; Apple keeps apps sealed off from each other. Anyone who says otherwise is shipping a modified copy, and that can get your account flagged. So Idyll cleans the websites and gives the apps a daily limit instead.</p>
+
+    <p>Last thing, and my favourite: <span class="hand">it’s free, for good.</span> No subscription, no trial that turns into one, no ads, no data sold. Idyll will never charge you. That was the first decision I made, and the easiest.</p>
+
+    <p class="hand">Write back soon. Or better, message me. I’ll actually see it.</p>
+
+    <div class="sign">
+      <div>
+        <span class="love">With love,</span>
+        <span class="name">Idyll</span>
+      </div>
+      <span class="swan" aria-hidden="true"></span>
+    </div>
+
+    <div class="ps">
+      <p>P.S. It isn’t ready to send just yet, so there’s nothing to download. It’s on its way to:</p>
+      <ul class="platforms">
+        <li>iPhone<span>coming soon</span></li>
+        <li>Android<span>coming soon</span></li>
+        <li>Chrome<span>coming soon</span></li>
+        <li>Mac<span>coming soon</span></li>
+      </ul>
+    </div>
+  </article>
+
+  <p class="footnote"><span>Idyll. Social without the scroll.</span><span>Free, for good.</span></p>
+</div>
+
+</body>
+</html>

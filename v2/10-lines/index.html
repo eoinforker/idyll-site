@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll: social without the scroll. It takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for. Free, for good.">
+<link rel="icon" type="image/png" href="../../img/favicon-32.png">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+  :root {
+    --klein: #0b2a9e;
+    --klein-deep: #071f7a;
+    --foam: #f3eee2;
+    --paper: #f2ede2;
+    --ink: #13183a;
+    --ink-soft: #4a4f6b;
+    --rule: rgba(19, 24, 58, 0.16);
+    --serif: "Timeless Serif", "Iowan Old Style", Georgia, serif;
+    --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono: "Paper Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --gutter: clamp(20px, 5vw, 72px);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+  /* ---------- Hero: the lake ---------- */
+  .lake {
+    position: relative;
+    height: 100vh;
+    height: 100svh;
+    min-height: 640px;
+    max-height: 1100px;
+    background: var(--klein);
+    color: var(--foam);
+    overflow: hidden;
+  }
+  .lake canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .sky {
+    position: relative;
+    z-index: 1;
+    padding: clamp(22px, 3.2vw, 40px) var(--gutter) 0;
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 340px);
+    align-items: end;
+    gap: 24px 48px;
+  }
+  .topline {
+    grid-column: 1 / -1;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    opacity: 0.82;
+    margin-bottom: clamp(28px, 7vh, 88px);
+  }
+  .wordmark {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 360;
+    font-size: clamp(76px, 13vw, 196px);
+    line-height: 0.82;
+    letter-spacing: -0.035em;
+  }
+  .wordmark em { font-style: italic; font-weight: 300; }
+  .sky p {
+    margin: 0 0 0.6em;
+    font-family: var(--serif);
+    font-size: clamp(19px, 1.7vw, 24px);
+    line-height: 1.3;
+    font-weight: 380;
+  }
+  .sky p i { font-style: italic; }
+  .caption {
+    position: absolute; z-index: 1;
+    left: var(--gutter); right: var(--gutter); bottom: clamp(18px, 3vh, 30px);
+    display: flex; justify-content: space-between; gap: 16px;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.02em;
+    color: var(--foam); opacity: 0.78;
+    pointer-events: none;
+  }
+  .caption span { background: var(--klein); padding: 2px 6px; margin: 0 -6px; }
+  .caption span:last-child { text-align: right; }
+
+  /* ---------- Content ---------- */
+  main { padding: 0 var(--gutter); }
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: 16px clamp(24px, 4vw, 64px);
+    padding: clamp(56px, 9vw, 120px) 0;
+    border-top: 1px solid var(--rule);
+  }
+  .row:first-child { border-top: 0; }
+  .label {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    color: var(--klein);
+    padding-top: 0.5em;
+  }
+  .lede {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 340;
+    font-size: clamp(30px, 4.3vw, 60px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    max-width: 17em;
+    text-wrap: balance;
+  }
+  .lede em { font-style: italic; color: var(--klein); }
+  .body { max-width: 34em; }
+  .body p { margin: 0 0 1em; }
+  .body p:last-child { margin-bottom: 0; }
+  h2 {
+    margin: 0 0 0.55em;
+    font-family: var(--serif);
+    font-weight: 380;
+    font-size: clamp(28px, 3.1vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  /* The ledger: what goes is struck through with a single still line */
+  .ledger { width: 100%; border-collapse: collapse; }
+  .ledger caption { text-align: left; }
+  .ledger th, .ledger td {
+    text-align: left; vertical-align: top;
+    padding: 18px 24px 20px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ledger thead th {
+    font-family: var(--mono); font-weight: 400; font-size: 12px;
+    color: var(--ink-soft); padding-top: 0; padding-bottom: 12px;
+  }
+  .ledger tbody th {
+    font-family: var(--serif); font-weight: 400; font-size: clamp(22px, 2.2vw, 28px);
+    line-height: 1.15; width: 22%;
+  }
+  .ledger td { width: 39%; }
+  .ledger ul { list-style: none; margin: 0; padding: 0; }
+  .ledger li { margin: 0 0 4px; }
+  .gone li {
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--klein);
+    text-decoration-thickness: 1px;
+  }
+  .stays li { color: var(--ink); }
+  .note { font-size: 15px; color: var(--ink-soft); margin-top: 22px; max-width: 40em; }
+
+  .places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px clamp(24px, 3vw, 48px); }
+  .places h3 {
+    margin: 0 0 10px;
+    font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.1;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  }
+  .soon {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.02em;
+    color: var(--klein);
+    border: 1px solid currentColor; border-radius: 2px;
+    padding: 1px 6px 2px;
+    white-space: nowrap;
+  }
+  .places p { margin: 0 0 0.8em; font-size: 16px; }
+
+  .honest {
+    background: var(--klein); color: var(--foam);
+    margin: 0 calc(var(--gutter) * -1);
+    padding-left: var(--gutter); padding-right: var(--gutter);
+    border-top: 0;
+  }
+  .honest .label { color: var(--foam); opacity: 0.8; }
+  .honest + .row { border-top: 0; }
+
+  .free {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 330;
+    font-size: clamp(54px, 10vw, 150px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+  .free em { font-style: italic; color: var(--klein); }
+
+  footer {
+    padding: 48px var(--gutter) 56px;
+    border-top: 1px solid var(--rule);
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    font-size: 15px; color: var(--ink-soft);
+  }
+  footer img { width: 44px; height: 44px; border-radius: 22.5%; display: block; }
+  footer strong { font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--ink); }
+  footer .end { margin-left: auto; font-family: var(--mono); font-size: 12px; }
+
+  @media (max-width: 900px) {
+    .places { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .sky { grid-template-columns: 1fr; }
+    .topline { margin-bottom: 36px; gap: 16px; }
+    .topline span:first-child { max-width: 15em; }
+    .places { margin-top: 28px; }
+    .row { grid-template-columns: 1fr; }
+    .label { padding-top: 0; }
+    .ledger thead { display: none; }
+    .ledger, .ledger tbody, .ledger tr, .ledger th, .ledger td { display: block; width: auto; }
+    .ledger tr { border-bottom: 1px solid var(--rule); padding: 18px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+    .ledger tbody th { grid-column: 1 / -1; border: 0; padding: 0; }
+    .ledger td { border: 0; padding: 0; }
+    .caption span:last-child { display: none; }
+    footer .end { margin-left: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="lake" aria-label="Idyll">
+  <canvas id="water" aria-hidden="true"></canvas>
+  <div class="sky">
+    <div class="topline"><span>For iPhone, Android, Chrome and Mac</span><span>Coming soon</span></div>
+    <h1 class="wordmark">Idyll</h1>
+    <div>
+      <p>Social without the scroll.</p>
+      <p><i>The ads, Shorts, Reels and endless feeds go quiet. What you came for stays.</i></p>
+    </div>
+  </div>
+  <div class="caption"><span>Still water</span><span>YouTube, Instagram, Facebook and X, with the feed taken out</span></div>
+</header>
+
+<main>
+  <section class="row" aria-labelledby="lede">
+    <div class="label">What it is</div>
+    <p class="lede" id="lede">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps <em>what people came for</em>.</p>
+  </section>
+
+  <section class="row" aria-labelledby="ledger-h">
+    <div class="label">Site by site</div>
+    <div>
+      <h2 id="ledger-h">What goes, and what stays</h2>
+      <table class="ledger">
+        <thead><tr><th scope="col">Site</th><th scope="col">Taken out</th><th scope="col">Left alone</th></tr></thead>
+        <tbody>
+          <tr>
+            <th scope="row">YouTube</th>
+            <td class="gone"><ul><li>Video ads</li><li>Shorts</li><li>The recommended home feed</li><li>Up next</li></ul></td>
+            <td class="stays"><ul><li>Your subscriptions</li><li>Search</li><li>The video a friend sends</li></ul></td>
+          </tr>
+          <tr>
+            <th scope="row">Instagram</th>
+            <td class="gone"><ul><li>Sponsored posts</li><li>The Reels feed</li><li>The Explore grid</li></ul></td>
+            <td class="stays"><ul><li>Messages</li><li>Search</li><li>The Reel a friend sends</li></ul></td>
+          </tr>
+          <tr>
+            <th scope="row">Facebook</th>
+            <td class="gone"><ul><li>Reels</li><li>Watch</li><li>The algorithmic feed</li></ul></td>
+            <td class="stays"><ul><li>Friends, in order</li><li>Groups</li><li>Messages</li></ul></td>
+          </tr>
+          <tr>
+            <th scope="row">X</th>
+            <td class="gone"><ul><li>For you</li><li>Promoted posts</li><li>Trends</li><li>Who to follow</li></ul></td>
+            <td class="stays"><ul><li>Following</li><li>Messages</li><li>Search</li></ul></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">When a friend sends you something, it plays. One video, not the feed after it.</p>
+    </div>
+  </section>
+
+  <section class="row" aria-labelledby="where-h">
+    <div class="label">Where it works</div>
+    <div>
+      <h2 id="where-h">On your phone, and on your laptop</h2>
+      <div class="places">
+        <div>
+          <h3>iPhone <span class="soon">Coming soon</span></h3>
+          <p>A Safari content blocker cleans the websites. Safari applies the rules itself, and iOS shows that the blocker can't read or send anything from the pages you visit.</p>
+          <p>Idyll Plus, an optional extension, also skips video ads and turns Shorts into normal videos.</p>
+          <p>The real apps get a daily allowance through Screen Time. They work as usual, notifications and all, until the minutes run out. Then they pause until midnight.</p>
+        </div>
+        <div>
+          <h3>Android <span class="soon">Coming soon</span></h3>
+          <p>A clean built-in browser for each site.</p>
+          <p>Inside the real apps, a feed guard presses "Skip ad" for you and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
+        </div>
+        <div>
+          <h3>Chrome and Mac <span class="soon">Coming soon</span></h3>
+          <p>The same rules on a laptop, so the quiet follows you to the bigger screen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row honest" aria-labelledby="honest-h">
+    <div class="label">The honest part</div>
+    <div class="body">
+      <h2 id="honest-h">What no app can do on iPhone</h2>
+      <p>No app can change what's inside the official YouTube or Instagram apps on iPhone. Apple keeps apps sealed off from each other. Anyone who says otherwise is shipping a modified copy of those apps, and that can get your account flagged.</p>
+      <p>So Idyll does the two things that are possible and safe: it cleans the websites, and it gives the apps a daily limit.</p>
+    </div>
+  </section>
+
+  <section class="row" aria-labelledby="privacy-h">
+    <div class="label">Privacy</div>
+    <div class="body">
+      <h2 id="privacy-h">You never log in to Idyll</h2>
+      <p>You log in to the real sites and apps, the way you always have. Idyll has no account to make, nothing leaves your phone, and there are no trackers. None.</p>
+    </div>
+  </section>
+
+  <section class="row" aria-labelledby="free-h">
+    <div class="label">What it costs</div>
+    <div>
+      <p class="free" id="free-h">Free, <em>for good.</em></p>
+      <div class="body" style="margin-top:32px">
+        <p>No subscription. No trial that turns into one. No ads, and no data sold. Idyll will never charge, because a quieter phone shouldn't be something you pay rent on.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <img src="../../img/icon.png" alt="The Idyll icon: a cygnet pressed into warm paper">
+  <strong>Idyll</strong>
+  <span>Social without the scroll.</span>
+  <span class="end">Coming soon to iPhone, Android, Chrome and Mac</span>
+</footer>
+
+<script>
+(function () {
+  const canvas = document.getElementById('water');
+  const ctx = canvas.getContext('2d');
+  const hero = canvas.parentElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const FOAM = '243, 238, 226';
+
+  // ---- Bird mask, sampled from the brand silhouette ----
+  const MW = 640, MH = 380;
+  let mask = null, maskBottom = MH - 1;
+  const img = new Image();
+  img.onload = () => {
+    const off = document.createElement('canvas');
+    off.width = MW; off.height = MH;
+    const o = off.getContext('2d');
+    o.drawImage(img, 0, 0, MW, MH);
+    const d = o.getImageData(0, 0, MW, MH).data;
+    mask = new Uint8Array(MW * MH);
+    let bottom = 0;
+    for (let i = 0; i < MW * MH; i++) {
+      if (d[i * 4 + 3] > 110) { mask[i] = 1; bottom = Math.max(bottom, (i / MW) | 0); }
+    }
+    maskBottom = bottom;
+    layout(); kick();
+  };
+  img.src = '../../img/cygnet-mark.svg';
+
+  // ---- Layout ----
+  let W = 0, H = 0, dpr = 1, rows = [], horizon = 0, bird = null, wl = 0;
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  function inBird(x, y) {
+    if (!mask || !bird) return 0;
+    const u = ((x - bird.x) / bird.w * MW) | 0;
+    const v = ((y - bird.y) / bird.h * MH) | 0;
+    if (u < 0 || v < 0 || u >= MW || v >= MH) return 0;
+    return mask[v * MW + u];
+  }
+  function runsAt(y) {
+    const out = [];
+    if (!bird) return out;
+    let start = -1;
+    for (let x = bird.x - 2; x <= bird.x + bird.w + 2; x += 1) {
+      const m = inBird(x, y);
+      if (m && start < 0) start = x;
+      if (!m && start >= 0) { if (x - start > 1.5) out.push([start, x]); start = -1; }
+    }
+    return out;
+  }
+
+  function layout() {
+    const r = hero.getBoundingClientRect();
+    W = r.width; H = r.height;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    const narrow = W < 760;
+    horizon = H * (narrow ? 0.5 : 0.46);
+    const lakeH = H - horizon;
+    const n = Math.round(lakeH / (narrow ? 4.2 : 4.8));
+
+    // Bird size and place: sits right of centre, on a row two thirds down the lake
+    const bw = narrow ? W * 0.78 : Math.min(W * 0.34, 520);
+    const bh = bw * MH / MW;
+    wl = horizon + lakeH * (narrow ? 0.62 : 0.6);
+    const bx = narrow ? (W - bw) * 0.5 : W * 0.56 - bw * 0.5;
+    const by = wl - bh * (maskBottom + 1) / MH;
+    bird = { x: bx, y: by, w: bw, h: bh, cx: bx + bw * 0.55 };
+
+    seed = 11;
+    rows = [];
+    for (let i = 0; i < n; i++) {
+      const s = i / (n - 1);
+      const y = horizon + lakeH * (0.5 * s + 0.5 * s * s) + 2;
+      const persp = 0.35 + 0.65 * ((y - horizon) / lakeH);
+      // gaps that make the line feel like a busy feed: each closes at its own moment
+      const gaps = [];
+      let x = -500 - rnd() * 80;
+      while (x < W + 500) {
+        x += 10 + rnd() * rnd() * 140;
+        const g = 3 + rnd() * 26;
+        gaps.push([x, g, rnd()]);
+        x += g;
+      }
+      rows.push({ y, persp, gaps, spd: (rnd() - 0.3) * 140, ph: rnd() * 6.28, bird: [], refl: [] });
+    }
+    // spacing for bird line weight
+    for (let i = 0; i < n; i++) {
+      const a = rows[Math.max(0, i - 1)].y, b = rows[Math.min(n - 1, i + 1)].y;
+      rows[i].gap = (b - a) / 2 || 3;
+    }
+    if (mask) {
+      const reflDepth = bh * 0.7;
+      for (const row of rows) {
+        if (row.y >= bird.y && row.y <= wl + 0.5) row.bird = runsAt(row.y);
+        else if (row.y > wl && row.y < wl + reflDepth) {
+          const mirrored = wl - (row.y - wl) * 1.25;
+          row.refl = runsAt(mirrored);
+          row.reflFade = 1 - (row.y - wl) / reflDepth;
+        }
+      }
+    }
+  }
+
+  // ---- Motion ----
+  const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  let t0 = performance.now(), running = false, visible = true, raf = 0;
+  let scrollCalm = 0;
+
+  function calmAt(now) {
+    if (reduce.matches) return 1;
+    const tc = smooth(0.9, 6.2, (now - t0) / 1000);
+    return Math.max(tc, scrollCalm);
+  }
+
+  function dy(x, row, i, t, a, c) {
+    const p = row.persp;
+    // calm: long, low swell
+    let y = (Math.sin(x * 0.010 + t * 0.55 + i * 0.21) * 0.9 + Math.sin(x * 0.0037 - t * 0.27 + i * 0.07) * 0.8) * p * (0.6 + 0.4 * c);
+    // ripple rings around where the bird sits
+    if (bird && c > 0.2) {
+      const ex = (x - bird.cx) / 1.0, ey = (row.y - wl) * 3.2;
+      const dist = Math.sqrt(ex * ex + ey * ey);
+      if (dist < 420) y += Math.sin(dist * 0.07 - t * 1.4) * 1.6 * p * (1 - dist / 420) * c;
+    }
+    // agitation: the feed
+    if (a > 0.001) {
+      y += (Math.sin(x * 0.09 + i * 1.7 + t * 9) * 0.6 + Math.sin(x * 0.027 - t * 4.3 + row.ph) * 1.0 + (Math.random() - 0.5) * 1.3) * 7 * p * a;
+    }
+    return y;
+  }
+
+  function draw(now) {
+    const t = reduce.matches ? 2.0 : (now - t0) / 1000;
+    const c = calmAt(now);
+    const a = Math.pow(1 - c, 1.6);
+    const bv = smooth(0.35, 0.95, c);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineCap = 'butt';
+    ctx.lineJoin = 'round';
+    const step = W < 760 ? 5 : 4;
+
+    // base water lines
+    ctx.strokeStyle = `rgba(${FOAM}, ${0.62 + 0.1 * c})`;
+    ctx.lineWidth = 0.75;
+    ctx.beginPath();
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const off = (row.spd * t) % 400 * a;
+      let gi = 0, pen = false;
+      for (let x = -step; x <= W + step; x += step) {
+        // find whether x falls in an open gap
+        let gap = false;
+        const xs = x - off;
+        while (gi < row.gaps.length && row.gaps[gi][0] + row.gaps[gi][1] < xs) gi++;
+        if (gi < row.gaps.length) {
+          const g = row.gaps[gi];
+          if (xs >= g[0] && g[2] < a * 1.15) gap = true;
+        }
+        if (gap) { pen = false; continue; }
+        const y = row.y + dy(x, row, i, t, a, c);
+        if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
+      }
+    }
+    ctx.stroke();
+
+    if (!mask || bv <= 0.001) return;
+
+    // the bird: the same lines, swelling to fill the silhouette
+    ctx.strokeStyle = `rgba(${FOAM}, ${0.95 * bv})`;
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row.bird.length) continue;
+      ctx.lineWidth = 0.75 + (row.gap * 0.72 - 0.75) * bv;
+      ctx.beginPath();
+      for (const [x0, x1] of row.bird) {
+        let x = x0;
+        ctx.moveTo(x, row.y + dy(x, row, i, t, a, c));
+        while (x < x1) { x = Math.min(x1, x + 3); ctx.lineTo(x, row.y + dy(x, row, i, t, a, c)); }
+      }
+      ctx.stroke();
+    }
+
+    // the reflection: broken, drifting with the water
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row.refl.length) continue;
+      const shift = Math.sin(i * 0.9 + t * 1.1) * 3.5 * row.persp + Math.sin(i * 0.37 - t * 0.6) * 2;
+      ctx.strokeStyle = `rgba(${FOAM}, ${0.6 * bv * (0.35 + 0.65 * row.reflFade)})`;
+      ctx.lineWidth = 0.75 + (row.gap * 0.42 - 0.75) * bv;
+      ctx.beginPath();
+      for (const [x0, x1] of row.refl) {
+        const y = row.y + dy(x0, row, i, t, a, c);
+        ctx.moveTo(x0 + shift, y);
+        ctx.lineTo(x1 + shift, row.y + dy(x1, row, i, t, a, c));
+      }
+      ctx.stroke();
+    }
+  }
+
+  function frame() {
+    const now = performance.now();
+    raf = 0;
+    if (!running) return;
+    draw(now);
+    raf = requestAnimationFrame(frame);
+  }
+  function kick() {
+    if (reduce.matches) { running = false; draw(performance.now()); return; }
+    running = visible;
+    if (running && !raf) raf = requestAnimationFrame(frame);
+  }
+
+  new IntersectionObserver((entries) => {
+    visible = entries[0].isIntersecting;
+    if (!visible) running = false; else kick();
+  }).observe(hero);
+
+  window.addEventListener('scroll', () => {
+    scrollCalm = Math.max(scrollCalm, Math.min(1, window.scrollY / (H * 0.45 || 1)));
+  }, { passive: true });
+
+  let rt = 0;
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => { layout(); if (reduce.matches) draw(performance.now()); }, 120);
+  });
+  reduce.addEventListener && reduce.addEventListener('change', () => { layout(); kick(); });
+
+  layout();
+  kick();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Things-led: the icon is the hero, the app is shown tilted and real,
+   every section opens with a small glyph and a bold centred heading. */
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --ink: #1d1d1f;
+  --muted: #6e6e73;
+  --line: #e6e6ea;
+  --blue: #2f6fe4;
+  --lake: #2f6487;
+  --gone: #b8b8bd;
+  --sans: "Timeless Sans", -apple-system, system-ui, sans-serif;
+  --serif: "Timeless Serif", Georgia, serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-inline: 20px; }
+nav { display: flex; justify-content: space-between; align-items: center; padding-block: 18px; font-size: 14px; color: var(--muted); }
+nav .brand { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; }
+nav .brand img { width: 22px; height: 22px; border-radius: 5px; }
+nav div { display: flex; gap: 22px; }
+nav div a { color: var(--muted); }
+
+.center { text-align: center; }
+.hero { padding-block: 56px 0; }
+.icon { width: 132px; height: 132px; border-radius: 30px; box-shadow: 0 1px 1px rgba(0,0,0,.06), 0 14px 32px rgba(40, 32, 20, .18), 0 2px 4px rgba(40,32,20,.12); }
+h1 { margin: 22px 0 0; font: 700 44px/1.1 var(--sans); letter-spacing: -.02em; }
+.hero p { max-width: 27em; margin: 18px auto 0; color: #45454a; font-size: 19px; }
+.hero .link { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 18px; font-weight: 500; }
+.hero .link::after { content: "›"; font-size: 22px; line-height: 1; }
+
+/* The tilted strip of app, the Things signature. */
+.tilt { position: relative; height: 420px; margin-top: 40px; overflow: hidden; perspective: 1400px; }
+.sheet { position: absolute; left: 50%; top: 40px; width: 1180px; margin-left: -560px; display: grid; grid-template-columns: 300px 1fr; background: var(--card); border-radius: 18px; box-shadow: 0 40px 80px rgba(30, 30, 40, .14); transform: rotateX(38deg) rotateZ(-13deg); transform-origin: 50% 0; }
+.side { padding: 30px 26px; border-right: 1px solid var(--line); }
+.dots { display: flex; gap: 8px; margin-bottom: 26px; }
+.dots i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid #c9c9ce; }
+.side p { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; font: 600 24px/1 var(--sans); }
+.side p span { width: 24px; height: 24px; border-radius: 7px; flex: none; }
+.side p.off { color: var(--gone); text-decoration: line-through; font-weight: 500; }
+.main { padding: 34px 40px; }
+.main h3 { display: flex; align-items: center; gap: 12px; margin: 0; font: 700 34px/1.1 var(--sans); }
+.main h3 img { width: 34px; height: 34px; border-radius: 8px; }
+.main > p { margin: 10px 0 0; color: var(--muted); font-size: 20px; max-width: 28em; }
+.row { display: flex; align-items: center; gap: 14px; margin-top: 18px; font-size: 20px; }
+.row i { width: 20px; height: 20px; border-radius: 50%; border: 1.6px solid #c9c9ce; flex: none; }
+.row.kept i { border-color: var(--lake); background: var(--lake) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.4l2.6 2.6L13 6.4' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100%; }
+.row.gone { color: var(--gone); text-decoration: line-through; }
+
+section { padding-block: 88px; }
+.glyph { width: 40px; height: 40px; margin: 0 auto 12px; display: block; }
+h2 { margin: 0; font: 700 34px/1.15 var(--sans); letter-spacing: -.02em; }
+.lead { max-width: 30em; margin: 14px auto 0; color: #45454a; font-size: 18px; }
+.white { background: var(--card); }
+
+/* Devices together. */
+.devices { display: flex; justify-content: center; align-items: flex-end; gap: 26px; margin-top: 48px; }
+.phone { width: 210px; aspect-ratio: 9 / 19.3; border-radius: 34px; background: #111; padding: 8px; box-shadow: 0 24px 50px rgba(30,30,40,.16); flex: none; }
+.screen { height: 100%; border-radius: 27px; background: var(--card); overflow: hidden; padding: 30px 12px 10px; text-align: left; font-size: 11px; }
+.screen b { display: block; margin: 0 2px 8px; font-size: 18px; }
+.screen .group { background: var(--bg); border-radius: 10px; padding: 2px 10px; margin-bottom: 8px; }
+.tog { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); }
+.tog:last-child { border: 0; }
+.sw { width: 26px; height: 16px; border-radius: 8px; background: var(--lake); position: relative; flex: none; }
+.sw::after { content: ""; position: absolute; right: 2px; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+.msg { display: flex; gap: 8px; align-items: center; padding: 7px 2px; border-bottom: 1px solid var(--line); }
+.msg span { width: 26px; height: 26px; border-radius: 50%; background: #e3e0da; flex: none; }
+.msg em { display: block; font-style: normal; color: var(--muted); font-size: 10px; }
+.mac { width: 460px; border-radius: 12px; background: var(--card); box-shadow: 0 24px 50px rgba(30,30,40,.16); overflow: hidden; text-align: left; flex: none; }
+.bar { display: flex; align-items: center; gap: 6px; padding: 10px 12px; background: #ececef; border-bottom: 1px solid var(--line); }
+.bar i { width: 10px; height: 10px; border-radius: 50%; background: #d4d4d8; }
+.bar span { margin-left: 10px; flex: 1; padding: 3px 10px; border-radius: 6px; background: #fff; font-size: 11px; color: var(--muted); }
+.bar img { width: 16px; height: 16px; border-radius: 4px; }
+.page { padding: 18px 20px 22px; font-size: 12px; }
+.page b { font-size: 16px; }
+.subs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.subs div { aspect-ratio: 16 / 10; border-radius: 6px; background: linear-gradient(135deg, #e6e1d7, #d7d0c3); }
+.subs p { margin: 4px 0 0; font-size: 10.5px; color: var(--muted); }
+
+/* Platform cards. */
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 900px; margin: 44px auto 0; }
+.card { background: var(--card); border-radius: 16px; padding: 22px 14px 18px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.card svg { width: 64px; height: 48px; display: block; margin: 0 auto 10px; }
+.card h3 { margin: 0; font: 700 17px/1.2 var(--sans); }
+.card p { margin: 4px 0 12px; color: var(--muted); font-size: 13px; }
+.card span { display: inline-block; padding: 6px 12px; border-radius: 8px; background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 500; }
+
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px; text-align: left; }
+.three div { background: var(--bg); border-radius: 16px; padding: 22px; }
+.three h3 { margin: 0 0 6px; font: 700 17px/1.3 var(--sans); }
+.three p { margin: 0; color: var(--muted); font-size: 15.5px; }
+.free h2 { font: 400 52px/1.05 var(--serif); letter-spacing: -.02em; }
+footer { display: flex; justify-content: space-between; padding-block: 28px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+
+@media (max-width: 860px) {
+  .devices .mac { display: none; }
+  .cards { grid-template-columns: 1fr 1fr; }
+  .three { grid-template-columns: 1fr; }
+  .tilt { height: 300px; }
+  .sheet { transform: rotateX(38deg) rotateZ(-13deg) scale(.7); }
+}
+@media (max-width: 520px) { nav div { display: none; } .devices .phone:nth-child(2) { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><span class="brand"><img src="../../img/icon.png" alt="">Idyll</span><div><a href="#features">Features</a><a href="#private">Privacy</a><a href="#get">Get Idyll</a></div></nav>
+</div>
+
+<div class="hero center">
+  <img class="icon" src="../../img/icon.png" alt="The Idyll icon: a baby mute swan pressed into paper">
+  <h1>Idyll</h1>
+  <p>Idyll keeps your friends, your messages and your search, and quietly takes away the ads, Shorts, Reels and algorithmic feeds on YouTube, Instagram, Facebook and X.</p>
+  <a class="link" href="#features">See how it works</a>
+
+  <div class="tilt" aria-hidden="true">
+    <div class="sheet">
+      <div class="side">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <p><span style="background:#2f6487"></span>Messages</p>
+        <p><span style="background:#e9a23b"></span>Following</p>
+        <p><span style="background:#3d9a6b"></span>Subscriptions</p>
+        <p><span style="background:#8f7ec4"></span>Search</p>
+        <p class="off"><span style="background:#e2e2e6"></span>Reels</p>
+        <p class="off"><span style="background:#e2e2e6"></span>For you</p>
+      </div>
+      <div class="main">
+        <h3><img src="../../img/icon.png" alt="">Instagram, quietly</h3>
+        <p>Everything you open Instagram for, and nothing it keeps you there with.</p>
+        <div class="row kept"><i></i>Messages from friends</div>
+        <div class="row kept"><i></i>The reel your sister sent</div>
+        <div class="row kept"><i></i>Search, for the recipe you came for</div>
+        <div class="row gone"><i></i>The Reels feed</div>
+        <div class="row gone"><i></i>Sponsored posts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="white center" id="features">
+  <div class="wrap">
+    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><circle cx="15" cy="20" r="11" fill="#2f6487" opacity=".9"/><circle cx="25" cy="20" r="11" fill="#e9a23b" opacity=".85"/></svg>
+    <h2>Simply quieter</h2>
+    <p class="lead">Each site loses the parts built to keep you scrolling, and keeps the parts you came for. Within a minute of setting it up, your phone just feels calmer.</p>
+    <div class="devices" aria-hidden="true">
+      <div class="phone"><div class="screen">
+        <b>Idyll</b>
+        <div class="group">
+          <div class="tog">Ads and sponsored <span class="sw"></span></div>
+          <div class="tog">YouTube Shorts <span class="sw"></span></div>
+          <div class="tog">Reels <span class="sw"></span></div>
+          <div class="tog">Algorithmic feeds <span class="sw"></span></div>
+        </div>
+        <div class="group"><div class="tog">Instagram app, daily <strong>15 min</strong></div><div class="tog">YouTube app, daily <strong>20 min</strong></div></div>
+        <div class="group"><div class="tog">Used today <strong>9 of 15 min</strong></div></div>
+        <div class="group"><div class="tog">Safari blocker <strong style="color:#3d9a6b">On</strong></div><div class="tog">Idyll Plus <strong style="color:#6e6e73">Off</strong></div></div>
+      </div></div>
+      <div class="mac">
+        <div class="bar"><i></i><i></i><i></i><span>youtube.com/feed/subscriptions</span><img src="../../img/icon.png" alt=""></div>
+        <div class="page"><b>Subscriptions</b>
+          <div class="subs"><div></div><div></div><div></div></div>
+          <div class="subs"><p>Bread, slowly: a week of sourdough</p><p>Live at the Ulster Hall</p><p>How lino prints are made</p></div>
+        </div>
+      </div>
+      <div class="phone"><div class="screen">
+        <b>Messages</b>
+        <div class="msg"><span></span><div>Aoife<em>sent a reel</em></div></div>
+        <div class="msg"><span></span><div>Ciarán<em>dinner sunday?</em></div></div>
+        <div class="msg"><span></span><div>Niamh<em>look at this view</em></div></div>
+        <div class="msg"><span></span><div>Book club<em>chapter 9 done</em></div></div>
+        <div class="msg"><span></span><div>Tom<em>see you at 7</em></div></div>
+        <div class="msg"><span></span><div>Priya<em>sent a photo</em></div></div>
+        <div class="msg"><span></span><div>Five-a-side<em>who has the bibs</em></div></div>
+        <div class="msg"><span></span><div>Sam<em>ha, perfect</em></div></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="center" id="get">
+  <div class="wrap">
+    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="4" width="32" height="32" rx="9" fill="#d8412b"/><path d="M20 11v13m-6-5l6 6 6-6M13 29h14" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2>Get Idyll</h2>
+    <p class="lead">Free on every device, for good. No account, no subscription, nothing to unlock.</p>
+    <div class="cards">
+      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="22" y="4" width="20" height="40" rx="4" fill="none" stroke="#8e8e93" stroke-width="2"/></svg><h3>iPhone</h3><p>iOS 17 or later</p><span>Coming soon</span></div>
+      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="21" y="4" width="22" height="40" rx="5" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M28 8h8" stroke="#8e8e93" stroke-width="2" stroke-linecap="round"/></svg><h3>Android</h3><p>Android 8 or later</p><span>Coming soon</span></div>
+      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="6" y="8" width="52" height="34" rx="4" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M6 16h52" stroke="#8e8e93" stroke-width="2"/></svg><h3>Chrome</h3><p>Any computer</p><span>Coming soon</span></div>
+      <div class="card"><svg viewBox="0 0 64 48" aria-hidden="true"><rect x="12" y="6" width="40" height="28" rx="3" fill="none" stroke="#8e8e93" stroke-width="2"/><path d="M4 40h56" stroke="#8e8e93" stroke-width="2.5" stroke-linecap="round"/></svg><h3>Mac</h3><p>Safari, macOS 14 or later</p><span>Coming soon</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="white center" id="private">
+  <div class="wrap">
+    <svg class="glyph" viewBox="0 0 40 40" aria-hidden="true"><rect x="9" y="17" width="22" height="17" rx="5" fill="#3d9a6b"/><path d="M14 17v-4a6 6 0 0 1 12 0v4" stroke="#3d9a6b" stroke-width="3" fill="none"/></svg>
+    <h2>Private by design</h2>
+    <p class="lead">Idyll was built so that it never needs to see what you do.</p>
+    <div class="three">
+      <div><h3>It can’t read your pages</h3><p>On iPhone, Safari applies Idyll’s rules itself. iOS shows it can’t read or send anything from the pages you visit.</p></div>
+      <div><h3>You log in to the real thing</h3><p>In Safari or the real apps, never inside Idyll, so your password never passes through us.</p></div>
+      <div><h3>Nothing leaves your phone</h3><p>No account, no analytics, no servers that see what you watch.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="center free">
+  <div class="wrap">
+    <h2>Free, for good.</h2>
+    <p class="lead">No subscription, no trial that turns into one, no ads, no data sold. Every feature, on every phone, for everyone.</p>
+  </div>
+</section>
+
+<div class="wrap"><footer><span>Idyll</span><span>© 2026</span></footer></div>
+</body>
+</html>

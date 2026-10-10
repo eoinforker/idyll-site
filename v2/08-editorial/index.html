@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll</title>
+<meta name="description" content="On putting the phone down: an essay introducing Idyll, which takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Editorial: the landing page as a printed magazine feature.
+   Two "pages" of a quarterly, each with a running head and folio. */
+:root {
+  --paper: #f3eee4;
+  --sheet: #f8f4ec;
+  --ink: #1b1814;
+  --soft: #5d554b;
+  --rule: #cfc5b4;
+  --red: #9c2b1d;
+  --serif: "Timeless Serif", "Iowan Old Style", Georgia, serif;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(20px, 6vw, 96px);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 18px/1.55 var(--serif);
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+
+/* A sheet of paper, with a faint grain */
+.sheet {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  background: var(--sheet);
+  padding: 0 var(--pad);
+  box-shadow: 0 1px 0 rgba(60, 40, 10, .06), 0 30px 60px -40px rgba(60, 40, 10, .35);
+}
+.sheet::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: .32;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45  0 0 0 0 .38  0 0 0 0 .28  0 0 0 .18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+.sheet + .sheet { margin-top: clamp(28px, 4vw, 56px); }
+.sheet > * { position: relative; }
+
+/* Running heads and folios */
+.runhead, .folio {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font: 400 12px/1 var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+.runhead { padding: 28px 0 12px; border-bottom: 1px solid var(--ink); }
+.runhead em { font: italic 400 15px/1 var(--serif); letter-spacing: 0; text-transform: none; color: var(--ink); }
+.folio { padding: 18px 0 30px; border-top: 1px solid var(--rule); margin-top: 48px; }
+.folio b { font: 500 15px/1 var(--serif); letter-spacing: 0; color: var(--ink); }
+
+/* ---------- Opening spread ---------- */
+.opener { padding: clamp(40px, 7vw, 96px) 0 0; }
+.kicker {
+  font: 500 12px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase;
+  color: var(--red);
+  margin: 0 0 clamp(18px, 2.4vw, 30px);
+}
+h1 {
+  margin: 0;
+  font: 300 clamp(56px, 16.6vw, 236px)/.84 var(--serif);
+  letter-spacing: -.045em;
+  font-variation-settings: "wght" 300;
+  text-wrap: balance;
+  margin-left: -.05em;
+}
+h1 .it { font-style: italic; font-weight: 400; letter-spacing: -.035em; }
+h1 .down { display: block; text-align: right; padding-right: .04em; }
+
+.openfoot {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: clamp(28px, 5vw, 80px);
+  margin-top: clamp(40px, 6vw, 84px);
+  align-items: end;
+}
+.standfirst {
+  margin: 0;
+  font: italic 400 clamp(22px, 2.35vw, 31px)/1.32 var(--serif);
+  letter-spacing: -.005em;
+  text-wrap: pretty;
+}
+.byline {
+  margin: 26px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font: 400 13px/1.5 var(--sans);
+  letter-spacing: .06em;
+  color: var(--soft);
+}
+.byline b { color: var(--ink); font-weight: 600; }
+
+figure.icon { margin: 0; }
+figure.icon img {
+  display: block;
+  width: min(100%, 300px);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 22.5%;
+  box-shadow: 0 1px 1px rgba(40, 28, 10, .12), 0 18px 40px -18px rgba(40, 28, 10, .5);
+}
+figcaption {
+  margin-top: 16px;
+  max-width: 300px;
+  font: 400 13.5px/1.45 var(--serif);
+  color: var(--soft);
+}
+figcaption b { font: 600 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); margin-right: 6px; }
+
+/* ---------- Body copy in columns ---------- */
+.body {
+  margin-top: clamp(36px, 5vw, 64px);
+  columns: 3 16.5em;
+  column-gap: clamp(28px, 3.2vw, 48px);
+  column-rule: 1px solid var(--rule);
+  font-size: 17.5px;
+  line-height: 1.58;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  text-align: justify;
+  text-wrap: pretty;
+}
+.body p { margin: 0; orphans: 3; widows: 3; }
+.body p + p { text-indent: 1.4em; }
+.body p.sec { margin-top: 1.1em; text-indent: 0; }
+.body .lead::first-letter {
+  initial-letter: 4;
+  -webkit-initial-letter: 4;
+  font-weight: 400;
+  color: var(--red);
+  margin-right: .1em;
+}
+@supports not ((initial-letter: 4) or (-webkit-initial-letter: 4)) {
+  .body .lead::first-letter { float: left; font-size: 5.1em; line-height: .78; padding: .06em .08em 0 0; }
+}
+.lead .open { font-variant-caps: all-small-caps; letter-spacing: .06em; }
+.runin {
+  display: inline-block;
+  font: 600 .74em/1 var(--sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-right: .5em;
+}
+sup a {
+  font: 600 .66em/0 var(--sans);
+  color: var(--red);
+  text-decoration: none;
+  padding: 0 .1em;
+}
+.end { color: var(--red); font-size: .8em; margin-left: .3em; }
+
+/* The pull quote breaks across all columns */
+.pull {
+  column-span: all;
+  margin: clamp(36px, 4vw, 56px) 0;
+  padding: clamp(24px, 3vw, 36px) 0;
+  border-top: 3px double var(--ink);
+  border-bottom: 1px solid var(--ink);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+  gap: clamp(16px, 3vw, 48px);
+  text-align: left;
+  hyphens: manual;
+}
+.pull .mark {
+  font: italic 300 clamp(80px, 11vw, 168px)/.7 var(--serif);
+  color: var(--red);
+  letter-spacing: -.05em;
+}
+.pull blockquote { margin: 0; }
+.pull blockquote p {
+  font: 400 clamp(30px, 4.2vw, 60px)/1.04 var(--serif);
+  letter-spacing: -.028em;
+  text-indent: 0 !important;
+  text-wrap: balance;
+}
+.pull blockquote p em { font-style: italic; }
+
+/* Sidebar box: what goes, what stays */
+.box {
+  column-span: all;
+  margin: clamp(36px, 4vw, 56px) 0 clamp(28px, 3vw, 44px);
+  border: 1px solid var(--ink);
+  padding: clamp(20px, 2.6vw, 32px);
+  text-align: left;
+  hyphens: manual;
+  background: rgba(255, 252, 245, .5);
+}
+.box h2 {
+  margin: 0 0 4px;
+  font: 400 clamp(26px, 2.6vw, 34px)/1.1 var(--serif);
+  letter-spacing: -.02em;
+}
+.box h2 i { color: var(--soft); }
+.box > p { font-size: 15px; color: var(--soft); margin: 0 0 22px !important; text-indent: 0 !important; }
+.sites { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.site { padding: 16px 18px 4px; border-left: 1px solid var(--rule); }
+.site:first-child { border-left: 0; padding-left: 0; }
+.site h3 { margin: 0 0 12px; font: italic 400 24px/1 var(--serif); letter-spacing: -.01em; }
+.site dl { margin: 0; font-size: 15px; line-height: 1.45; }
+.site dt { font: 600 10.5px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--soft); margin: 0 0 6px; }
+.site dd { margin: 0 0 14px; }
+.site dd.gone { text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 1.5px; color: var(--soft); }
+
+/* Footnotes, set like a page foot */
+.notes {
+  margin-top: clamp(36px, 4vw, 56px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: clamp(20px, 4vw, 64px);
+}
+.notes .rule { border-top: 1px solid var(--ink); width: 6em; padding-top: 10px; font: 600 11px/1.3 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+.notes ol { margin: 0; padding: 0; list-style: none; columns: 2 15em; column-gap: 40px; font-size: 14.5px; line-height: 1.5; color: #39332b; }
+.notes li { break-inside: avoid; margin: 0 0 14px; padding-left: 1.6em; position: relative; }
+.notes li > span:first-child { position: absolute; left: 0; top: 0; font: 600 12px/1.9 var(--sans); color: var(--red); }
+.notes li:target { background: rgba(156, 43, 29, .07); outline: 6px solid rgba(156, 43, 29, .07); }
+.notes a.back { font: 12px var(--sans); color: var(--soft); text-decoration: none; }
+
+/* Availability, as a closing colophon */
+.colophon {
+  margin-top: clamp(40px, 5vw, 72px);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 40px);
+  align-items: start;
+  padding-top: 22px;
+  border-top: 1px solid var(--ink);
+}
+.colophon .swan {
+  width: 72px; height: 43px;
+  background: var(--ink);
+  -webkit-mask: url("../../img/cygnet-mark.svg") center / contain no-repeat;
+  mask: url("../../img/cygnet-mark.svg") center / contain no-repeat;
+}
+.colophon p { margin: 0; font-size: 16px; line-height: 1.5; max-width: 52em; }
+.status { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 12px !important; font: 400 13px/1.4 var(--sans); letter-spacing: .06em; }
+.status i { margin-left: 6px; font: italic 400 14px var(--serif); letter-spacing: 0; color: var(--red); }
+
+.page-end { height: clamp(28px, 4vw, 56px); }
+
+/* ---------- Smaller screens ---------- */
+@media (max-width: 900px) {
+  .openfoot { grid-template-columns: 1fr; }
+  figure.icon { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 18px; align-items: end; }
+  figure.icon img { width: 120px; }
+  figcaption { margin-top: 0; }
+  .sites { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site:nth-child(3) { border-left: 0; padding-left: 0; }
+  .site:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .notes { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  .runhead .mid { display: none; }
+  h1 .down { text-align: left; padding-left: 1.2em; }
+  .body { text-align: left; font-size: 17px; }
+  .pull { grid-template-columns: 1fr; gap: 0; }
+  .pull .mark { font-size: 84px; line-height: .6; }
+  .sites { grid-template-columns: 1fr; }
+  .site, .site:nth-child(3) { border-left: 0; padding-left: 0; padding-right: 0; }
+  .site:nth-child(n+2) { border-top: 1px solid var(--rule); }
+  .colophon { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  h1 { animation: settle 1.4s cubic-bezier(.2, .7, .1, 1) both; }
+  @keyframes settle { from { opacity: 0; letter-spacing: -.02em; } to { opacity: 1; letter-spacing: -.045em; } }
+}
+</style>
+</head>
+<body>
+
+<article>
+
+<!-- Page one: the opener -->
+<section class="sheet" aria-label="Opening">
+  <header class="runhead">
+    <span>Idyll</span>
+    <span class="mid">Essays</span>
+    <em>Autumn</em>
+  </header>
+
+  <div class="opener">
+    <p class="kicker">An essay, and an introduction</p>
+    <h1>On putting <span class="it">the phone</span> <span class="down">down</span></h1>
+
+    <div class="openfoot">
+      <div>
+        <p class="standfirst">Idyll takes the ads, the Shorts, the Reels and the algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what you came for. It is free, and it will stay that way. Here is what it does, how it does it, and where it has to stop.</p>
+        <p class="byline">Words by <b>the people making Idyll</b> &middot; Reading time, about four minutes &middot; Available on iPhone, Android, Chrome and Mac, all coming soon</p>
+      </div>
+      <figure class="icon">
+        <img src="../../img/icon.png" width="300" height="300" alt="The Idyll app icon: a small cygnet pressed into warm cream paper, like letterpress.">
+        <figcaption><b>Fig. 1</b>The icon. A cygnet, a young mute swan, pressed into warm paper. It is the only picture in this piece.</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <footer class="folio"><b>46</b><span>Idyll &middot; Social without the scroll</span></footer>
+</section>
+
+<!-- Page two: the essay -->
+<section class="sheet" aria-label="The essay">
+  <header class="runhead">
+    <em>On putting the phone down</em>
+    <span class="mid">Essays</span>
+    <span>Idyll</span>
+  </header>
+
+  <div class="body">
+    <p class="lead"><span class="open">There is a kind of evening</span> that ends with a phone held above your face in the dark, forty minutes into videos you never chose. Very few of us opened the app for that. We opened it to answer a message, to watch the clip a friend had sent, to check whether the group had moved Thursday to Friday. The feed was simply waiting on the other side of the thing we wanted.</p>
+    <p>Idyll is a small, free tool built around that gap. It takes the ads, YouTube Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X, and keeps what people came for: messages, search, the one video a friend sends you (that video, and not the feed that would normally follow it), your YouTube subscriptions, the people you follow on X, your Facebook friends in the order they posted, and your groups. Social, without the scroll.</p>
+    <p>The exact list, site by site, is in the box further down. It is short on purpose. Everything that stays is something you asked for; everything that goes is something that was chosen for you.</p>
+
+    <p class="sec"><span class="runin">On an iPhone</span>Idyll works as a Safari content blocker. It hands Safari a list of rules, and Safari does the cleaning. iOS itself tells you that a content blocker cannot read or send anything from the pages you visit.<sup><a href="#n1" id="r1" aria-label="Note 1">1</a></sup> An optional extension, Idyll Plus, goes a little further: it skips video ads and turns Shorts back into ordinary videos, with a play bar and an end.</p>
+    <p>The apps are a different matter.<sup><a href="#n2" id="r2" aria-label="Note 2">2</a></sup> For those, Idyll uses Screen Time to give each one a daily allowance. They work normally, notifications and all, until your minutes run out, and then they pause until midnight. It is a gentler limit than deleting them, and a firmer one than willpower at eleven at night.</p>
+  </div>
+
+  <div class="body" style="margin-top:0">
+    <div class="pull" role="presentation">
+      <div class="mark" aria-hidden="true">&ldquo;</div>
+      <blockquote><p>Idyll is free, for good. No subscription, no trial that turns into one, no ads, and <em>no data sold</em>.</p></blockquote>
+    </div>
+
+    <p class="sec" style="margin-top:0"><span class="runin">On Android</span>You get a clean built-in browser for each site, and a feed guard inside the real apps. The guard presses &ldquo;Skip ad&rdquo; for you and stops the swipe into the next Short or Reel. The one a friend sent still plays; it is the one after it that does not arrive.</p>
+
+    <p class="sec"><span class="runin">On a laptop</span>The same rules come to Chrome and to the Mac, so the desk is as quiet as the pocket.</p>
+
+    <p class="sec"><span class="runin">On privacy</span>You log in to the real sites and the real apps, never inside Idyll. There is no Idyll account to make, because there is nothing for one to hold. Nothing leaves your phone. There are zero trackers.</p>
+
+    <p class="sec"><span class="runin">On money</span>Idyll will never charge. We say that plainly, because it is a belief we hold, and it was decided before anything else was. A tool for spending less of your life being sold to should not be something that is sold to you, by subscription or by the slow trade of your attention and your data. So there is no price, now or later.</p>
+
+    <p class="sec"><span class="runin">On when</span>Every version, for iPhone, Android, Chrome and Mac, is coming soon. There is no download link yet and no mailing list, so there is nothing to sign up for. When it is ready, this page will say so.<span class="end" aria-hidden="true">&#9632;</span></p>
+
+    <aside class="box" aria-labelledby="box-h">
+      <h2 id="box-h">What goes, <i>and what stays</i></h2>
+      <p>Struck through: taken out by Idyll. Plain: left exactly where it was.</p>
+      <div class="sites">
+        <div class="site">
+          <h3>YouTube</h3>
+          <dl>
+            <dt>Goes</dt><dd class="gone">Video ads, Shorts, the recommended home feed, Up next</dd>
+            <dt>Stays</dt><dd>Your subscriptions, search, the video a friend sends</dd>
+          </dl>
+        </div>
+        <div class="site">
+          <h3>Instagram</h3>
+          <dl>
+            <dt>Goes</dt><dd class="gone">Sponsored posts, the Reels feed, the Explore grid</dd>
+            <dt>Stays</dt><dd>Messages, search, whatever a friend sends you</dd>
+          </dl>
+        </div>
+        <div class="site">
+          <h3>Facebook</h3>
+          <dl>
+            <dt>Goes</dt><dd class="gone">Reels, Watch, the algorithmic feed</dd>
+            <dt>Stays</dt><dd>Friends, in order. Groups. Messages</dd>
+          </dl>
+        </div>
+        <div class="site">
+          <h3>X</h3>
+          <dl>
+            <dt>Goes</dt><dd class="gone">For you, promoted posts, trends, who to follow</dd>
+            <dt>Stays</dt><dd>Following, messages, search</dd>
+          </dl>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="notes">
+    <div class="rule">Notes</div>
+    <ol>
+      <li id="n1"><span>1</span>That assurance is Apple&rsquo;s own. A content blocker only supplies rules; Safari applies them, and the blocker never sees the page. <a class="back" href="#r1" aria-label="Back to text">&#8617;</a></li>
+      <li id="n2"><span>2</span>An honest limit. No app can change what is inside the official YouTube or Instagram apps on iPhone: Apple keeps apps sealed off from one another. Anyone who claims otherwise is shipping a modified copy of the app, which can get accounts flagged. So Idyll cleans the websites, and gives the apps a daily limit instead. <a class="back" href="#r2" aria-label="Back to text">&#8617;</a></li>
+    </ol>
+  </div>
+
+  <div class="colophon">
+    <div class="swan" role="img" aria-label="The Idyll cygnet mark"></div>
+    <div>
+      <p><b>Idyll.</b> Social without the scroll. Free, for good. No account, nothing leaves your phone, zero trackers. There is no download yet.</p>
+      <p class="status"><span>iPhone <i>Coming soon</i></span><span>Android <i>Coming soon</i></span><span>Chrome <i>Coming soon</i></span><span>Mac <i>Coming soon</i></span></p>
+    </div>
+  </div>
+
+  <footer class="folio"><span>Idyll &middot; Social without the scroll</span><b>47</b></footer>
+</section>
+<div class="page-end"></div>
+
+</article>
+</body>
+</html>
