@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Idyll</title>
-<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, TikTok, X and five more. Free, for good.">
+<meta name="description" content="Idyll takes the short video, ads and algorithmic feeds out of YouTube, Instagram, TikTok, X and six more social apps. Free, for good.">
 <meta property="og:title" content="Idyll. Social, without the scroll.">
-<meta property="og:description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, TikTok, X and five more. Free, for good.">
+<meta property="og:description" content="Idyll takes the short video, ads and algorithmic feeds out of YouTube, Instagram, TikTok, X and six more social apps. Free, for good.">
 <meta property="og:image" content="https://eoinforker.github.io/idyll-site/img/icons/H2-white-on-magenta.png">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#f6f5f1">
@@ -142,6 +142,7 @@ a:hover { color: var(--pink); }
 /* Two ways in, folded into the plate. */
 .ways { max-width: 380px; }
 .ways > p { font: 400 15px/1.45 var(--sans); }
+.ways > p + p { margin-top: 10px; }
 .ways .plats { margin-top: 16px; width: 100%; gap: 8px; }
 .ways .leader i { border-color: currentColor; }
 @media (max-width: 860px) { .plate .crop { padding-bottom: 52px; } .ways { margin-top: 4px; } }
@@ -191,7 +192,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
 .mk { width: 60px; height: 60px; }
 .stop { color: var(--pink); font-weight: inherit; }
 
-/* Ten apps: a grid of printed marks, four across. */
+/* Eleven apps: a grid of printed marks, four across. Discord only pauses, so its strike is lighter. */
 .marks ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px 10px; }
 .marks li { grid-template-columns: none; justify-items: start; gap: 8px; font-size: 13.5px; line-height: 1.25; }
 .mk { width: 52px; height: 52px; }
@@ -209,7 +210,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
   <main id="top">
     <div class="lede">
       <p class="lockup"><img src="./img/icons/H2-white-on-magenta-1024.png" width="1024" height="1024" alt=""><span>Idyll</span></p>
-      <p class="soon"><span class="tag"><b>Coming soon</b><svg viewBox="0 0 26 22" aria-hidden="true"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></svg></span><span class="on">iPhone, Android, Chrome and Mac</span></p>
+      <p class="soon"><span class="tag"><b>Coming soon</b><svg viewBox="0 0 26 22" aria-hidden="true"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></svg></span><span class="on">iPhone, Android and Chrome</span></p>
     </div>
 
     <section class="hero" aria-labelledby="h">
@@ -231,16 +232,17 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
         <div class="marks">
           <p class="lbl">Gone</p>
           <ul>
-            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads</span></li>
+            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, home feed, ads</span></li>
             <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Explore</span></li>
             <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch</span></li>
-            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted</span></li>
+            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you</span></li>
             <li><span class="mk" data-mark="snapchat"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Snapchat, Idyll removes: </span>Spotlight, Discover</span></li>
-            <li><span class="mk" data-mark="tiktok"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From TikTok, Idyll removes: </span>For You</span></li>
+            <li><span class="mk" data-mark="tiktok"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From TikTok, Idyll removes: </span>For You, LIVE</span></li>
             <li><span class="mk" data-mark="reddit"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Reddit, Idyll removes: </span>Home, Popular</span></li>
             <li><span class="mk" data-mark="linkedin"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From LinkedIn, Idyll removes: </span>The feed</span></li>
             <li><span class="mk" data-mark="threads"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Threads, Idyll removes: </span>For you</span></li>
-            <li><span class="mk" data-mark="substack"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Substack, Idyll removes: </span>Notes, For you</span></li>
+            <li><span class="mk" data-mark="substack"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Substack, Idyll removes: </span>The home feed</span></li>
+            <li class="paused"><span class="mk" data-mark="discord" data-soft><canvas aria-hidden="true"></canvas></span><span><span class="sr">Discord: </span>Paused for Sleep and Focus</span></li>
           </ul>
         </div>
         <div class="win">
@@ -257,6 +259,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
         </div>
         <div class="ways">
           <p>Use the real app with a guard inside it, or a clean version in Idyll. Your choice, per app.</p>
+          <p>Videos and podcasts keep playing when you lock your phone.</p>
         </div>
       </div>
     </div>
@@ -268,9 +271,10 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
     <div class="words">
       <h2><span>Focus<b class="stop">.</b></span><span>A short break<b class="stop">.</b></span><span>Again<b class="stop">.</b></span></h2>
       <p>Pick a length or rounds. Notifications stay quiet until it ends.</p>
+      <p>Today and Focus on your home screen.</p>
     </div>
     <div class="shots">
-      <img src="./img/screens/focus-start.webp" width="600" height="1334" alt="Focus for 2 h 17 min on the magenta plate, with lengths to pick, a 10 second wait to stop early, rounds or a schedule, and Notifications stay quiet" loading="lazy" decoding="async">
+      <img src="./img/screens/focus-start.webp" width="600" height="1334" alt="Focus for 2 h 17 min on the magenta plate: lengths to pick, the eleven apps that pause, a 10 second wait to stop early, rounds or a schedule, a chime when it ends, and Notifications stay quiet" loading="lazy" decoding="async">
     </div>
   </div></div>
   <div class="half dark" id="sleep"><div class="crop">
@@ -279,7 +283,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
       <p>Set a bedtime and a morning. In between, the apps rest.</p>
     </div>
     <div class="shots">
-      <img src="./img/screens/sleep.webp" width="600" height="1334" alt="Sleep as a night print: the sleeping cygnet under a halftone moon, Bedtime at 11:30 PM, Up again at 7:15 AM" loading="lazy" decoding="async">
+      <img src="./img/screens/sleep.webp" width="600" height="1334" alt="Sleep as a night print: the sleeping cygnet under a halftone moon, Bedtime at 11:30 PM, Up again at 7:15 AM, a quiet note before bed, and Start Sleep" loading="lazy" decoding="async">
     </div>
   </div></div>
 </section>
@@ -294,7 +298,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
     <p class="fine night-fine">Screens from the Android app, with sample data.</p>
     <footer>
       <span>Idyll. Social without the scroll. Coming soon. <a href="./privacy.html">Privacy</a> &nbsp; <a href="./support.html">Support</a> &nbsp; <a href="https://ko-fi.com/idyllsocial">Ko-fi</a></span>
-      <span>YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn, Threads and Substack are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
+      <span>YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn, Threads, Substack and Discord are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
     </footer>
   </div>
 </div>
@@ -342,7 +346,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
       return [{ col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl) }];
     } });
   /* The marks: our own halftone prints of each logo, struck through in blue. */
-  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `./img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140,
+  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `./img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140, soft: 'soft' in el.dataset,
     cellOf: cw => cw / 24, inset: .1, blur: .15,
     build(p, a, w, h) { return [{ col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, () => 1, .58, (u, v) => 300 + i * 140 + u * 260) }]; } }));
 
@@ -384,8 +388,8 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
       const k = ease(clamp((now - p.t0 - p.cross) / 420)); if (k < 1) busy = true;
       if (k > 0) {
         const ox = 2 * p.dpr, oy = -1.5 * p.dpr, y0 = H * .6 + oy, y1 = H * .4 + oy;
-        g.strokeStyle = BLUE; g.lineWidth = W * .1; g.lineCap = 'butt'; g.beginPath();
-        g.moveTo(ox, y0); g.lineTo(ox + W * k, y0 + (y1 - y0) * k); g.stroke();
+        g.strokeStyle = BLUE; g.lineWidth = W * (p.soft ? .045 : .1); g.globalAlpha = p.soft ? .7 : 1; g.lineCap = 'butt'; g.beginPath();
+        g.moveTo(ox, y0); g.lineTo(ox + W * k, y0 + (y1 - y0) * k); g.stroke(); g.globalAlpha = 1;
       }
     }
     return busy;
