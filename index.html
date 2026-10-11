@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Idyll</title>
-<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, TikTok, X and five more. Free, for good.">
 <meta property="og:title" content="Idyll. Social, without the scroll.">
-<meta property="og:description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<meta property="og:description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, TikTok, X and five more. Free, for good.">
 <meta property="og:image" content="https://eoinforker.github.io/idyll-site/img/icons/H2-white-on-magenta.png">
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#f6f5f1">
@@ -218,6 +218,12 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
 .marks li { grid-template-columns: 60px minmax(0, 1fr); }
 .mk { width: 60px; height: 60px; }
 .stop { color: var(--pink); font-weight: inherit; }
+
+/* Nine apps: a three by three grid of printed marks. */
+.marks ul { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 14px; }
+.marks li { grid-template-columns: none; justify-items: start; gap: 8px; font-size: 13.5px; line-height: 1.25; }
+.mk { width: 52px; height: 52px; }
+@media (max-width: 420px) { .mk { width: 46px; height: 46px; } .marks li { font-size: 12.5px; } }
 </style>
 </head>
 <body>
@@ -266,10 +272,15 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
         <div class="marks">
           <p class="lbl">Gone</p>
           <ul>
-            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads, Up next</span></li>
-            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Suggested, Sponsored</span></li>
-            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch, the algorithmic feed</span></li>
-            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted, Trends</span></li>
+            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads</span></li>
+            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Explore</span></li>
+            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch</span></li>
+            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted</span></li>
+            <li><span class="mk" data-mark="snapchat"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Snapchat, Idyll removes: </span>Spotlight, Discover</span></li>
+            <li><span class="mk" data-mark="tiktok"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From TikTok, Idyll removes: </span>For You</span></li>
+            <li><span class="mk" data-mark="reddit"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Reddit, Idyll removes: </span>Home, Popular</span></li>
+            <li><span class="mk" data-mark="linkedin"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From LinkedIn, Idyll removes: </span>The feed</span></li>
+            <li><span class="mk" data-mark="threads"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Threads, Idyll removes: </span>For you</span></li>
           </ul>
         </div>
         <div class="win">
@@ -310,19 +321,20 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
     <div class="crop"><div class="tri">
       <div>
         <h3>iPhone</h3>
-        <p>In Safari, a content blocker cleans YouTube, Instagram, Facebook and X. Safari applies the rules itself, so Idyll can't read anything on the page.</p>
+        <p>Idyll opens clean versions of YouTube, Instagram, TikTok and six more, with the feeds taken out. You sign in to each one on its own page, and Idyll doesn't read, keep or send your password.</p>
+        <p>In Safari, a content blocker cleans the same sites. Safari applies the rules itself.</p>
         <p>The official apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p>
         <p class="honest">The honest limit: no app can change what's inside the official apps on iPhone, because Apple keeps them sealed off.</p>
       </div>
       <div>
         <h3>Android</h3>
-        <p>A clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops the swipe to the next Short or Reel.</p>
+        <p>A feed guard inside the real apps, all nine of them, that presses Skip ad and stops the swipe to the next Short or Reel. Plus a clean built-in browser for each.</p>
         <p>The one a friend sent still plays.</p>
       </div>
       <div>
         <h3>Chrome and Mac</h3>
         <p>The same rules on a laptop.</p>
-        <p>Everywhere, you log in to the real sites and apps, never inside Idyll. No account. No trackers. Nothing leaves your device.</p>
+        <p>Everywhere: no account, no trackers, and nothing leaves your device.</p>
       </div>
     </div></div>
   </section>
@@ -336,7 +348,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
     </section>
     <footer>
       <span>Idyll. Social without the scroll. Coming soon.</span>
-      <span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
+      <span>YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn and Threads are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
     </footer>
   </div>
 </div>

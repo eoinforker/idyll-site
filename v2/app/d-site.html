@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll app, D The site</title>
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* D, The site: the whole page as one journey. Paper hero for the start, the icon's plate as the signature,
+   Gone and Stays for a site's settings, the without and with pair to explain, night for rest, privacy and support. */
+.scr { padding: 54px 0 34px; }
+.pad { padding: 0 24px; }
+.hero { font: 500 58px/.9 var(--sans); letter-spacing: -.055em; text-align: center; }
+.h1 { font: 500 40px/1 var(--sans); letter-spacing: -.045em; }
+.lead { font: 400 17px/1.45 var(--sans); }
+.small { font: 400 14px/1.45 var(--sans); }
+.soft { color: var(--soft); }
+.lbl { font: 400 11.5px/1.2 var(--mono); letter-spacing: .03em; }
+.foot { margin-top: auto; padding: 0 24px 8px; display: grid; gap: 6px; }
+.btn.ink { background: var(--ink); color: var(--cream); }
+.btn.pk { background: var(--pink); color: var(--cream); }
+.btn.cr { box-shadow: inset 0 0 0 1.5px var(--cream); color: var(--cream); }
+.lnk { display: flex; align-items: center; justify-content: center; height: 44px; font: 400 16px/1 var(--sans); }
+.nav { height: 44px; display: flex; align-items: center; padding: 0 16px 0 10px; font: 400 16px/1 var(--sans); }
+.ik { color: var(--ink); font-weight: inherit; }
+/* The site's dotted leader. */
+.ld { flex: 1; min-width: 18px; border-bottom: 1.5px dotted currentColor; transform: translateY(-4px); opacity: .55; align-self: center; }
+.lrow { display: flex; align-items: center; gap: 12px; }
+.tk { color: var(--pink); }
+.tk .ic { stroke-width: 2.4; }
+.empty { width: 22px; height: 22px; box-shadow: inset 0 0 0 1.5px rgba(22,21,20,.3); flex: none; margin: 0 1px; }
+.n { font-variant-numeric: tabular-nums; }
+.night { background: var(--night); color: var(--cream); }
+.night .soft { color: rgba(255,246,238,.62); }
+.night .crop { --c: rgba(255,246,238,.7); }
+/* Two small phones, without and with. */
+.mini { width: 132px; height: 196px; border-radius: 22px; padding: 4px; background: #3b3b3e; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18); }
+.mini > div { height: 100%; border-radius: 18px; overflow: hidden; background: #fff; font: 600 6.5px/1.2 var(--sans); color: #0e0f14; padding-top: 14px; }
+.mini .ph { height: 66px; overflow: hidden; position: relative; }
+.mini .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mini .hd2 { display: flex; align-items: center; gap: 4px; padding: 5px 6px; }
+.mini .hd2 i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.mini .shop { background: var(--blue); color: #fff; padding: 3px 6px; }
+.mini .badge { position: absolute; left: 5px; top: 5px; background: rgba(0,0,0,.45); color: #fff; border-radius: 9px; padding: 2px 5px; }
+.mini .done { text-align: center; padding: 10px 6px; border-top: 1px solid #efeff2; }
+.mini .done span { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--pink); color: var(--pink); display: grid; place-items: center; margin: 0 auto 4px; }
+.mini .done .ic { width: 13px; height: 13px; stroke-width: 2.6; }
+.pair { display: flex; justify-content: center; gap: 26px; }
+.pair figure { margin: 0; display: grid; gap: 8px; justify-items: center; }
+.pair figcaption { font: 400 11px/1 var(--mono); letter-spacing: .02em; }
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="board-head"><h1>D. The site<b class="stop">.</b></h1><p>The whole page as one journey: the paper hero to start, the icon's plate as the signature, Gone and Stays for a site, without and with to explain, night for rest, privacy and support.</p></div>
+
+  <!-- 1 Hello: the site's hero -->
+  <div class="cell"><p class="cap">Hello</p>
+  <div class="phone"><div class="scr" style="text-align:center">
+    <img src="../../img/icons/H2-white-on-magenta.png" alt="" style="width:72px;height:72px;border-radius:22.5%;margin:44px auto 0;display:block">
+    <p class="lbl lrow" style="margin:34px 24px 0"><span>Idyll</span><i class="ld"></i><span>free, for good</span></p>
+    <h1 class="hero" style="margin-top:34px">Social,<br>without<br>the scroll<b class="stop">.</b></h1>
+    <p class="lead pad" style="margin-top:30px">Your social apps without the feeds. Messages, friends, search and posting all stay.</p>
+    <p class="small soft" style="margin-top:10px">No account. Idyll collects nothing.</p>
+    <div class="foot"><a class="btn ink">Start</a><a class="lnk">How it works</a></div>
+  </div></div></div>
+
+  <!-- 2 Pick -->
+  <div class="cell"><p class="cap">Pick your apps</p>
+  <div class="phone"><div class="scr">
+    <h1 class="hero" style="font-size:44px;margin-top:30px">Which ones<br>do you use?</h1>
+    <p class="lead soft" style="text-align:center;margin-top:12px">Pick any. You can change this later.</p>
+    <ul class="pad" style="margin-top:22px;display:grid;gap:0">
+      <li class="lrow" style="height:47px"><span data-t="youtube" class="sm"></span><span class="lead">YouTube</span><i class="ld"></i><span class="tk"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li class="lrow" style="height:47px"><span data-t="instagram" class="sm"></span><span class="lead">Instagram</span><i class="ld"></i><span class="tk"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li class="lrow" style="height:47px"><span data-t="facebook" class="sm"></span><span class="lead">Facebook</span><i class="ld" style="opacity:.2"></i><span class="empty"></span></li>
+      <li class="lrow" style="height:47px"><span data-t="x" class="sm"></span><span class="lead">X</span><i class="ld"></i><span class="tk"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li class="lrow" style="height:47px"><span data-t="snapchat" class="sm"></span><span class="lead">Snapchat</span><i class="ld" style="opacity:.2"></i><span class="empty"></span></li>
+      <li class="lrow" style="height:47px"><span data-t="tiktok" class="sm"></span><span class="lead">TikTok</span><i class="ld" style="opacity:.2"></i><span class="empty"></span></li>
+      <li class="lrow" style="height:47px"><span data-t="reddit" class="sm"></span><span class="lead">Reddit</span><i class="ld"></i><span class="tk"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li class="lrow" style="height:47px"><span data-t="linkedin" class="sm"></span><span class="lead">LinkedIn</span><i class="ld" style="opacity:.2"></i><span class="empty"></span></li>
+      <li class="lrow" style="height:47px"><span data-t="threads" class="sm"></span><span class="lead">Threads</span><i class="ld" style="opacity:.2"></i><span class="empty"></span></li>
+    </ul>
+    <div class="foot"><a class="btn ink">Next</a><a class="lnk">Just show me</a></div>
+  </div></div></div>
+
+  <!-- 3 First clean app: the plate reveal -->
+  <div class="cell"><p class="cap">First clean app, live</p>
+  <div class="phone lighthi"><div class="scr" style="padding:54px 0 0;background:#fff">
+    <div class="chrome" style="background:var(--paper);border-bottom:1px solid var(--rule)"><span class="hb"><img src="../../img/icons/H2-white-on-magenta.png" alt="Home" style="width:28px;height:28px;border-radius:22.5%"></span><span class="t">YouTube</span><span class="hb"><svg class="ic"><use href="#i-sliders"/></svg></span></div>
+    <div data-site="yt"></div>
+    <div class="plate" style="position:absolute;left:0;right:0;bottom:0;height:318px">
+      <div class="crop" style="position:absolute;inset:14px 14px 40px"></div>
+      <div class="print cyg" data-print="cygnet" style="position:absolute;left:28px;top:30px;width:132px"></div>
+      <div style="position:absolute;left:176px;right:28px;top:34px"><p class="lbl">Gone</p><p class="small" style="margin-top:8px;display:grid;gap:4px;font-size:15px"><span><span class="struck">Shorts</span></span><span><span class="struck">Home feed</span></span><span><span class="struck">Up next</span></span></p></div>
+      <div style="position:absolute;left:28px;right:28px;top:148px">
+        <p style="font:500 24px/1.1 var(--sans);letter-spacing:-.03em">This is YouTube in Idyll<b class="ik">.</b></p>
+        <p class="small" style="margin-top:8px;font-size:15px">No Shorts, no home feed. Search and subscriptions are here.</p>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:15px"><a>Back to YouTube</a><a>OK</a></div>
+      </div>
+    </div>
+  </div></div></div>
+
+  <!-- 4 That's Idyll: without and with -->
+  <div class="cell"><p class="cap">That's Idyll, optional chapters</p>
+  <div class="phone"><div class="scr">
+    <h1 class="hero" style="font-size:46px;margin-top:18px">That's Idyll<b class="stop">.</b></h1>
+    <p class="lead soft" style="text-align:center;margin:10px 30px 0">Everything below is optional. Do any of it now, later, or never.</p>
+    <div class="pair" style="margin-top:18px">
+      <figure><div class="mini"><div>
+        <div class="hd2"><i style="background:#ffe1ef"></i>Berrybox<span style="font-weight:400;color:#6b6e78">Sponsored</span></div>
+        <div class="ph"><img src="../../img/photos/102.jpg" alt=""></div><div class="shop">Shop now</div>
+        <div class="hd2"><i style="background:#fff1c9"></i>dune.days<span style="font-weight:400;color:#6b6e78">Suggested</span></div>
+        <div class="ph"><img src="../../img/photos/184.jpg" alt=""><span class="badge">Reels</span></div>
+      </div></div><figcaption>Without Idyll</figcaption></figure>
+      <figure><div class="mini"><div>
+        <div class="hd2"><i style="background:#ffe1ef"></i>maya.walks<span style="font-weight:400;color:#6b6e78">2h</span></div>
+        <div class="ph"><img src="../../img/photos/128.jpg" alt=""></div>
+        <div class="hd2"><i style="background:#e3e9ff"></i>priya.reads<span style="font-weight:400;color:#6b6e78">4h</span></div>
+        <div class="ph" style="height:22px"><img src="../../img/photos/42.jpg" alt=""></div>
+        <div class="done"><span><svg class="ic"><use href="#i-check"/></svg></span>You're all caught up</div>
+      </div></div><figcaption>With Idyll</figcaption></figure>
+    </div>
+    <div class="crop" style="margin:20px 24px 0;padding:4px 14px">
+      <div class="lrow" style="height:46px;border-bottom:1px solid var(--rule)"><span class="lead" style="font-size:16px;font-weight:500">Time in the real apps</span><i class="ld"></i><span class="small soft">Allowance</span></div>
+      <div class="lrow" style="height:46px;border-bottom:1px solid var(--rule)"><span class="lead" style="font-size:16px;font-weight:500">Sleep</span><i class="ld"></i><span class="small soft">Rest at night</span></div>
+      <div class="lrow" style="height:46px;border-bottom:1px solid var(--rule)"><span class="lead" style="font-size:16px;font-weight:500">Focus</span><i class="ld"></i><span class="small soft">Pause while you work</span></div>
+      <div class="lrow" style="height:46px;border-bottom:1px solid var(--rule)"><span class="lead" style="font-size:16px;font-weight:500">Safari</span><i class="ld"></i><span class="small soft">Same sites, tidied</span></div>
+      <div class="lrow" style="height:46px"><span class="lead" style="font-size:16px;font-weight:500">Send the real apps here</span><i class="ld"></i><span class="small soft">Land in Idyll</span></div>
+    </div>
+    <div class="foot"><a class="btn ink">Go to Idyll</a></div>
+  </div></div></div>
+
+  <!-- 5 Home: the icon at the top -->
+  <div class="cell"><p class="cap">Home</p>
+  <div class="phone lightbar"><div class="scr" style="padding-top:0">
+    <div class="plate" style="height:336px;flex:none;position:relative">
+      <div class="crop" style="position:absolute;inset:52px 12px 12px"></div>
+      <div style="position:absolute;top:58px;left:26px;right:24px;height:40px;display:flex;align-items:center;justify-content:space-between"><span style="font:600 21px/1 var(--sans);letter-spacing:-.02em">Idyll<b class="ik">.</b></span><a style="font-size:16px">Settings</a></div>
+      <div class="print cyg" data-print="cygnet" style="position:absolute;left:50%;margin-left:-118px;top:96px;width:236px"></div>
+      <div style="position:absolute;left:26px;right:26px;bottom:26px;display:flex;align-items:flex-end;justify-content:space-between">
+        <p class="n" style="font:500 34px/1 var(--sans);letter-spacing:-.04em">18 <span style="opacity:.62">of 30 min</span></p>
+        <p class="lbl" style="text-align:right;line-height:1.45">Today, real apps<br>Sample numbers</p>
+      </div>
+    </div>
+    <ul class="pad" style="margin-top:14px">
+      <li class="lrow" style="height:50px"><span data-t="instagram" class="sm"></span><span class="lead" style="font-weight:500">Instagram</span><i class="ld"></i><span class="small n">11 min</span></li>
+      <li class="lrow" style="height:50px"><span data-t="youtube" class="sm"></span><span class="lead" style="font-weight:500">YouTube</span><i class="ld"></i><span class="small n">5 min</span></li>
+      <li class="lrow" style="height:50px"><span data-t="x" class="sm"></span><span class="lead" style="font-weight:500">X</span><i class="ld"></i><span class="small n">2 min</span></li>
+      <li class="lrow" style="height:50px"><span data-t="reddit" class="sm"></span><span class="lead" style="font-weight:500">Reddit</span><i class="ld"></i><span class="small n">0 min</span></li>
+    </ul>
+    <div class="pad" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px">
+      <a class="btn ink" style="height:60px;flex-direction:column;gap:5px">Focus<span style="font:400 13px/1 var(--sans);opacity:.7">50 min</span></a>
+      <a class="btn" style="height:60px;flex-direction:column;gap:5px;box-shadow:inset 0 0 0 1.5px var(--ink)">Post Mode<span class="soft" style="font:400 13px/1 var(--sans)">Real apps, 10 min</span></a>
+    </div>
+    <div class="pad" style="margin-top:12px"><div style="height:50px;display:flex;align-items:center;gap:10px;padding:0 14px;box-shadow:inset 0 0 0 1px rgba(22,21,20,.3)"><svg class="ic soft" style="width:20px"><use href="#i-link"/></svg><span class="lead soft" style="font-size:16px">Paste a link</span><a class="small" style="margin-left:auto;font-size:15px">Paste</a></div></div>
+    <div class="pad" style="margin-top:auto;padding-bottom:10px;display:flex;justify-content:space-between"><span class="small">Sleep: resting from 23:00</span><a class="small soft">Hours this week</a></div>
+  </div></div></div>
+
+  <!-- 6 A site's settings: Gone and Stays, as on the site -->
+  <div class="cell"><p class="cap">A site's settings</p>
+  <div class="phone lightbar"><div class="scr" style="padding-top:0">
+    <div class="plate" style="height:410px;flex:none;position:relative">
+      <div class="crop" style="position:absolute;inset:52px 12px 12px"></div>
+      <div class="nav" style="position:absolute;top:54px;left:0"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+      <div style="position:absolute;left:28px;right:28px;top:112px">
+        <div style="display:flex;align-items:center;gap:14px"><span data-t="instagram"></span><h1 class="h1" style="font-size:36px">Instagram<b class="ik">.</b></h1></div>
+        <p class="lbl" style="margin-top:30px">Gone</p>
+        <div style="display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:center;margin-top:12px">
+          <span class="print mk" data-print="mark" data-b="instagram" data-n="24" style="width:60px;height:60px"></span>
+          <span style="font:400 17px/1.35 var(--sans)">Reels, Explore, Suggested posts, Sponsored posts</span>
+        </div>
+        <p class="small" style="margin-top:18px"><a>Bring one back</a></p>
+      </div>
+    </div>
+    <div class="win" style="margin:-58px 28px 0 auto;width:250px;position:relative">
+      <p class="bar">Stays</p>
+      <ul class="sq" style="padding:12px 14px 14px;font:400 16px/1.3 var(--sans)"><li>Messages</li><li>Search</li><li>Following, in order</li><li>Stories</li><li>The reel a friend sent</li></ul>
+    </div>
+    <div class="pad" style="margin-top:34px;display:grid;gap:2px"><a class="lead" style="height:40px;display:flex;align-items:center">Open the real Instagram</a><a class="lead soft" style="height:40px;display:flex;align-items:center">Sign out of Instagram</a></div>
+  </div></div></div>
+
+  <!-- 7 Focus: the icon, full bleed -->
+  <div class="cell"><p class="cap">Focus running</p>
+  <div class="phone lightbar lighthi plate"><div class="scr" style="text-align:center;padding-top:0">
+    <div class="crop" style="position:absolute;inset:52px 12px 46px;--c:var(--cream)"></div>
+    <div class="print cyg" data-print="cygnet" style="width:330px;margin:104px auto 0"></div>
+    <p class="n" style="font:500 104px/1 var(--sans);letter-spacing:-.06em;margin-top:34px">38:12</p>
+    <p style="font:500 21px/1.2 var(--sans);letter-spacing:-.02em;margin-top:12px">Focus until 15:20<b class="ik">.</b></p>
+    <p class="small" style="margin-top:28px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" style="width:34px;height:34px"></span>
+      </p>
+    <p class="small" style="margin-top:12px">Paused in the real apps. Idyll still works.</p>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn cr">Stop Focus</a><a class="lnk">Add 10 minutes</a></div>
+  </div></div></div>
+
+  <!-- 8 Sleep: night -->
+  <div class="cell"><p class="cap">Sleep schedule</p>
+  <div class="phone night lightbar lighthi"><div class="scr">
+    <div class="nav"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <h1 class="hero" style="font-size:96px;margin-top:22px">Sleep<b class="stop">.</b></h1>
+    <p class="lead soft" style="text-align:center;margin:18px 28px 0">From bedtime until morning the real apps rest. Calls and texts aren't touched.</p>
+    <div style="display:flex;justify-content:center;align-items:baseline;gap:14px;margin-top:34px" class="n"><span style="font:500 52px/1 var(--sans);letter-spacing:-.05em">23:00</span><span class="soft" style="font-size:17px">to</span><span style="font:500 52px/1 var(--sans);letter-spacing:-.05em">07:00</span></div>
+    <div class="pad" style="margin-top:26px">
+      <div style="position:relative;height:6px;background:rgba(255,246,238,.12)"><div style="position:absolute;left:27.8%;width:44.4%;top:0;bottom:0;background:var(--pink)"></div></div>
+      <p class="lbl soft" style="display:flex;justify-content:space-between;margin-top:9px"><span>18:00</span><span>00:00</span><span>06:00</span><span>12:00</span></p>
+    </div>
+    <p class="pad lbl" style="margin-top:22px;display:flex;justify-content:space-between;font-size:13px"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span style="opacity:.35">Sat</span><span style="opacity:.35">Sun</span></p>
+    <div class="mono lrow" style="margin:24px 24px 0;padding:12px 0;border-top:1px solid rgba(255,246,238,.16);border-bottom:1px solid rgba(255,246,238,.16)"><span class="lead">Apps to rest</span><i class="ld"></i><i class="bm" data-b="instagram"></i><i class="bm" data-b="x"></i><i class="bm" data-b="tiktok"></i><a class="small" style="margin-left:6px;font-size:15px">Change</a></div>
+    <div class="foot"><a class="btn pk">Save</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 9 Hours: paper, crop box, leaders -->
+  <div class="cell"><p class="cap">Hours, this week (sample numbers)</p>
+  <div class="phone"><div class="scr">
+    <div class="nav"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <h1 class="hero" style="font-size:52px;margin-top:10px">This week<b class="stop">.</b></h1>
+    <p class="n" style="text-align:center;font:500 22px/1 var(--sans);letter-spacing:-.02em;margin-top:16px">3 h 24 min in the real apps</p>
+    <p class="lbl soft" style="text-align:center;margin-top:8px">Screen Time's count. Sample numbers.</p>
+    <div class="crop" style="margin:26px 24px 0;padding:22px 16px 16px"><div data-week data-h="130" style="color:var(--ink)"></div></div>
+    <ul class="pad" style="margin-top:20px">
+      <li class="lrow" style="height:46px"><span data-t="instagram" class="sm"></span><span class="lead">Instagram</span><i class="ld"></i><span class="small n">1 h 36</span></li>
+      <li class="lrow" style="height:46px"><span data-t="youtube" class="sm"></span><span class="lead">YouTube</span><i class="ld"></i><span class="small n">58 min</span></li>
+      <li class="lrow" style="height:46px"><span data-t="x" class="sm"></span><span class="lead">X</span><i class="ld"></i><span class="small n">31 min</span></li>
+      <li class="lrow" style="height:46px"><span data-t="reddit" class="sm"></span><span class="lead">Reddit</span><i class="ld"></i><span class="small n">19 min</span></li>
+    </ul>
+    <p class="small soft" style="text-align:center;margin:auto 30px 0;padding-bottom:12px">Idyll reads these from Screen Time when you open this page. It doesn't keep them.</p>
+  </div></div></div>
+
+  <!-- 10 Privacy: night, the footer -->
+  <div class="cell"><p class="cap">What Idyll connects to</p>
+  <div class="phone night lightbar lighthi"><div class="scr">
+    <div class="nav"><svg class="ic"><use href="#i-chevl"/></svg>Settings</div>
+    <h1 class="hero" style="font-size:50px;margin-top:14px">What Idyll<br>connects to<b class="stop">.</b></h1>
+    <div class="pad" style="margin-top:30px">
+      <p class="lead" style="font-weight:500">The sites you open</p>
+      <p class="small soft" style="margin-top:3px">They load from their own servers, as in Safari. You sign in on their pages. Idyll doesn't keep or send your password.</p>
+      <p class="lead" style="font-weight:500;margin-top:16px">Screen Time, on this phone</p>
+      <p class="small soft" style="margin-top:3px">Only if you turn on an allowance, Sleep or Focus. Apple gives Idyll a code for each app, not its name.</p>
+    </div>
+    <div class="pad" style="margin-top:26px"><p class="lbl soft">Nothing else</p>
+      <p style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px 18px;font:500 22px/1.3 var(--sans);letter-spacing:-.02em"><span class="struck">Idyll servers</span><span class="struck">An account</span><span class="struck">Analytics</span><span class="struck">Ads</span></p>
+    </div>
+    <div class="pad" style="margin-top:auto"><a class="lead" style="height:44px;display:flex;align-items:center">Read the privacy policy</a></div>
+    <p class="small soft" style="margin:6px 24px 0;padding:12px 0 8px;border-top:1px solid rgba(255,246,238,.2);font-size:12.5px">YouTube, Instagram and the rest are trademarks of their owners. Idyll isn't affiliated with any of them.</p>
+  </div></div></div>
+
+  <!-- 11 Support: Free. For good. -->
+  <div class="cell"><p class="cap">Support Idyll</p>
+  <div class="phone night lightbar lighthi"><div class="scr">
+    <div class="nav"><svg class="ic"><use href="#i-chevl"/></svg>Settings</div>
+    <h1 class="hero" style="font-size:84px;line-height:.86;letter-spacing:-.06em;margin-top:34px">Free<b class="stop">.</b><br>For good<b class="stop">.</b></h1>
+    <p class="lead" style="text-align:center;margin:26px 30px 0">Idyll will never charge. If you'd like to, a tip pays for the hours it takes to keep up with the sites.</p>
+    <p class="small soft" style="text-align:center;margin:10px 30px 0">Tips unlock nothing.</p>
+    <div class="pad" style="margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <a class="btn cr n" style="height:64px;flex-direction:column;gap:6px;font-size:18px">£1.99<span class="soft" style="font:400 12px/1 var(--sans)">Small tip</span></a>
+      <a class="btn cr n" style="height:64px;flex-direction:column;gap:6px;font-size:18px">£4.99<span class="soft" style="font:400 12px/1 var(--sans)">Tip</span></a>
+      <a class="btn cr n" style="height:64px;flex-direction:column;gap:6px;font-size:18px">£9.99<span class="soft" style="font:400 12px/1 var(--sans)">Big tip</span></a>
+    </div>
+    <p class="small soft" style="text-align:center;margin-top:14px">Paid through Apple. Idyll never learns who you are.</p>
+    <p class="small soft" style="margin:auto 24px 0;padding:12px 0 8px;border-top:1px solid rgba(255,246,238,.2);display:flex;justify-content:space-between"><span>Idyll. Social without the scroll.</span><a>Tell a friend</a></p>
+  </div></div></div>
+</div>
+<script src="kit.js"></script>
+</body>
+</html>
