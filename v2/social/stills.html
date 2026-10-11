@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll stills</title>
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Idyll launch stills. ?f=a..f are 1080 x 1350 feed posts, ?f=g and h are 1080 x 1920 stories.
+   Stories keep everything important between 250 and 1520, 60 from the sides. */
+:root { --paper: #f6f5f1; --ink: #161514; --soft: #5b5853; --pink: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --night: #141416;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace; }
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow: hidden; -webkit-font-smoothing: antialiased; }
+h1, h2, p, ul { margin: 0; padding: 0; } ul { list-style: none; }
+.frame { position: relative; width: 1080px; height: 1350px; overflow: hidden; display: none; }
+.frame.story { height: 1920px; }
+.frame.on { display: block; }
+.stop { color: var(--pink); font-weight: inherit; }
+.ik { color: var(--ink); font-weight: inherit; }
+.plate { background: var(--pink); color: var(--cream); isolation: isolate; }
+.plate::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.night { background: var(--night); color: var(--cream); }
+.paper { background: var(--paper); color: var(--ink); }
+.crop { --c: var(--cream); --l: 22px; position: absolute; inset: 40px; pointer-events: none;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 100% / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 100% / 2px var(--l) no-repeat; }
+.paper .crop { --c: var(--ink); }
+canvas { display: block; position: absolute; }
+.big { font: 500 124px/.9 var(--sans); letter-spacing: -.055em; }
+.mono { font: 400 30px/1.2 var(--mono); letter-spacing: .02em; }
+.abs { position: absolute; }
+.leader { display: flex; align-items: baseline; gap: 16px; }
+.leader i { flex: 1; border-bottom: 3px dotted currentColor; transform: translateY(-8px); }
+.tag { display: inline-flex; align-items: stretch; font: 400 32px/1 var(--mono); letter-spacing: .02em; }
+.tag b { font-weight: 400; background: var(--pink); color: var(--cream); padding: 14px 10px 13px 22px; }
+.tag svg { display: block; width: 70px; height: 59px; fill: var(--pink); }
+.tag.inv b { background: var(--cream); color: var(--pink); }
+.tag.inv svg { fill: var(--cream); }
+.win { background: var(--cream); color: var(--ink); border: 3px solid var(--ink); box-shadow: 18px 18px 0 var(--ink); }
+.win .bar { background: var(--blue); color: var(--cream); border-bottom: 3px solid var(--ink); padding: 14px 26px 12px; }
+.win li { display: grid; grid-template-columns: 18px 1fr; gap: 28px; align-items: baseline; font: 400 58px/1.25 var(--sans); letter-spacing: -.02em; }
+.win li::before { content: ""; width: 18px; height: 18px; background: var(--pink); transform: translateY(-.12em); }
+.icon { width: 290px; height: 290px; border-radius: 22.5%; display: block; }
+#d .device { --w: 410px; position: absolute; top: 290px; }
+</style>
+</head>
+<body>
+<div id="sprite"></div>
+<svg width="0" height="0" style="position:absolute"><symbol id="edge" viewBox="0 0 26 22"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></symbol></svg>
+
+<!-- a: the plate -->
+<section class="frame plate" id="a">
+  <div class="crop"></div>
+  <canvas data-cyg data-water="#2d5bff" style="left:90px;top:200px;width:900px;height:534px"></canvas>
+  <h1 class="big abs" style="left:60px;right:60px;top:850px;text-align:center">Social, without<br>the scroll<b class="ik">.</b></h1>
+  <p class="mono leader abs" style="left:90px;right:90px;top:1150px"><span>Idyll</span><i></i><span>free, for good</span></p>
+</section>
+
+<!-- b: gone -->
+<section class="frame plate" id="b">
+  <div class="crop"></div>
+  <h2 class="big abs" style="left:90px;top:110px;font-size:150px">Gone<b class="ik">.</b></h2>
+  <div id="bmarks"></div>
+</section>
+
+<!-- c: stays -->
+<section class="frame plate" id="c">
+  <div class="crop"></div>
+  <canvas data-cyg data-water="#2d5bff" style="left:70px;top:120px;width:560px;height:332px"></canvas>
+  <div class="win abs" style="left:230px;top:500px;width:770px">
+    <p class="bar mono" style="font-size:32px">Stays</p>
+    <ul style="padding:34px 40px 42px"><li>Messages</li><li>Search</li><li>Subscriptions</li><li>Following</li><li>The video a friend sent</li></ul>
+  </div>
+</section>
+
+<!-- d: without and with -->
+<section class="frame paper" id="d">
+  <h2 class="abs" style="left:60px;right:60px;top:110px;text-align:center;font:500 84px/1 var(--sans);letter-spacing:-.045em">The same feed, twice<b class="stop">.</b></h2>
+  <div class="device" style="left:105px"><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div></div>
+  <div class="device" style="left:565px"><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div></div>
+  <p class="mono abs" style="left:105px;width:410px;top:1166px;text-align:center">Without Idyll</p>
+  <p class="mono abs" style="left:565px;width:410px;top:1166px;text-align:center">With Idyll</p>
+</section>
+
+<!-- e: free, for good -->
+<section class="frame night" id="e">
+  <h1 class="abs" style="left:40px;right:40px;top:230px;text-align:center;font:500 228px/.84 var(--sans);letter-spacing:-.06em">Free<b class="stop">.</b><br>For good<b class="stop">.</b></h1>
+  <p class="abs" style="left:90px;right:90px;top:760px;text-align:center;font:400 44px/1.4 var(--sans)">No subscription, no ads, no data sold.<br><span style="opacity:.68">Idyll will never charge.</span></p>
+  <canvas data-cyg data-cell="5" style="left:410px;top:1010px;width:260px;height:154px"></canvas>
+</section>
+
+<!-- f: the icon, three ways -->
+<section class="frame paper" id="f">
+  <p class="abs" style="left:90px;top:140px;display:flex;align-items:center;gap:26px"><span class="tag"><b>Coming soon</b><svg><use href="#edge"/></svg></span><span class="mono" style="color:var(--blue);font-size:32px">iPhone, Android and Chrome</span></p>
+  <h1 class="abs" style="left:82px;top:270px;font:500 230px/.9 var(--sans);letter-spacing:-.06em">Idyll<b class="stop">.</b></h1>
+  <div class="abs" style="left:90px;right:90px;top:620px;display:flex;justify-content:space-between">
+    <div><img class="icon" src="../../img/icons/H2-white-on-magenta-1024.png" alt=""><p class="mono" style="margin-top:22px;text-align:center;font-size:28px">Magenta</p></div>
+    <div><img class="icon" src="../../img/icons/H4-white-on-electric-blue-1024.png" alt=""><p class="mono" style="margin-top:22px;text-align:center;font-size:28px">Electric blue</p></div>
+    <div><img class="icon" src="../../img/icons/H7-white-on-ink-1024.png" alt=""><p class="mono" style="margin-top:22px;text-align:center;font-size:28px">Black</p></div>
+  </div>
+  <p class="abs" style="left:90px;right:90px;top:1070px;font:500 56px/1.15 var(--sans);letter-spacing:-.03em">Free, for good<b class="stop">.</b> <span style="color:var(--soft)">Pick the icon you like.</span></p>
+</section>
+
+<!-- g: story, the plate -->
+<section class="frame story plate" id="g">
+  <div class="crop"></div>
+  <canvas data-cyg data-water="#2d5bff" style="left:90px;top:330px;width:900px;height:534px"></canvas>
+  <h1 class="abs" style="left:60px;right:60px;top:950px;text-align:center;font:500 250px/.9 var(--sans);letter-spacing:-.06em">Idyll<b class="ik">.</b></h1>
+  <p class="abs" style="left:60px;right:60px;top:1230px;text-align:center"><span class="tag inv"><b>Coming soon</b><svg><use href="#edge"/></svg></span></p>
+  <p class="mono abs" style="left:60px;right:60px;top:1340px;text-align:center;font-size:34px">iPhone, Android and Chrome</p>
+</section>
+
+<!-- h: story, free for good -->
+<section class="frame story night" id="h">
+  <h1 class="abs" style="left:40px;right:40px;top:400px;text-align:center;font:500 228px/.84 var(--sans);letter-spacing:-.06em">Free<b class="stop">.</b><br>For good<b class="stop">.</b></h1>
+  <p class="abs" style="left:90px;right:90px;top:950px;text-align:center;font:400 46px/1.4 var(--sans)">No subscription, no ads,<br>no data sold.</p>
+  <p class="abs" style="left:90px;right:90px;top:1100px;text-align:center;font:400 46px/1.4 var(--sans);opacity:.68">Idyll will never charge.</p>
+  <canvas data-cyg data-cell="5" style="left:405px;top:1290px;width:270px;height:160px"></canvas>
+</section>
+
+<script>window.IDYLL_ROOT = '../../';</script>
+<script src="print.js"></script>
+<script src="feed.js"></script>
+<script>
+(async () => {
+  const f = new URLSearchParams(location.search).get('f') || 'a';
+  const frame = document.getElementById(f); frame.classList.add('on');
+  const st = document.createElement('style'); st.textContent = Feed.css; document.head.appendChild(st);
+  document.getElementById('sprite').innerHTML = Feed.sprite;
+  await document.fonts.ready;
+  if (f === 'b') {
+    const order = ['youtube', 'instagram', 'facebook', 'x', 'snapchat', 'tiktok', 'reddit', 'linkedin', 'threads'];
+    for (let i = 0; i < 9; i++) {
+      const c = document.createElement('canvas'); c.style.cssText = `left:${110 + (i % 3) * 330}px;top:${400 + Math.floor(i / 3) * 300}px;width:200px;height:200px`;
+      document.getElementById('bmarks').appendChild(c);
+      (await Print(c, { kind: 'mark', b: order[i], ink: '#fff6ee', strike: '#2d5bff', n: 24, seed: 11 + i })).paint(1e9);
+    }
+  }
+  if (f === 'd') {
+    const b = Feed.build(); document.getElementById('appB').innerHTML = b.without; document.getElementById('appA').innerHTML = b.with;
+    await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+    const fb = document.querySelector('#appB .feed'), fa = document.querySelector('#appA .feed'), vpA = document.querySelector('#appA .vp');
+    const kids = [...fb.querySelectorAll('.blk > *')];
+    fb.style.transform = `translateY(${-kids[1].offsetTop}px)`;
+    fa.style.transform = `translateY(${-Math.max(0, fa.offsetHeight - vpA.clientHeight)}px)`;
+  }
+  for (const c of frame.querySelectorAll('canvas[data-cyg]'))
+    (await Print(c, { kind: 'cygnet', ink: '#fff6ee', water: c.dataset.water || null, cell: +c.dataset.cell || undefined, seed: 3 })).paint(1e9);
+  await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+  window.ready = true;
+})();
+</script>
+</body>
+</html>

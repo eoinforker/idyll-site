@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll Home, more life</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<style>
+:root { --bg: #e8e6e0; --fg: #161514; --soft: #5b5853; --edge: rgba(22,21,20,.22); --pink: #d81b7a; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.35 "Timeless Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.board { padding: 56px 64px 40px; width: max-content; }
+h1 { font: 500 44px/1 "Timeless Sans", sans-serif; letter-spacing: -.045em; }
+h1 b, h2 b { color: var(--pink); font-weight: inherit; }
+.lede { margin: 12px 0 44px; color: var(--soft); max-width: 60em; }
+h2 { font: 500 26px/1 "Timeless Sans", sans-serif; letter-spacing: -.03em; margin: 0 0 22px 4px; }
+.row { display: grid; grid-template-columns: repeat(5, 393px); gap: 40px; align-items: start; margin-bottom: 64px; }
+img { display: block; width: 393px; height: 852px; border-radius: 40px; box-shadow: 0 0 0 1px var(--edge); }
+p.c { margin: 16px 6px 0; max-width: 383px; color: var(--soft); font-size: 15px; }
+p.c strong { color: var(--fg); font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="board" id="b"></div>
+<script>
+const caps = [
+  ['Now', 'Grey tiles, cream type, magenta only in the full stops.'],
+  ['A. Plate', 'Today printed on a small plate with crop marks and the stretching cygnet; its water in the second ink.'],
+  ['B. Brand tiles', 'Official colours in Idyll\'s tile shape, rows and inbox.'],
+  ['C. Second ink', 'Magenta on the allowance bar, the App links and Focus.'],
+  ['D. Recommended', 'The plate, the week as halftone dots with today in magenta, and magenta arrows on the App links.'],
+];
+const rows = [['dark-black', 'Dark, black accent'], ['dark-magenta', 'Dark, magenta accent'], ['light-magenta', 'Light, magenta accent']];
+document.getElementById('b').innerHTML = `<h1>Home, with more life<b>.</b></h1><p class="lede">Android, 393 by 852. Black accent is the founder's setting; magenta rows are for reference. In magenta, the second ink is blue.</p>` +
+  rows.map(([t, n]) => `<h2>${n}<b>.</b></h2><div class="row">${caps.map(([h, l], i) => `<div><img src="png/${t}-${i + 1}.png" alt=""><p class="c"><strong>${h}.</strong> ${l}</p></div>`).join('')}</div>`).join('');
+Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }))).then(() => document.fonts.ready).then(() => { window.ready = true; });
+</script>
+</body>
+</html>

@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll Sleep, round 2</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../kit.css">
+<!-- The approved tokens and components, copied unchanged from final/ (via focus-2). -->
+<link rel="stylesheet" href="final-tokens.css">
+<style>
+/* Sleep, three directions, Android (393 x 852). ?mode=light|dark, ?only=N, ?accent=magenta|blue|black.
+   1 is the live screen as it looks on the founder's phone today (black accent, times wrapping), for reference. */
+:root { --serif: "Timeless Serif", Georgia, serif; }
+.cell { width: 393px; }
+.phone { width: 393px; height: 852px; }
+.island { width: 12px; height: 12px; margin-left: -6px; top: 17px; border-radius: 50%; }
+.sb { padding: 2px 26px 0 30px; font: 500 15px/1 var(--sys); }
+.hi { width: 108px; margin-left: -54px; height: 4px; bottom: 10px; }
+.row { flex-wrap: wrap; row-gap: 60px; }
+
+/* A time is one word: it never wraps, at any width or font scale. */
+.time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+/* A value you tap to change: underlined in the site's way, never a pill. */
+.v { text-decoration: underline; text-decoration-thickness: .06em; text-underline-offset: .16em; white-space: nowrap; }
+.serif { font-family: var(--serif); font-weight: 400; letter-spacing: -.015em; }
+.it { font-style: italic; }
+
+/* A: the night print. Light mode prints on the accent plate (as Focus); dark mode prints on night. */
+.m-dark .phone.night { --fg: #fff6ee; }
+.phone.night:not(.onplate) .stop { color: var(--pink); }
+.moon canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.axis { position: relative; height: 14px; margin: 16px 24px 0; }
+.axis span { position: absolute; top: 0; transform: translateX(-50%); }
+.axis span:first-child { transform: none; } .axis span:last-child { transform: translateX(-100%); }
+.acc-black.m-dark .phone.night .stop { color: #d81b7a; }
+.nights { display: flex; justify-content: center; gap: 8px; }
+.nights span { width: 30px; height: 30px; display: grid; place-items: center; font: 500 13px/1 var(--sans); box-shadow: inset 0 0 0 1px currentColor; }
+.nights span.on { background: var(--fg); color: var(--bg); box-shadow: none; }
+.onplate .nights span.on { color: var(--plate, var(--pink)); }
+.lines p { font: 400 17px/1.25 var(--sans); letter-spacing: -.01em; padding: 13px 0; }
+.lines p + p { border-top: 1px solid var(--hair); }
+.onplate .lines p + p { border-top-color: rgba(255,246,238,.32); }
+
+/* B: the evening, drawn. */
+.sky { position: relative; height: 120px; margin: 0 24px; }
+.sky canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.handle { position: absolute; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; background: var(--fg); }
+.handle::after { content: ""; position: absolute; left: -8px; bottom: -6px; width: 18px; height: 18px; background: var(--fg); }
+.handle.fixed::after { display: none; }
+.now { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1.5px dotted var(--fg); }
+.srow { display: flex; align-items: center; gap: 8px; min-height: 52px; border-bottom: 1px solid var(--hair); font: 400 17px/1.3 var(--sans); }
+.srow:first-child { border-top: 1px solid var(--hair); }
+
+/* C: a few questions. */
+.q { font: italic 400 25px/1.15 var(--serif); letter-spacing: -.015em; }
+.ans { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1.5px solid var(--line); padding-bottom: 4px; }
+.ans .time { font: 500 58px/1 var(--sans); letter-spacing: -.05em; }
+.ess { display: flex; justify-content: space-between; }
+.ess > span { position: relative; display: grid; justify-items: center; gap: 7px; font: 400 13px/1 var(--sans); color: var(--soft); }
+.ess .tile { width: 54px; height: 54px; border-radius: 14px; }
+.ess .tile .bm { width: 26px; height: 26px; }
+.ess .sel .tile { outline: 2px solid var(--fg); outline-offset: 3px; }
+.ess .sel { color: var(--fg); }
+.ess .ok { position: absolute; top: -9px; right: -9px; width: 22px; height: 22px; border-radius: 50%; background: var(--pink); color: var(--on-accent, var(--cream)); display: grid; place-items: center; }
+.acc-black.m-light .ess .ok { background: #161514; }
+.ess .ok .ic { width: 14px; height: 14px; stroke-width: 2.8; }
+
+/* The live screen today: the numerals too big for their columns, so they wrap. */
+.wrapnum { font: 500 56px/1 var(--sans); letter-spacing: -.05em; word-break: break-all; }
+.slab { background: var(--pink); }
+.acc-black.m-light .slab { background: #161514; }
+
+/* Focus, in the same three languages. */
+.lens { display: flex; flex-wrap: wrap; gap: 8px; }
+.lens span { height: 44px; padding: 0 14px; display: grid; place-items: center; font: 500 15px/1 var(--sans); box-shadow: inset 0 0 0 1px var(--box-edge); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.lens span.on { background: var(--fg); color: var(--bg); box-shadow: none; }
+.lens.sm span { height: 36px; min-width: 44px; padding: 0 12px; font-size: 15px; }
+.onplate .lens span { box-shadow: inset 0 0 0 1px rgba(255,246,238,.6); }
+.onplate .lens span.on { background: var(--cream); color: var(--plate, var(--pink)); }
+.opt { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--hair); }
+.opt:first-child { border-top: 1px solid var(--hair); }
+.opt .tick, .opt .ring { width: 24px; height: 24px; flex: none; margin-left: auto; }
+.choose { display: flex; align-items: center; min-height: 36px; font: 400 17px/1.3 var(--sans); color: var(--soft); }
+.choose.on { color: var(--fg); font-weight: 500; }
+.choose .tick { margin-left: auto; }
+.onplate .sw { background: rgba(255,246,238,.28); }
+.onplate .sw.on { background: var(--cream); }
+.onplate .sw.on::after { background: var(--plate, var(--pink)); box-shadow: none; }
+.live .foot { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: 42px; background: var(--bg); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+</svg>
+<div class="board" id="board"></div>
+
+<template id="screens">
+  <!-- 1 Today, on the founder's phone (black accent): the times wrap -->
+  <div class="cell" data-force="black"><p class="cap">Live screen today</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <h1 class="t-hero" style="font-size:88px;margin-top:14px">Sleep<b class="stop">.</b></h1>
+    <p class="t-body soft" style="text-align:center;margin:14px 28px 0">From bedtime until morning the real apps rest. Calls and texts aren't touched.</p>
+    <div class="crop" style="margin:24px 24px 0;padding:18px 0;display:grid;grid-template-columns:1fr 1fr">
+      <div style="padding:0 20px;min-width:0"><p class="t-label">Bedtime</p><p class="wrapnum" style="margin-top:10px;width:118px">23:00</p></div>
+      <div style="padding:0 20px;min-width:0;border-left:1px solid var(--crop)"><p class="t-label">Morning</p><p class="wrapnum" style="margin-top:10px;width:118px">07:00</p></div>
+    </div>
+    <div class="pad" style="margin-top:22px">
+      <div style="position:relative;height:28px" class="slab"></div>
+      <p class="t-label" style="display:flex;justify-content:space-between;margin-top:8px"><span>18:00</span><span>00:00</span><span>06:00</span><span>12:00</span></p>
+    </div>
+    <div class="pad" style="margin-top:20px;display:flex;justify-content:space-between">
+      <span class="day on">M</span><span class="day on">T</span><span class="day on">W</span><span class="day on">T</span><span class="day on">F</span><span class="day on">S</span><span class="day on">S</span>
+    </div>
+    <div style="margin:18px 24px 0;display:flex;align-items:center;gap:8px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0">
+      <span class="t-body" style="margin-right:auto">Apps to rest</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a>
+    </div>
+    <div class="foot"><a class="btn primary">Save</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 2 A, Night print: setup -->
+  <div class="cell"><p class="cap">A. Night print, setting up</p>
+  <div class="phone night" data-plate-light><div class="pcrop crop"></div><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="moon" style="position:absolute;top:96px;right:40px;width:74px;height:74px"></div>
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:214px;margin:58px auto 0"></div>
+    <h1 class="t-title-m" style="text-align:center;margin-top:30px;font-size:37px">Bedtime at <span class="v time">23:00</span><b class="stop">.</b><br>Up again at <span class="v time">07:00</span><b class="stop">.</b></h1>
+    <div class="nights" style="margin-top:22px"><span class="on">M</span><span class="on">T</span><span class="on">W</span><span class="on">T</span><span class="on">F</span><span>S</span><span>S</span></div>
+    <div class="lines" style="margin:22px 30px 0;text-align:center">
+      <p>A quiet note <span class="v">30 minutes</span> before bed.</p>
+      <p>The apps wait <span class="v">15 minutes</span> after you wake.</p>
+      <p><span class="v">YouTube</span> stays open overnight.</p>
+    </div>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn primary">Start Sleep</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 3 A, Night print: resting -->
+  <div class="cell"><p class="cap">A. Night print, resting</p>
+  <div class="phone night" data-plate-light><div class="pcrop crop"></div><div class="scr" style="text-align:center">
+    <div class="moon" data-big style="width:120px;height:120px;margin:84px auto 0"></div>
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:250px;margin:26px auto 0"></div>
+    <h1 class="t-hero" style="font-size:66px;margin-top:34px">Goodnight<b class="stop">.</b></h1>
+    <p class="t-head" style="margin-top:14px">Resting until <span class="time">07:00</span>.</p>
+    <p style="margin-top:26px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" style="width:34px;height:34px"></span></p>
+    <p class="t-small" style="margin:14px 50px 0">YouTube is still open. Calls and texts are fine.</p>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn secondary">Change Sleep</a><a class="lnk">Turn Sleep off</a></div>
+  </div></div></div>
+
+  <!-- 4 B, The evening, drawn: setup -->
+  <div class="cell"><p class="cap">B. The evening, drawn, setting up</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Sleep<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:6px">Drag the times. The apps rest in between.</p></div>
+    <div style="position:relative;height:50px;margin:26px 24px 0">
+      <span class="t-num-m time" style="position:absolute;left:96px;transform:translateX(-50%);bottom:4px;font-size:36px">23:00</span>
+      <span class="t-num-m time" style="position:absolute;left:249px;transform:translateX(-50%);bottom:4px;font-size:36px">07:00</span>
+    </div>
+    <div class="sky" data-sky="23,7" style="margin-top:8px"></div>
+    <p class="t-label axis"><span style="left:0">18:00</span><span style="left:33.33%">00:00</span><span style="left:66.67%">06:00</span><span style="left:100%">12:00</span></p>
+    <p class="t-head pad" style="margin-top:24px">Eight hours, on these nights<b class="stop">.</b></p>
+    <div class="pad" style="margin-top:12px;display:flex;justify-content:space-between">
+      <span class="day on">M</span><span class="day on">T</span><span class="day on">W</span><span class="day on">T</span><span class="day on">F</span><span class="day off">S</span><span class="day off">S</span>
+    </div>
+    <div class="pad" style="margin-top:18px">
+      <div class="srow"><span>A quiet note <span class="v">30 minutes</span> before bed.</span></div>
+      <div class="srow"><span>The apps wait <span class="v">15 minutes</span> after you wake.</span></div>
+      <div class="srow"><span data-t="youtube" class="sm"></span><span style="margin-right:auto">YouTube stays open overnight.</span><a class="t-small" style="font-size:15px">Change</a></div>
+    </div>
+    <div class="foot"><a class="btn primary">Save</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 5 B, The evening, drawn: on, before bedtime -->
+  <div class="cell"><p class="cap">B. The evening, drawn, on</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Sleep is on<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:6px">The apps rest from <span class="time">23:00</span> tonight.</p></div>
+    <div style="position:relative;height:50px;margin:26px 24px 0">
+      <span class="t-num-m time" style="position:absolute;left:96px;transform:translateX(-50%);bottom:4px;font-size:36px">23:00</span>
+      <span class="t-num-m time" style="position:absolute;left:249px;transform:translateX(-50%);bottom:4px;font-size:36px">07:00</span>
+    </div>
+    <div class="sky" data-sky="23,7" data-now="21.67" style="margin-top:8px"></div>
+    <p class="t-label axis"><span style="left:0">18:00</span><span style="left:33.33%">00:00</span><span style="left:66.67%">06:00</span><span style="left:100%">12:00</span></p>
+    <p class="t-head pad" style="margin-top:26px">An hour and 20 minutes to go. A quiet note comes at <span class="time">22:30</span><b class="stop">.</b></p>
+    <div class="pad" style="margin-top:22px">
+      <div class="srow"><span style="margin-right:auto">Sleep</span><span class="sw on"></span></div>
+      <div class="srow"><span style="margin-right:auto">Monday to Friday nights</span><a class="t-small" style="font-size:15px">Change</a></div>
+      <div class="srow"><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><span style="margin-right:auto">rest</span><a class="t-small" style="font-size:15px">Change</a></div>
+    </div>
+    <div class="foot"><a class="lnk">Skip tonight</a></div>
+  </div></div></div>
+
+  <!-- 6 C, A few questions: setup -->
+  <div class="cell"><p class="cap">C. A few questions, setting up</p>
+  <div class="phone"><div class="scr">
+    <div class="navb" style="justify-content:space-between"><span style="display:flex;align-items:center"><svg class="ic"><use href="#i-chevl"/></svg>Home</span><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" style="display:block;width:30px;height:17.8px"></span></div>
+    <div class="pad" style="margin-top:10px">
+      <p class="q">When do you go to bed?</p>
+      <div class="ans" style="margin-top:6px"><span class="time">23:00</span><span class="t-small soft">Monday to Friday</span></div>
+      <p class="q" style="margin-top:22px">And when do you wake?</p>
+      <div class="ans" style="margin-top:6px"><span class="time">07:00</span><span class="t-small soft">Eight hours</span></div>
+      <p class="q" style="margin-top:22px">Which nights?</p>
+      <div style="margin-top:12px;display:flex;justify-content:space-between">
+        <span class="day on">M</span><span class="day on">T</span><span class="day on">W</span><span class="day on">T</span><span class="day on">F</span><span class="day off">S</span><span class="day off">S</span></div>
+      <p class="q" style="margin-top:24px">Anything you still need overnight?</p>
+      <div class="ess" style="margin-top:16px">
+        <span><span data-t="instagram"></span>Instagram</span>
+        <span><span data-t="x"></span>X</span>
+        <span><span data-t="tiktok"></span>TikTok</span>
+        <span class="sel"><span data-t="youtube"></span>YouTube<i class="ok"><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <span><span data-t="reddit"></span>Reddit</span>
+      </div>
+      <p class="t-small soft" style="margin-top:16px">A quiet note <span class="v" style="color:var(--fg)">30 minutes</span> before bed. The apps wait <span class="v" style="color:var(--fg)">15 minutes</span> after you wake.</p>
+    </div>
+    <div class="foot"><a class="btn primary">That's it</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 7 C, A few questions: on -->
+  <div class="cell"><p class="cap">C. A few questions, on</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="2.2" style="width:94px;height:56px;margin:70px 0 0 24px"></div>
+    <div class="pad" style="margin-top:22px">
+      <h1 class="t-title-l">Sleep is on<b class="stop">.</b></h1>
+      <p class="serif it" style="font-size:25px;line-height:1.25;margin-top:18px">Goodnight at <span class="v time">23:00</span>, good morning at <span class="v time">07:00</span>. Monday to Friday nights.</p>
+      <p class="t-body soft" style="margin-top:18px">Instagram, X and TikTok rest. YouTube stays open. A quiet note comes at <span class="time">22:30</span>.</p>
+    </div>
+    <div class="pad" style="margin-top:30px">
+      <div class="srow"><span style="margin-right:auto">Sleep</span><span class="sw on"></span></div>
+      <div class="srow"><span style="margin-right:auto">Change the answers</span><svg class="ic chev"><use href="#i-chev"/></svg></div>
+    </div>
+  </div></div></div>
+
+  <!-- 8 Focus today, on the founder's phone (black accent) -->
+  <div class="cell" data-force="black" data-g="focus"><p class="cap">Focus, live screen today</p>
+  <div class="phone live"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Focus<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:8px">The real apps pause until the time is up.</p></div>
+    <div class="pad" style="margin-top:20px"><p class="t-label">Length</p>
+      <div class="lens" style="margin-top:12px"><span>25 min</span><span class="on">50 min</span><span>90 min</span><span>Until I stop</span><span>Custom</span></div></div>
+    <div class="pad" style="margin-top:18px"><div style="display:flex;align-items:center;gap:8px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0"><span class="t-body" style="margin-right:auto">Apps to pause</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a></div></div>
+    <div class="pad" style="margin-top:18px"><p class="t-label">Ending early</p>
+      <ul style="margin-top:8px">
+        <li class="opt"><p class="t-body">Anytime</p></li>
+        <li class="opt"><p class="t-body">Wait 10 seconds</p><span class="tick"><svg class="ic"><use href="#i-check"/></svg></span></li>
+        <li class="opt"><div><p class="t-body">Locked until it ends</p><p class="t-small soft">One emergency exit a week.</p></div></li>
+        <li class="opt"><p class="t-body">Rounds</p><svg class="ic chev"><use href="#i-chev"/></svg></li>
+        <li class="opt"><p class="t-body">Schedule</p><svg class="ic chev"><use href="#i-chev"/></svg></li>
+      </ul></div>
+    <div class="foot"><a class="btn primary">Done</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 9 A, Night print: Focus setup -->
+  <div class="cell" data-g="focus"><p class="cap">A. Night print, Focus</p>
+  <div class="phone night" data-plate-light><div class="pcrop crop"></div><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:190px;margin:30px auto 0"></div>
+    <h1 class="t-title-m" style="text-align:center;margin-top:24px;font-size:37px">Focus for <span class="v time">50 minutes</span><b class="stop">.</b></h1>
+    <p class="t-small" style="text-align:center;margin-top:8px">Until <span class="time">15:20</span>. The apps pause until then.</p>
+    <div class="lens sm" style="justify-content:center;margin:18px 24px 0"><span>25</span><span class="on">50</span><span>90</span><span>Until I stop</span><span>Custom</span></div>
+    <div class="lines" style="margin:16px 30px 0;text-align:center">
+      <p><span class="v">Instagram, X and TikTok</span> pause.</p>
+      <p>To stop early, you <span class="v">wait 10 seconds</span>.</p>
+      <p>One long stretch. <span class="v">Use rounds</span> or <span class="v">a schedule</span>.</p>
+      <p style="display:flex;align-items:center;justify-content:center;gap:14px">Notifications stay quiet <span class="sw on"></span></p>
+    </div>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn primary">Start Focus</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 10 B, The day, drawn: Focus setup -->
+  <div class="cell" data-g="focus"><p class="cap">B. Drawn, Focus</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Focus<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:6px">Drag the end. The apps pause until then.</p></div>
+    <div style="position:relative;height:50px;margin:22px 24px 0">
+      <span class="t-num-m" style="position:absolute;left:43px;transform:translateX(-50%);bottom:4px;font-size:36px">Now</span>
+      <span class="t-num-m time" style="position:absolute;left:216px;transform:translateX(-50%);bottom:4px;font-size:36px">15:20</span>
+    </div>
+    <div class="sky" data-day="14,18,14.5,15.33" style="margin-top:8px;height:96px"></div>
+    <p class="t-label axis"><span style="left:0">14:00</span><span style="left:25%">15:00</span><span style="left:50%">16:00</span><span style="left:75%">17:00</span><span style="left:100%">18:00</span></p>
+    <div class="lens sm pad" style="margin-top:20px"><span>25</span><span class="on">50</span><span>90</span><span>Until I stop</span><span>Custom</span></div>
+    <div class="pad" style="margin-top:16px">
+      <div class="srow"><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><span style="margin-right:auto">pause</span><a class="t-small" style="font-size:15px">Change</a></div>
+      <div class="srow"><span style="margin-right:auto">To stop early, <span class="v">wait 10 seconds</span>.</span></div>
+      <div class="srow"><span style="margin-right:auto"><span class="v">Rounds</span> and <span class="v">a schedule</span> are off.</span></div>
+      <div class="srow"><span style="margin-right:auto">Notifications stay quiet</span><span class="sw on"></span></div>
+    </div>
+    <div class="foot"><a class="btn primary">Start Focus</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 11 C, A few questions: Focus setup -->
+  <div class="cell" data-g="focus"><p class="cap">C. A few questions, Focus</p>
+  <div class="phone"><div class="scr">
+    <div class="navb" style="justify-content:space-between"><span style="display:flex;align-items:center"><svg class="ic"><use href="#i-chevl"/></svg>Home</span><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" style="display:block;width:30px;height:17.8px"></span></div>
+    <div class="pad" style="margin-top:6px">
+      <p class="q">How long?</p>
+      <div class="ans" style="margin-top:4px"><span class="time">50 min</span><span class="t-small soft" style="white-space:nowrap">Until 15:20</span></div>
+      <div class="lens sm" style="margin-top:12px"><span>25</span><span class="on">50</span><span>90</span><span>Until I stop</span><span>Custom</span></div>
+      <p class="q" style="margin-top:20px">Anything you still need meanwhile?</p>
+      <div class="ess" style="margin-top:16px">
+        <span><span data-t="instagram"></span>Instagram</span>
+        <span><span data-t="x"></span>X</span>
+        <span><span data-t="tiktok"></span>TikTok</span>
+        <span class="sel"><span data-t="youtube"></span>YouTube<i class="ok"><svg class="ic"><use href="#i-check"/></svg></i></span>
+        <span><span data-t="reddit"></span>Reddit</span>
+      </div>
+      <p class="q" style="margin-top:18px">And if you want to stop early?</p>
+      <div style="margin-top:6px">
+        <p class="choose">Anytime</p>
+        <p class="choose on">Wait 10 seconds<span class="tick"><svg class="ic"><use href="#i-check"/></svg></span></p>
+        <p class="choose">Locked, with one emergency exit a week</p>
+      </div>
+      <div style="margin-top:10px"><div class="srow" style="min-height:46px"><span style="margin-right:auto"><span class="v">Rounds</span> and <span class="v">a schedule</span> are off.</span></div>
+      <div class="srow" style="min-height:46px"><span style="margin-right:auto">Notifications stay quiet</span><span class="sw on"></span></div></div>
+    </div>
+    <div class="foot"><a class="btn primary">Start Focus</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+</template>
+
+<script>
+window.IDYLL_ROOT = '../../../';
+(() => {
+  const q = new URLSearchParams(location.search), want = q.get('mode');
+  const accentQ = q.get('accent') || 'magenta';
+  const board = document.getElementById('board');
+  const modes = ['light', 'dark'].filter(m => !want || m === want);
+  const ACCENTS = { magenta: ['#d81b7a', '#2d5bff'], blue: ['#2d5bff', '#d81b7a'], black: ['#161514', '#d81b7a'] };
+  function prep(root, mode, accent) {
+    const dark = mode === 'dark', [acc, ink2] = ACCENTS[accent];
+    root.querySelectorAll('.phone[data-plate-light]').forEach(p => { if (!dark) p.classList.add('onplate'); else if (accent === 'black') p.classList.add('onplate'); });
+    root.querySelectorAll('.phone').forEach(p => {
+      const light = dark || p.classList.contains('onplate');
+      if (light) p.classList.add('lightbar', 'lighthi');
+    });
+    root.querySelectorAll('.smallcyg').forEach(g => { if (!g.dataset.ink) g.dataset.ink = dark ? '#fff6ee' : acc; });
+    root.querySelectorAll('.sigcyg').forEach(g => g.dataset.water = ink2);
+    root.querySelectorAll('.print[data-print="mark"]').forEach(g => { g.dataset.strike = g.hasAttribute('data-nostrike') ? 'none' : ink2; });
+    root.dataset.acc = acc; root.dataset.ink2 = ink2; root.dataset.dark = dark ? 1 : '';
+  }
+  modes.forEach(m => {
+    board.insertAdjacentHTML('beforeend', `<p class="rowname">${m === 'dark' ? 'Dark' : 'Light'}<b class="stop">.</b></p>`);
+    const row = document.createElement('section'); row.className = 'row';
+    [...document.getElementById('screens').content.cloneNode(true).children].forEach(c => {
+      const accent = c.dataset.force || accentQ;
+      c.classList.add(`m-${m}`); if (m === 'dark') c.classList.add('mono'); if (accent !== 'magenta') c.classList.add(`acc-${accent}`);
+      row.appendChild(c); prep(c, m, accent);
+    });
+    board.appendChild(row);
+  });
+
+  /* Halftone, the kit's way: dots on a rotated screen, sized by tone. */
+  const DPR = 3;
+  function dots(g, w, h, cell, ang, tone, col, dx = 0, dy = 0, rk = .56) {
+    const ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / cell / 2) + 2;
+    g.fillStyle = col; g.beginPath();
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+      const x = cx + (i * ca - j * sa) * cell, y = cy + (i * sa + j * ca) * cell;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const v = tone(x / w, y / h); if (v < .04) continue;
+      const r = cell * rk * Math.sqrt(Math.min(v, 1)); if (r < .3) continue;
+      g.moveTo(x + dx + r, y + dy); g.arc(x + dx, y + dy, r, 0, 6.2832);
+    }
+    g.fill();
+  }
+  const canvas = el => { const cv = document.createElement('canvas'); const w = el.clientWidth * DPR, h = el.clientHeight * DPR; cv.width = w; cv.height = h; el.appendChild(cv); return [cv.getContext('2d'), w, h]; };
+  function moon(el) {
+    const cell = el.closest('.cell'), plate = el.closest('.onplate'), dark = !!cell.dataset.dark;
+    const black = cell.classList.contains('acc-black');
+    /* Cream on the plate; the accent on night. Black's accent is cream, so its moon is cream too. */
+    const ink = plate || black ? '#fff6ee' : cell.dataset.acc;
+    const [g, w, h] = canvas(el); el.style.position = el.style.position || 'relative';
+    const c = (el.hasAttribute('data-big') ? 5.2 : 4.2) * DPR;
+    const disc = (u, v) => Math.hypot(u - .5, v - .5) < .47;
+    const lit = (u, v) => Math.hypot(u - .5, v - .5) < .47 && Math.hypot(u - .30, v - .36) > .40;
+    /* The second ink, a touch off register, in the shadow side. */
+    if (!plate) dots(g, w, h, c * .9, 15 * Math.PI / 180, (u, v) => disc(u, v) && !lit(u, v) ? .16 : 0, cell.dataset.ink2, 2 * DPR, -1.5 * DPR);
+    dots(g, w, h, c, 45 * Math.PI / 180, (u, v) => lit(u, v) ? .55 + .45 * Math.min(1, (u + (1 - v)) * .7) : disc(u, v) ? .1 : 0, ink);
+  }
+  function sky(el) {
+    const cell = el.closest('.cell'), dark = !!cell.dataset.dark;
+    const [bed, wake] = el.dataset.sky.split(',').map(Number);
+    const at = hr => (((hr - 18) % 24) + 24) % 24 / 18;
+    const a = at(bed), b = at(wake);
+    const fg = dark ? '#fff6ee' : '#161514', acc = cell.classList.contains('acc-black') ? (dark ? '#fff6ee' : '#161514') : cell.dataset.acc;
+    const [g, w, h] = canvas(el);
+    /* How dark the sky is at each hour: dusk at 18:00, deepest near 03:00, light again by 08:00. */
+    const night = u => { const hr = 18 + u * 18; const t = hr <= 27 ? Math.max(0, (hr - 18.5) / 8.5) : Math.max(0, 1 - (hr - 27) / 5.5); return Math.min(1, t * t * (3 - 2 * t)); };
+    const inSpan = u => u >= a && u <= b;
+    /* The sky, outside the sleep span, in a soft tint of the ink. */
+    dots(g, w, h, 5.4 * DPR, 45 * Math.PI / 180, (u, v) => inSpan(u) ? 0 : .05 + .55 * night(u) * (1 - .45 * v), fg + (dark ? '80' : '70'));
+    /* The sleep span, printed in the accent: a solid plate that thins into dots at its edges. */
+    g.fillStyle = acc; g.fillRect(a * w + 12 * DPR, 0, (b - a) * w - 24 * DPR, h);
+    dots(g, w, h, 5.4 * DPR, 45 * Math.PI / 180, (u, v) => inSpan(u) ? Math.min(1, .35 + Math.min(u - a, b - u) * w / DPR / 10) : 0, acc);
+    /* A moon in the span, in the plate's paper. */
+    const mx = (at(3) * w), my = h * .42, R = 22 * DPR;
+    const paper = acc === '#fff6ee' ? '#141416' : '#fff6ee';
+    g.save(); g.beginPath(); g.rect(mx - R - 2, my - R - 2, 2 * R + 4, 2 * R + 4); g.clip();
+    dots(g, w, h, 2.6 * DPR, 45 * Math.PI / 180, (u, v) => { const x = u * w, y = v * h; const d = Math.hypot(x - mx, y - my), d2 = Math.hypot(x - mx + R * .42, y - my + R * .3); return d < R && d2 > R * .86 ? 1 : d < R ? .12 : 0; }, paper);
+    g.restore();
+    /* Handles at bedtime and wake, and the time now. */
+    for (const u of [a, b]) el.insertAdjacentHTML('beforeend', `<span class="handle" style="left:${u * 100}%"></span>`);
+    if (el.dataset.now) el.insertAdjacentHTML('beforeend', `<span class="now" style="left:${at(+el.dataset.now) * 100}%"></span><span class="t-label" style="position:absolute;top:calc(100% + 16px);left:${at(+el.dataset.now) * 100}%;transform:translateX(-50%);color:var(--fg)">Now</span>`);
+  }
+
+  function dayband(el) {
+    const cell = el.closest('.cell'), dark = !!cell.dataset.dark;
+    const [h0, h1, a0, b0] = el.dataset.day.split(',').map(Number);
+    const a = (a0 - h0) / (h1 - h0), b = (b0 - h0) / (h1 - h0);
+    const fg = dark ? '#fff6ee' : '#161514', acc = cell.classList.contains('acc-black') ? (dark ? '#fff6ee' : '#161514') : cell.dataset.acc;
+    const [g, w, h] = canvas(el);
+    const inSpan = u => u >= a && u <= b;
+    dots(g, w, h, 5.4 * DPR, 45 * Math.PI / 180, (u, v) => inSpan(u) ? 0 : (u < a ? .1 : .16 + .12 * u) * (1 - .3 * v), fg + (dark ? '80' : '70'));
+    g.fillStyle = acc; g.fillRect(a * w + 12 * DPR, 0, (b - a) * w - 24 * DPR, h);
+    dots(g, w, h, 5.4 * DPR, 45 * Math.PI / 180, (u, v) => inSpan(u) ? Math.min(1, .35 + Math.min(u - a, b - u) * w / DPR / 10) : 0, acc);
+    for (const u of [a, b]) el.insertAdjacentHTML('beforeend', `<span class="handle" style="left:${u * 100}%"></span>`);
+    el.querySelector('.handle').classList.add('fixed');
+  }
+  window.SLEEP_DRAW = () => { document.querySelectorAll('[data-day]').forEach(dayband); document.querySelectorAll('.moon').forEach(moon); document.querySelectorAll('[data-sky]').forEach(sky); };
+})();
+</script>
+<script src="../kit.js"></script>
+<script>
+(async () => {
+  await document.fonts.ready;
+  for (let i = 0; i < 200 && document.documentElement.dataset.ready !== '1'; i++) await new Promise(r => setTimeout(r, 50));
+  /* Draw only the visible screens (hidden ones have no size). */
+  SLEEP_DRAW();
+  window.ready = true;
+})();
+</script>
+</body>
+</html>

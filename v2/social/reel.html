@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll reel</title>
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Idyll launch reel, 1080 x 1920, 20 s. Deterministic: window.seek(t) draws the frame at t seconds.
+   Safe zone: nothing important above 250 or below 1520, 60 from the sides. */
+:root { --paper: #f6f5f1; --ink: #161514; --soft: #5b5853; --pink: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --night: #141416;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--night); -webkit-font-smoothing: antialiased; }
+h1, h2, p { margin: 0; }
+.scene { position: absolute; inset: 0; display: none; overflow: hidden; }
+.stop { color: var(--pink); font-weight: inherit; }
+.ik { color: var(--ink); font-weight: inherit; }
+.in { will-change: opacity, transform; }
+.plate { background: var(--pink); color: var(--cream); isolation: isolate; }
+.plate::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.crop { --c: var(--cream); --l: 22px; position: absolute; inset: 40px; pointer-events: none;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 100% / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 100% / 2px var(--l) no-repeat; }
+canvas { display: block; position: absolute; }
+.big { font: 500 132px/.9 var(--sans); letter-spacing: -.055em; }
+.mono { font: 400 30px/1.2 var(--mono); letter-spacing: .02em; }
+
+/* 2: the same feed, twice */
+#s2 { background: var(--paper); color: var(--ink); }
+#s2 .device { --w: 460px; position: absolute; top: 450px; }
+#s2 .cap { position: absolute; top: 1426px; width: 460px; text-align: center; }
+
+/* 3: gone */
+#s3 .mk { position: absolute; width: 230px; height: 230px; }
+
+/* 4: the one video */
+#s4 { background: var(--paper); color: var(--ink); }
+.win { position: absolute; left: 84px; width: 900px; top: 584px; background: var(--cream); border: 3px solid var(--ink); box-shadow: 14px 14px 0 var(--ink); }
+.win .bar { background: var(--blue); color: var(--cream); border-bottom: 3px solid var(--ink); padding: 12px 22px 10px; }
+.player { position: relative; height: 504px; overflow: hidden; background: #000; }
+.player img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 60% 50%; }
+.player .pb { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: rgba(255,255,255,.3); }
+.player .pb i { display: block; height: 100%; background: var(--pink); transform-origin: left; }
+.player .end { position: absolute; inset: 0; background: rgba(20,20,22,.62); color: var(--cream); display: grid; place-items: center; text-align: center; }
+.player .ck { width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--pink); display: grid; place-items: center; margin: 0 auto 26px; }
+.player .ck svg { width: 64px; height: 64px; fill: none; stroke: var(--pink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 5: end card */
+#s5 { background: var(--night); color: var(--cream); text-align: center; }
+</style>
+</head>
+<body>
+<div id="sprite"></div>
+
+<!-- 1 -->
+<section class="scene plate" id="s1">
+  <div class="crop"></div>
+  <canvas id="cyg1" style="left:120px;top:400px;width:840px;height:499px"></canvas>
+  <p class="mono in" id="t1b" style="position:absolute;left:60px;right:60px;top:1420px;display:flex;align-items:baseline;gap:16px"><span>Idyll</span><i style="flex:1;border-bottom:3px dotted var(--cream);transform:translateY(-8px)"></i><span>free, for good</span></p>
+  <h1 class="big in" id="t1" style="position:absolute;left:60px;right:60px;top:1050px;text-align:center">Social, without<br>the scroll<b class="ik">.</b></h1>
+</section>
+
+<!-- 2 -->
+<section class="scene" id="s2">
+  <h2 class="in" id="t2" style="position:absolute;left:60px;right:60px;top:300px;text-align:center;font:500 84px/1 var(--sans);letter-spacing:-.045em">The same feed, twice<b class="stop">.</b></h2>
+  <div class="device" style="left:60px"><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div></div>
+  <div class="device" style="left:560px"><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div></div>
+  <p class="cap mono" style="left:60px">Without Idyll</p>
+  <p class="cap mono" style="left:560px">With Idyll</p>
+</section>
+
+<!-- 3 -->
+<section class="scene plate" id="s3">
+  <div class="crop"></div>
+  <h2 class="big in" id="t3" style="position:absolute;left:60px;top:300px;font-size:150px">Gone<b class="ik">.</b></h2>
+  <div id="marks"></div>
+  <p class="in" id="t3b" style="position:absolute;left:60px;right:60px;top:1436px;text-align:center;font:500 46px/1.2 var(--sans);letter-spacing:-.02em">Reels, Shorts, For You and the rest.</p>
+</section>
+
+<!-- 4 -->
+<section class="scene" id="s4">
+  <h2 class="in" id="t4" style="position:absolute;left:60px;right:60px;top:290px;font:500 96px/.95 var(--sans);letter-spacing:-.05em">The one video<br>someone sent you<b class="stop">.</b></h2>
+  <div class="win in" id="card">
+    <p class="bar mono" style="font-size:26px">From Leo</p>
+    <div class="player"><img id="vid" src="../../img/photos/76.jpg" alt=""><span class="pb"><i id="pb"></i></span>
+      <div class="end" id="end"><div><div class="ck"><svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div><p style="font:500 52px/1.1 var(--sans);letter-spacing:-.03em">That's everything<b class="stop">.</b></p><p style="font:400 30px/1.3 var(--sans);margin-top:10px;opacity:.85">Nothing plays after it.</p></div></div>
+    </div>
+    <div style="padding:26px 28px 30px;display:flex;justify-content:space-between;align-items:baseline"><div><p style="font:500 44px/1.1 var(--sans);letter-spacing:-.025em">She rides again</p><p style="font:400 28px/1.3 var(--sans);color:var(--soft);margin-top:6px">Leo Marsh</p></div><p class="mono" id="clock" style="font-size:26px;color:var(--soft)">0:00 / 0:48</p></div>
+  </div>
+  <h2 class="in" id="t4b" style="position:absolute;left:60px;right:60px;top:1374px;font:500 96px/1 var(--sans);letter-spacing:-.05em">Then it ends<b class="stop">.</b></h2>
+</section>
+
+<!-- 5 -->
+<section class="scene" id="s5">
+  <img class="in" id="icon" src="../../img/icons/H2-white-on-magenta-1024.png" alt="" style="position:absolute;left:390px;top:420px;width:300px;height:300px;border-radius:22.5%">
+  <h1 class="in" id="t5" style="position:absolute;left:60px;right:60px;top:800px;font:500 240px/.9 var(--sans);letter-spacing:-.06em">Idyll<b class="stop">.</b></h1>
+  <p class="in" id="t5b" style="position:absolute;left:60px;right:60px;top:1100px;font:500 64px/1.1 var(--sans);letter-spacing:-.03em">Free, for good.</p>
+  <p class="in" id="t5c" style="position:absolute;left:60px;right:60px;top:1200px;font:400 40px/1.35 var(--sans);color:rgba(255,246,238,.68)">Coming soon to iPhone,<br>Android and Chrome.</p>
+</section>
+
+<script>window.IDYLL_ROOT = '../../';</script>
+<script src="print.js"></script>
+<script src="feed.js"></script>
+<script>
+(async () => {
+  const $ = s => document.querySelector(s);
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const out3 = t => 1 - Math.pow(1 - clamp(t), 3), out4 = t => 1 - Math.pow(1 - clamp(t), 4);
+  const st = document.createElement('style'); st.textContent = Feed.css; document.head.appendChild(st);
+  $('#sprite').innerHTML = Feed.sprite;
+  const f = Feed.build(); $('#appB').innerHTML = f.without; $('#appA').innerHTML = f.with;
+
+  /* Text lands: fade and a short rise. */
+  const land = (el, t, at, dur = .45, rise = 28) => { const k = out3((t - at) / dur); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * rise}px)`; };
+
+  await document.fonts.ready;
+  await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+
+  /* Scene 1 and 3 prints. */
+  const scenes = [...document.querySelectorAll('.scene')];
+  const show = s => scenes.forEach(x => x.style.display = x === s ? 'block' : 'none');
+  show($('#s1')); const cyg = await Print($('#cyg1'), { kind: 'cygnet', ink: '#fff6ee', water: '#2d5bff', speed: 1.35, seed: 3 });
+  show($('#s3'));
+  const order = ['youtube', 'instagram', 'facebook', 'x', 'snapchat', 'tiktok', 'reddit', 'linkedin', 'threads'];
+  const marks = [];
+  for (let i = 0; i < 9; i++) {
+    const c = document.createElement('canvas'); c.className = 'mk';
+    c.style.left = (120 + (i % 3) * 305) + 'px'; c.style.top = (560 + Math.floor(i / 3) * 290) + 'px';
+    $('#marks').appendChild(c);
+    marks.push(await Print(c, { kind: 'mark', b: order[i], ink: '#fff6ee', strike: '#2d5bff', n: 24, speed: 1.6, seed: 11 + i }));
+  }
+
+  /* Scene 2: measure both feeds, then a fixed schedule of flicks. */
+  show($('#s2'));
+  const fb = $('#appB .feed'), fa = $('#appA .feed'), vpA = $('#appA .vp');
+  const blk = fb.querySelectorAll('.blk')[0];
+  const offB = [...fb.querySelectorAll('.blk > *')].map(c => c.offsetTop);
+  const offA = [...fa.querySelectorAll('.post')].map(c => c.offsetTop).slice(1).concat(Math.max(0, fa.offsetHeight - vpA.clientHeight));
+  const flicksB = [[3.45, 1], [4.2, 2], [5.05, 3], [5.75, 5], [6.5, 6], [7.2, 7], [7.95, 9], [8.6, 10]];
+  const flicksA = [[3.6, 0], [4.45, 1], [5.3, 2], [6.15, 3]];
+  const scrollAt = (t, flicks, off, durOf) => { let y = 0, from = 0; for (const [at, idx] of flicks) { const to = off[idx]; const d = durOf(idx); if (t < at) break; const k = out4((t - at) / d); y = from + (to - from) * k; from = to; } return y; };
+
+  window.seek = function (t) {
+    if (t < 3) {
+      show($('#s1')); cyg.paint((t - .1) * 1000);
+      land($('#t1'), t, 1.2, .5, 36); land($('#t1b'), t, 1.75, .45, 16);
+    } else if (t < 9) {
+      show($('#s2')); land($('#t2'), t, 3.05, .4, 20);
+      fb.style.transform = `translate3d(0,${-scrollAt(t, flicksB, offB, () => .55)}px,0)`;
+      fa.style.transform = `translate3d(0,${-scrollAt(t, flicksA, offA, i => i === 3 ? .85 : .65)}px,0)`;
+    } else if (t < 13) {
+      show($('#s3')); land($('#t3'), t, 9.0, .35, 20);
+      marks.forEach((m, i) => m.paint((t - 9.3 - i * .24) * 1000));
+      land($('#t3b'), t, 11.95, .45, 20);
+    } else if (t < 17) {
+      show($('#s4')); land($('#t4'), t, 13.0, .4, 20); land($('#card'), t, 13.2, .45, 40);
+      const p = clamp((t - 13.6) / 1.9);
+      $('#pb').style.transform = `scaleX(${p})`;
+      $('#vid').style.transform = `scale(${1.02 + .05 * p})`;
+      const secs = Math.round(p * 48); $('#clock').textContent = `0:${String(secs).padStart(2, '0')} / 0:48`;
+      const e = out3((t - 15.5) / .35); $('#end').style.opacity = e;
+      land($('#t4b'), t, 15.85, .45, 24);
+    } else {
+      show($('#s5')); land($('#icon'), t, 17.0, .5, 16); land($('#t5'), t, 17.3, .45, 24); land($('#t5b'), t, 17.65, .45, 18); land($('#t5c'), t, 17.85, .45, 18);
+    }
+  };
+  window.seek(0);
+  window.ready = true;
+  /* In a normal browser tab, play it in real time. */
+  if (!/HeadlessChrome/.test(navigator.userAgent) && !location.search.includes('still')) { const t0 = performance.now(); const loop = () => { window.seek(((performance.now() - t0) / 1000) % 20); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll onboarding, Android</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../kit.css">
+<!-- The approved tokens and components, copied unchanged from final/final.html. -->
+<link rel="stylesheet" href="final-tokens.css">
+<style>
+/* Android onboarding, round 2. Same tokens and components as final/; only the phone is Android sized (393 x 852)
+   with a punch hole and a gesture bar. ?mode=light|dark, ?only=N (1 to 11), ?accent=magenta|blue|black. */
+.cell { width: 393px; }
+.phone { width: 393px; height: 852px; }
+.island { width: 12px; height: 12px; margin-left: -6px; top: 17px; border-radius: 50%; }
+.sb { padding: 2px 26px 0 30px; font: 500 15px/1 var(--sys); }
+.hi { width: 108px; margin-left: -54px; height: 4px; bottom: 10px; }
+.box.on.cr { background: var(--cream); color: var(--plate, var(--pink)); }
+.box.on.cr .ic { stroke-width: 2.4; }
+.entry + .entry { border-top: 1px solid var(--crop); margin-top: 16px; padding-top: 16px; }
+.crop .entry + .entry { border-top-color: color-mix(in srgb, var(--crop) 60%, transparent); }
+.step { display: grid; grid-template-columns: 24px 1fr auto; align-items: baseline; gap: 0 8px; padding: 13px 0; border-bottom: 1px solid var(--hair); }
+.step:first-child { border-top: 1px solid var(--hair); }
+.step .t-label { color: var(--fg); }
+.step a { font: 400 15px/1 var(--sans); }
+.mk-row { display: flex; align-items: center; justify-content: space-between; min-height: 42px; padding: 5px 0; border-bottom: 1px solid var(--hair); font: 500 17px/1.25 var(--sans); }
+.mk-row:first-child { border-top: 1px solid var(--hair); }
+.mk-row .ic { color: var(--chev); width: 22px; height: 22px; }
+.mk-row .dn { transform: rotate(90deg); } .mk-row .up { transform: rotate(-90deg); }
+.mk-row.open { border-bottom: 0; }
+.steps .step { padding: 9px 0; }
+.steps .step:first-child { border-top: 1px solid var(--hair); }
+.plate.gone { position: relative; margin: 26px 24px 0; padding: 22px 22px 24px; color: var(--cream); }
+.plate.gone > .crop { position: absolute; inset: 8px; --c: var(--cream); }
+.plate.gone .t-label { color: var(--cream); }
+.plate.gone ul { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 14px; margin-top: 12px; }
+.plate.gone li { display: grid; justify-items: start; gap: 8px; font: 400 13.5px/1.25 var(--sans); }
+.plate.gone .print { display: block; width: 52px; height: 52px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7.5 16.5 16.5 7.5M9 7.5h7.5V15"/></symbol>
+</svg>
+<div class="board" id="board"></div>
+
+<template id="screens">
+  <!-- 1 Hello (unchanged; Android's copy and its colour picker) -->
+  <div class="cell"><p class="cap">Hello</p>
+  <div class="phone hello"><div class="pcrop crop"></div><div class="scr">
+    <div class="pad" style="margin-top:24px"><span class="tag"><b>Free, for good</b><svg viewBox="0 0 26 22" aria-hidden="true"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></svg></span></div>
+    <div style="margin:22px 24px 0;height:220px;display:grid;place-items:center"><div class="print cyg sigcyg" data-print="cygnet" style="width:300px"></div></div>
+    <div class="pad" style="margin-top:28px">
+      <h1 class="t-display" style="margin-left:-4px">Idyll<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:18px">Use your apps as normal. Idyll takes the feeds out. Messages, friends, search and posting all stay.</p>
+      <p class="t-small soft" style="margin-top:10px">No account. Idyll collects nothing.</p>
+    </div>
+    <div class="foot">
+      <div style="display:flex;align-items:center;margin-bottom:8px"><span class="t-label" style="color:var(--soft)">Colour</span><span style="margin-left:auto;display:flex">
+        <span style="width:44px;height:44px;display:grid;place-items:center"><span style="width:28px;height:28px;background:#d81b7a;box-shadow:inset 0 0 0 1.5px var(--fg);display:grid;place-items:center;color:#fff6ee"><svg class="ic" style="width:18px;height:18px;stroke-width:2.4"><use href="#i-check"/></svg></span></span>
+        <span style="width:44px;height:44px;display:grid;place-items:center"><span style="width:28px;height:28px;background:#2d5bff;box-shadow:inset 0 0 0 1.5px var(--fg)"></span></span>
+        <span style="width:44px;height:44px;display:grid;place-items:center"><span style="width:28px;height:28px;background:#161514;box-shadow:inset 0 0 0 1.5px var(--fg)"></span></span>
+      </span></div>
+      <a class="btn primary">Start</a><a class="lnk">How it works</a></div>
+  </div></div></div>
+
+  <!-- 2 Pick (unchanged) -->
+  <div class="cell"><p class="cap">Pick your apps</p>
+  <div class="phone"><div class="scr">
+    <div class="pad" style="margin-top:28px">
+      <h1 class="t-title-m">Which ones do<br>you use?</h1>
+      <p class="t-body soft" style="margin-top:10px">Pick any. You can change this later.</p>
+    </div>
+    <ul class="rows pad" style="margin-top:22px">
+      <li style="height:48px"><span data-t="youtube" class="sm"></span><span><span class="t-body" style="display:block;line-height:1.2">YouTube</span><span class="t-cap soft" style="display:block;line-height:1.2">On this phone</span></span><span class="box on"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li style="height:48px"><span data-t="instagram" class="sm"></span><span><span class="t-body" style="display:block;line-height:1.2">Instagram</span><span class="t-cap soft" style="display:block;line-height:1.2">On this phone</span></span><span class="box on"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li style="height:48px"><span data-t="facebook" class="sm"></span><span class="t-body">Facebook</span><span class="box"></span></li>
+      <li style="height:48px"><span data-t="x" class="sm"></span><span><span class="t-body" style="display:block;line-height:1.2">X</span><span class="t-cap soft" style="display:block;line-height:1.2">On this phone</span></span><span class="box on"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li style="height:48px"><span data-t="snapchat" class="sm"></span><span class="t-body">Snapchat</span><span class="box"></span></li>
+      <li style="height:48px"><span data-t="tiktok" class="sm"></span><span class="t-body">TikTok</span><span class="box"></span></li>
+      <li style="height:48px"><span data-t="reddit" class="sm"></span><span class="t-body">Reddit</span><span class="box on"><svg class="ic"><use href="#i-check"/></svg></span></li>
+      <li style="height:48px"><span data-t="linkedin" class="sm"></span><span class="t-body">LinkedIn</span><span class="box"></span></li>
+      <li style="height:48px"><span data-t="threads" class="sm"></span><span class="t-body">Threads</span><span class="box"></span></li>
+    </ul>
+    <div class="foot"><a class="btn primary">Next</a><a class="lnk">Just show me</a></div>
+  </div></div></div>
+
+  <!-- 3 Two ways in (new; replaces "Use your apps as normal.") -->
+  <div class="cell"><p class="cap">Two ways in</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Back</div>
+    <div class="pad" style="margin-top:12px"><h1 class="t-title-m">Two ways in<b class="stop">.</b></h1></div>
+    <div class="crop" style="margin:24px 24px 0;padding:20px 18px">
+      <div class="entry">
+        <p class="t-body-m">The real apps</p>
+        <p class="t-small soft" style="margin-top:4px">Idyll steps out of Reels, Shorts and For You, and covers Explore. Ads and suggested posts in your feed stay. Idyll can't change what's inside an app.</p>
+      </div>
+      <div class="entry">
+        <p class="t-body-m">In Idyll</p>
+        <p class="t-small soft" style="margin-top:4px">The same sites inside Idyll, with the feeds, ads and suggested posts taken out. Videos keep playing when you lock the phone.</p>
+      </div>
+    </div>
+    <p class="t-body pad" style="margin-top:22px">Use either, or both. The first time you open an app from Home, Idyll asks which one you want.</p>
+    <div class="foot"><a class="btn primary">Set up the real apps</a><a class="lnk">Use them in Idyll for now</a></div>
+  </div></div></div>
+
+  <!-- 4 Accessibility, the prominent disclosure (changed) -->
+  <div class="cell"><p class="cap">Idyll uses Accessibility</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Back</div>
+    <div class="pad" style="margin-top:12px">
+      <h1 class="t-title-m">Idyll uses<br>Accessibility<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px">It's the Android setting that lets Idyll see when Reels or Shorts are on screen.</p>
+    </div>
+    <div class="crop" style="margin:22px 24px 0;padding:18px 18px">
+      <div class="entry">
+        <p class="t-body-m">Only in the apps you picked</p>
+        <p style="display:flex;gap:8px;margin-top:10px"><span data-t="instagram" class="sm"></span><span data-t="youtube" class="sm"></span><span data-t="x" class="sm"></span><span data-t="reddit" class="sm"></span></p>
+        <p class="t-small soft" style="margin-top:8px">Nine at most. Every other app is ignored.</p>
+      </div>
+      <div class="entry">
+        <p class="t-body-m">What it reads</p>
+        <p class="t-small soft" style="margin-top:4px">The names and layout of what's on screen, to find the feed.</p>
+      </div>
+      <div class="entry">
+        <p class="t-body-m">What it never does</p>
+        <p class="t-small soft" style="margin-top:4px">Read your messages or what you type, or send anything anywhere.</p>
+      </div>
+    </div>
+    <p class="t-small soft pad" style="margin-top:14px">Turn it off any time in Settings, Accessibility.</p>
+    <div class="foot"><a class="btn primary">Agree and continue</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 5 Turn it on (changed: shows the two switches) -->
+  <div class="cell"><p class="cap">Turn it on</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Back</div>
+    <div class="pad" style="margin-top:12px">
+      <h1 class="t-title-m">Turn it on<br>in Settings<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px">Android opens Accessibility. Tap Downloaded apps, then Idyll.</p>
+    </div>
+    <div class="crop" style="margin:24px 24px 0;padding:6px 18px">
+      <ul class="rows" style="--hair:transparent">
+        <li style="height:56px"><span class="t-body">Use Idyll</span><span class="sw on" style="margin-left:auto"></span></li>
+        <li style="height:56px;border-top:1px solid color-mix(in srgb, var(--crop) 40%, transparent)"><span><span class="t-body" style="display:block;line-height:1.2">Idyll shortcut</span><span class="t-cap soft">Leave this one off.</span></span><span class="sw" style="margin-left:auto"></span></li>
+      </ul>
+    </div>
+    <p class="t-small soft pad" style="margin-top:14px">Android shows a warning about full control. It's the standard wording for every Accessibility app.</p>
+    <div class="foot"><a class="btn primary">Open Settings</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 6 Keep it running (changed: every maker that closes apps, this phone's open, before On) -->
+  <div class="cell"><p class="cap">Keep it running</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Back</div>
+    <div class="pad" style="margin-top:12px">
+      <h1 class="t-title-m">One more step<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px">Some phones close apps in the background to save battery. If yours closes Idyll, the feeds come back and nothing tells you.</p>
+    </div>
+    <div class="pad" style="margin-top:18px">
+      <div class="mk-row">Samsung<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row">OnePlus<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row">Oppo and Realme<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row">Vivo<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row">Honor and Huawei<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row">Google Pixel<svg class="ic dn"><use href="#i-chev"/></svg></div>
+      <div class="mk-row open"><span>Xiaomi, Redmi and Poco<span class="t-cap soft" style="display:block;line-height:1.3">This phone</span></span><svg class="ic up"><use href="#i-chev"/></svg></div>
+      <div class="steps">
+        <div class="step"><span class="t-label">1</span><span class="t-body">Autostart: on</span><a>Open</a></div>
+        <div class="step"><span class="t-label">2</span><span class="t-body">Battery saver: No restrictions</span><a>Open</a></div>
+        <div class="step"><span class="t-label">3</span><span class="t-body">In recents, hold Idyll and tap the lock</span><span></span></div>
+      </div>
+    </div>
+    <p class="t-small soft pad" style="margin-top:14px">Menus differ a little between phones. dontkillmyapp.com has the latest for yours.</p>
+    <div class="foot"><a class="btn primary">Done</a><a class="lnk">Skip</a></div>
+  </div></div></div>
+
+  <!-- 7 On (changed: the website's prints of the apps you picked, on the plate) -->
+  <div class="cell"><p class="cap">On</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Back</div>
+    <div class="pad" style="margin-top:12px">
+      <h1 class="t-title-m">On<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px">Open Instagram and try it.</p>
+    </div>
+    <div class="plate gone"><div class="crop"></div>
+      <p class="t-label">Gone</p>
+      <ul>
+        <li><span class="print" data-print="mark" data-b="youtube" data-n="24"></span>Shorts, home feed</li>
+        <li><span class="print" data-print="mark" data-b="instagram" data-n="24"></span>Reels, Explore</li>
+        <li><span class="print" data-print="mark" data-b="x" data-n="24"></span>For you</li>
+        <li><span class="print" data-print="mark" data-b="reddit" data-n="24"></span>Home, Popular</li>
+      </ul>
+    </div>
+    <div class="foot"><a class="btn primary">Open Instagram</a><a class="lnk">Done</a></div>
+  </div></div></div>
+
+  <!-- 8 That's Idyll (unchanged, Android rows) -->
+  <div class="cell"><p class="cap">That's Idyll</p>
+  <div class="phone"><div class="scr">
+    <div class="pad" style="margin-top:22px"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="2.2" aria-hidden="true" style="display:block;width:56px;height:33.2px"></span></div>
+    <div class="pad" style="margin-top:20px">
+      <h1 class="t-title-l">That's Idyll<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:12px;max-width:19em">Everything below is optional. Do any of it now, later, or never.</p>
+    </div>
+    <ul class="rows pad" style="margin-top:22px">
+      <li style="padding:11px 0"><div><p class="t-body-m">Time in the real apps</p><p class="t-small soft">A daily allowance.</p></div><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></li>
+      <li style="padding:11px 0"><div><p class="t-body-m">Sleep</p><p class="t-small soft">The real apps rest at night.</p></div><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></li>
+      <li style="padding:11px 0"><div><p class="t-body-m">Focus</p><p class="t-small soft">One tap pauses them while you work.</p></div><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></li>
+      <li style="padding:11px 0"><div><p class="t-body-m">Your time</p><p class="t-small soft">How long you spent in each app, from Android's own count.</p></div><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></li>
+      <li style="padding:11px 0"><div><p class="t-body-m">Colour and icon</p><p class="t-small soft">Magenta, electric blue or black.</p></div><span class="chev"><svg class="ic"><use href="#i-chev"/></svg></span></li>
+    </ul>
+    <div class="foot"><a class="btn primary">Go to Idyll</a></div>
+  </div></div></div>
+
+  <!-- 9 Later: the first tap on a Home row asks once (the In Idyll set, D) -->
+  <div class="cell"><p class="cap">First tap on Home</p>
+  <div class="phone sheeted"><div class="scr">
+    <div class="navb" style="padding:0 20px 0 24px;margin-top:6px;justify-content:space-between"><span class="t-wordmark logo" style="display:flex;align-items:center;gap:10px"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.8" aria-hidden="true" style="display:block;width:34px;height:20.2px"></span><span>Idyll<b class="stop">.</b></span></span><a>Settings</a></div>
+    <div class="pad" style="margin-top:26px">
+      <p class="t-label">Today in the real apps</p>
+      <p class="t-num-l" style="font-size:50px;margin-top:10px">18 <span class="soft">of 30 min</span></p>
+      <div class="bar-track" style="margin-top:16px"><i style="width:60%"></i></div>
+      <p class="t-label" style="margin-top:9px;display:flex;justify-content:space-between"><span>Android's count</span><span>Sample numbers</span></p>
+    </div>
+    <ul class="rows pad" style="margin-top:24px">
+      <li style="height:54px"><span data-t="instagram"></span><span class="t-body-m">Instagram</span><span class="t-small soft n" style="margin-left:auto">11 min</span></li>
+      <li style="height:54px"><span data-t="youtube"></span><span class="t-body-m">YouTube</span><span class="t-small soft n" style="margin-left:auto">5 min</span></li>
+      <li style="height:54px"><span data-t="x"></span><span class="t-body-m">X</span><span class="t-small soft n" style="margin-left:auto">2 min</span></li>
+    </ul>
+    <div class="plate sheet" style="height:412px"><div class="crop"></div>
+      <div style="position:absolute;left:28px;right:28px;top:34px">
+        <p class="t-sheet">Open YouTube<b class="stop">.</b></p>
+        <div style="margin-top:10px" data-choice></div>
+        <p style="display:flex;align-items:center;gap:12px;margin-top:8px;height:44px"><span class="box on cr" style="margin:0"><svg class="ic"><use href="#i-check"/></svg></span><span class="t-small" style="font-size:15px">Remember for YouTube</span></p>
+      </div></div>
+  </div></div></div>
+
+  <!-- 10 Later: signing in, the first time an app opens in Idyll (unchanged) -->
+  <div class="cell"><p class="cap">Sign in</p>
+  <div class="phone"><div class="scr">
+    <div class="pad" style="margin-top:28px;display:grid;gap:16px;justify-items:start">
+      <span data-t="instagram"></span>
+      <h1 class="t-title-m">Sign in to<br>Instagram<b class="stop">.</b></h1>
+      <p class="t-body">You sign in on Instagram's own page, inside Idyll. Idyll doesn't read, keep or send your password. Instagram keeps you signed in, the way your browser would.</p>
+    </div>
+    <div class="foot"><a class="btn primary">Continue to Instagram</a><a class="lnk">Later</a></div>
+  </div></div></div>
+
+  <!-- 11 Later: the first open of YouTube in Idyll (changed: one line for background play) -->
+  <div class="cell"><p class="cap">First open, YouTube in Idyll</p>
+  <div class="phone sheeted"><div class="scr" style="padding:54px 0 0">
+    <div data-chrome="YouTube"></div>
+    <div data-site="yt-mode"></div>
+    <div class="plate sheet" style="height:318px" data-sheet='{"cyg":132,"gone":["Shorts","Home feed","Up next"],"title":"This is YouTube in Idyll","body":"No Shorts, no home feed. Videos keep playing when you lock the phone.","l":"Back to YouTube","r":"OK"}'></div>
+  </div></div></div>
+</template>
+
+<script>
+window.IDYLL_ROOT = '../../../';
+(() => {
+  const q = new URLSearchParams(location.search), want = q.get('mode');
+  const accent = q.get('accent') || 'magenta';
+  const board = document.getElementById('board');
+  const modes = ['light', 'dark'].filter(m => !want || m === want);
+  const ic = n => `<svg class="ic"><use href="#i-${n}"/></svg>`;
+  const chrome = t => `<div class="chrome chrome-bg" style="border-bottom:1px solid var(--hair)"><span class="hb"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.7" aria-hidden="true" style="display:block;width:30px;height:17.8px"></span></span><span class="t">${t}</span><span class="hb">${ic('sliders')}</span></div>`;
+  const sheet = (d) => `<div class="crop"></div>
+    <div class="print cyg sigcyg" data-print="cygnet" style="position:absolute;left:28px;top:30px;width:${d.cyg}px"></div>
+    <div style="position:absolute;left:176px;right:28px;top:34px"><p class="t-label">Gone</p><p class="t-small" style="margin-top:8px;display:grid;gap:4px;font-size:15px">${d.gone.map(g => `<span><span class="struck">${g}</span></span>`).join('')}</p></div>
+    <div style="position:absolute;left:28px;right:28px;top:148px"><p class="t-sheet">${d.title}<b class="stop">.</b></p><p class="t-small" style="margin-top:8px;font-size:15px">${d.body}</p>
+    <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:15px"><a>${d.l}</a><a>${d.r}</a></div></div>`;
+  /* The per-app choice, as drawn in in-idyll/ (option D). */
+  const ch = (title, line, glyph) => `<a style="display:flex;align-items:center;gap:12px;padding:14px 0;text-decoration:none"><span style="flex:1"><span class="t-note" style="display:flex;align-items:center;gap:4px">${title}${glyph ? '<svg class="ic" style="width:18px;height:18px;stroke-width:1.9"><use href="#i-out"/></svg>' : ''}</span><span class="t-small" style="display:block;margin-top:4px;font-size:15px">${line}</span></span><svg class="ic" style="opacity:.8"><use href="#i-chev"/></svg></a>`;
+  const choice = ch('YouTube app', 'Shorts and the home feed are stopped. Everything else works as usual.', true)
+    + '<div style="border-top:1px solid var(--cream);opacity:.45"></div>'
+    + ch('YouTube in Idyll', 'Search and your subscriptions, nothing else. No ads. It&#39;s the website, so a few app features are missing.');
+  const ACCENTS = { magenta: ['#d81b7a', '#2d5bff'], blue: ['#2d5bff', '#d81b7a'], black: ['#161514', '#d81b7a'] };
+  function prep(root, mode) {
+    const dark = mode === 'dark', [acc, ink2] = ACCENTS[accent];
+    root.querySelectorAll('[data-chrome]').forEach(e => e.outerHTML = chrome(e.dataset.chrome));
+    root.querySelectorAll('[data-site="yt-mode"]').forEach(s => s.dataset.site = dark ? 'yt-dark' : 'yt');
+    root.querySelectorAll('[data-sheet]').forEach(s => s.innerHTML = sheet(JSON.parse(s.dataset.sheet)));
+    root.querySelectorAll('[data-choice]').forEach(s => s.innerHTML = choice);
+    if (!dark) root.querySelectorAll('.phone.hello').forEach(p => p.classList.add('onplate'));
+    root.querySelectorAll('.phone').forEach(p => { if (dark || p.classList.contains('onplate')) p.classList.add('lightbar'); if (dark || p.classList.contains('onplate') || p.classList.contains('sheeted')) p.classList.add('lighthi'); });
+    root.querySelectorAll('.smallcyg').forEach(g => g.dataset.ink = dark ? '#fff6ee' : acc);
+    root.querySelectorAll('.sigcyg').forEach(g => g.dataset.water = ink2);
+    root.querySelectorAll('.print[data-print="mark"]').forEach(g => { g.dataset.strike = ink2; if (!dark && !g.closest('.plate')) g.dataset.ink = '#161514'; });
+  }
+  modes.forEach(m => {
+    board.insertAdjacentHTML('beforeend', `<p class="rowname">${m === 'dark' ? 'Dark' : 'Light'}<b class="stop">.</b></p>`);
+    const row = document.createElement('section'); row.className = 'row';
+    [...document.getElementById('screens').content.cloneNode(true).children].forEach(c => {
+      c.classList.add(`m-${m}`); if (m === 'dark') c.classList.add('mono'); if (accent !== 'magenta') c.classList.add(`acc-${accent}`);
+      row.appendChild(c); prep(c, m);
+    });
+    board.appendChild(row);
+  });
+})();
+</script>
+<script src="../kit.js"></script>
+</body>
+</html>

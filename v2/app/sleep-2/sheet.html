@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll Sleep, round 2</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<style>
+/* The comparison sheet: one mode, Sleep then Focus, a plain label under each screen. ?mode=light|dark */
+:root { --bg: #e8e6e0; --fg: #161514; --soft: #5b5853; --edge: rgba(22,21,20,.22); --pink: #d81b7a; }
+.dk { --bg: #0b0b0c; --fg: #fff6ee; --soft: rgba(255,246,238,.62); --edge: rgba(255,246,238,.16); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.35 "Timeless Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.board { padding: 56px 64px 60px; width: max-content; }
+h2 { font: 500 30px/1 "Timeless Sans", sans-serif; letter-spacing: -.035em; margin: 0 0 26px 4px; }
+h2 + .row { margin-bottom: 70px; }
+h2 b { color: var(--pink); font-weight: inherit; }
+.row { display: grid; grid-auto-flow: column; grid-auto-columns: 393px; gap: 40px; align-items: start; }
+img { display: block; width: 393px; height: 852px; border-radius: 40px; box-shadow: 0 0 0 1px var(--edge); }
+p { margin: 20px 6px 0; max-width: 383px; color: var(--soft); }
+</style>
+</head>
+<body>
+<div class="board" id="b"></div>
+<script>
+const m = new URLSearchParams(location.search).get('mode') || 'light';
+if (m === 'dark') document.documentElement.classList.add('dk');
+const f = n => `png/${m}-${String(n).padStart(2, '0')}.png`, k = n => `png/dark-black-${String(n).padStart(2, '0')}.png`;
+const sleep = [[f(1), 'Today, as on the phone. The times wrap.'], [f(2), 'A. Night print, setting up.'], [f(3), 'A. Night print, resting.'], [f(4), 'B. The evening, drawn, setting up.'], [f(5), 'B. The evening, drawn, on before bedtime.'], [f(6), 'C. A few questions, setting up.'], [f(7), 'C. A few questions, on.']];
+const focus = [[f(8), 'Today, as on the phone.'], [f(9), 'A. Night print.'], [f(10), 'B. Drawn.'], [f(11), 'C. A few questions.']];
+if (m === 'dark') { sleep.push([k(2), 'A in the black accent, setting up.'], [k(3), 'A in the black accent, resting.']); focus.push([k(9), 'A in the black accent.']); }
+const row = (t, list) => `<h2>${t}, ${m}<b>.</b></h2><div class="row">${list.map(([s, l]) => `<div><img src="${s}" alt=""><p>${l}</p></div>`).join('')}</div>`;
+document.getElementById('b').innerHTML = row('Sleep', sleep) + row('Focus', focus);
+Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }))).then(() => document.fonts.ready).then(() => { window.ready = true; });
+</script>
+</body>
+</html>

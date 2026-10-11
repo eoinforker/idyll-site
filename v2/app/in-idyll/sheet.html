@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>In Idyll options</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<style>
+/* The comparison sheet: the rendered phones side by side, a plain label under each. ?mode=light|dark */
+:root { --bg: #e8e6e0; --fg: #161514; --soft: #5b5853; --edge: rgba(22,21,20,.22); }
+.dk { --bg: #0b0b0c; --fg: #fff6ee; --soft: rgba(255,246,238,.62); --edge: rgba(255,246,238,.16); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.35 "Timeless Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.board { display: flex; gap: 44px; padding: 56px 64px 52px; width: max-content; align-items: flex-start; }
+.board > div { width: 390px; }
+img { display: block; width: 390px; height: 844px; border-radius: 44px; box-shadow: 0 0 0 1px var(--edge); }
+p { margin: 22px 6px 0; max-width: 380px; }
+p b { font-weight: 500; margin-right: 8px; }
+p span { color: var(--soft); }
+</style>
+</head>
+<body>
+<div class="board" id="b"></div>
+<script>
+const m = new URLSearchParams(location.search).get('mode') || 'light';
+if (m === 'dark') document.documentElement.classList.add('dk');
+const L = [['A', 'Tap an app for the clean version. App, with the arrow, opens the real one.'], ['B', 'Two doors on every row: Idyll or the real app.'], ['C', 'Choose once where apps open. Each row keeps the other door.'], ['D-home', 'D', 'Choose once, per app'], ['D-sheet', 'D', 'The first tap of YouTube asks once.'], ['E', 'Rows open Idyll. Hold one for the real app.']];
+document.getElementById('b').innerHTML = L.map(r => { const [f, k, t] = r.length === 3 ? r : [r[0], r[0], r[1]]; return `<div><img src="png/${m}-${f}.png" alt=""><p><b>${k}</b><span>${t}</span></p></div>`; }).join('');
+</script>
+</body>
+</html>

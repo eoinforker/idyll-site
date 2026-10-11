@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll ads</title>
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Three 10 s Idyll ads. ?ad=1|2|3 &fmt=story (1080 x 1920) | feed (1080 x 1350).
+   Deterministic: window.seek(t) draws the frame at t seconds. Story safe zone: 250 to 1520. */
+:root { --paper: #f6f5f1; --ink: #141416; --soft: #5b5853; --pink: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --night: #141416;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1080px; overflow: hidden; background: var(--night); -webkit-font-smoothing: antialiased; }
+h1, h2, p { margin: 0; }
+#stage { position: relative; width: 1080px; overflow: hidden; }
+.scene { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+.magenta { background: var(--pink); color: var(--cream); }
+.blue { background: var(--blue); color: var(--cream); }
+.night { background: var(--night); color: var(--cream); }
+.paper { background: var(--paper); color: var(--ink); }
+.pk { color: var(--pink); font-weight: inherit; } .ik { color: var(--ink); font-weight: inherit; } .bk { color: var(--blue); font-weight: inherit; }
+.crop { --c: var(--cream); --l: 22px; position: absolute; inset: 40px; pointer-events: none; z-index: 30;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 0 / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 0 100% / 2px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / var(--l) 2px no-repeat, linear-gradient(var(--c), var(--c)) 100% 100% / 2px var(--l) no-repeat; }
+.paper .crop { --c: var(--ink); }
+.night .crop { --c: #6f6b68; }
+canvas { display: block; position: absolute; }
+.cap { position: absolute; left: 70px; right: 70px; text-align: center; font: 500 104px/.94 var(--sans); letter-spacing: -.052em; will-change: opacity, transform; z-index: 20; }
+.cap.s { font-size: 76px; line-height: 1; letter-spacing: -.045em; }
+.cap.xs { font: 400 44px/1.3 var(--sans); letter-spacing: -.01em; }
+/* Two inks a hair out of register. */
+.blue .cap, .blue .reg { text-shadow: 3px 2px 0 rgba(216,27,122,.42); }
+.magenta .cap, .magenta .reg { text-shadow: 3px 2px 0 rgba(45,91,255,.38); }
+.night .cap, .night .reg { text-shadow: 2px 2px 0 rgba(216,27,122,.32); }
+.leader { position: absolute; left: 90px; right: 90px; display: flex; align-items: baseline; gap: 16px; font: 400 30px/1.2 var(--mono); letter-spacing: .02em; z-index: 20; }
+.leader i { flex: 1; border-bottom: 3px dotted currentColor; transform: translateY(-8px); }
+/* Real app screens, as rendered from the Android app. */
+.scr { position: absolute; border-radius: 46px; overflow: hidden; background: #fff; box-shadow: 16px 16px 0 var(--ink); will-change: transform, opacity; }
+.night .scr { box-shadow: 16px 16px 0 #000; border: 3px solid #4a4850; }
+.scr img { display: block; width: 100%; }
+.grain { position: absolute; inset: -40px; pointer-events: none; z-index: 40; opacity: .42; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.night .grain { mix-blend-mode: screen; opacity: .08; }
+.paper .grain { opacity: .22; }
+/* Feed noise cards. */
+.card { position: absolute; left: 90px; width: 900px; background: var(--cream); border: 3px solid var(--ink); will-change: transform; }
+/* A generic social app, drawn plainly (not a real brand's screens). */
+.app { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; color: #0e0f14; font: 400 22px/1.3 var(--sans); }
+.app .hd2 { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 30px 28px 18px; border-bottom: 1px solid #efeff2; }
+.app .hd2 .ic { width: 40px; height: 40px; }
+.app .hd2 b { font: 700 34px/1 var(--sans); letter-spacing: -.03em; }
+.app .vp { position: relative; flex: 1; overflow: hidden; }
+.app .tb2 { flex: none; height: 104px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #ececef; background: #fff; position: relative; }
+.app .tb2 span { display: grid; justify-items: center; gap: 6px; font: 600 17px/1 var(--sans); color: #0e0f14; }
+.app .tb2 .ic { width: 40px; height: 40px; }
+.ic { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.f { fill: currentColor; }
+.fp { padding-bottom: 18px; }
+.fp .h { display: flex; align-items: center; gap: 14px; padding: 16px 22px; }
+.fp .av { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; font: 800 21px/1 var(--sans); }
+.fp .h b { font-weight: 700; } .fp .h small { display: block; color: #6b6e78; font-size: 18px; }
+.fp img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.fp .tx { padding: 14px 22px 0; }
+.fp .tx b { font-weight: 700; margin-right: 6px; }
+.fp .ac { display: flex; gap: 22px; padding: 14px 22px 0; } .fp .ac .ic { width: 36px; height: 36px; }
+.reelv { position: absolute; inset: 0; background: #000; }
+.reelv img { width: 100%; height: 100%; object-fit: cover; opacity: .9; }
+.ring { position: absolute; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; border: 6px solid var(--pink); opacity: 0; z-index: 25; }
+.dot { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(216,27,122,.85); opacity: 0; z-index: 25; }
+/* The Idyll strip from Overlay.kt: plate, struck mark, title 18sp medium, line 14sp, OK. In px at 2.5x. */
+.strip { position: absolute; left: 30px; right: 30px; height: 210px; background: var(--pink); color: var(--cream); display: flex; align-items: center; padding: 0 40px; gap: 35px; z-index: 22; will-change: transform; }
+.strip .mk { width: 100px; height: 100px; flex: none; }
+.strip .w { flex: 1; }
+.strip b { display: block; font: 500 45px/1.15 var(--sans); letter-spacing: -.02em; }
+.strip b i { font-style: normal; color: var(--ink); }
+.strip small { display: block; font: 400 35px/1.3 var(--sans); margin-top: 4px; }
+.strip u { font: 400 37px/1 var(--sans); }
+/* Lock screen. */
+.lock { position: absolute; inset: 0; background: #0b0b0d; color: var(--cream); text-align: center; }
+</style>
+</head>
+<body>
+<div id="sprite"></div>
+<div id="stage"></div>
+<script>window.IDYLL_ROOT = '../../';</script>
+<script src="print.js"></script>
+<script src="feed.js"></script>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const AD = +(q.get('ad') || 1), FEED = q.get('fmt') === 'feed';
+  const W = 1080, H = FEED ? 1350 : 1920;
+  document.body.style.height = H + 'px';
+  const stage = document.getElementById('stage'); stage.style.height = H + 'px';
+  document.getElementById('sprite').innerHTML = Feed.sprite;
+  const I = (n, cls = '') => `<svg class="ic ${cls}"><use href="#i-${n}"/></svg>`;
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const out3 = t => 1 - Math.pow(1 - clamp(t), 3), io = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  const C = { pink: '#d81b7a', blue: '#2d5bff', cream: '#fff6ee', ink: '#141416' };
+  /* Layout: L.cap is where captions sit, L.mid the stage for prints and screens. */
+  const L = FEED ? { cap: 120, capLow: 1010, mid: 380, end: 1350, leader: 1230 } : { cap: 290, capLow: 1250, mid: 640, end: 1920, leader: 1470 };
+
+  const mk = (parent, html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const e = d.firstElementChild; parent.appendChild(e); return e; };
+  const scene = cls => { const s = mk(stage, `<section class="scene ${cls}"><div class="grain"></div></section>`); return s; };
+  const land = (el, t, at, dur = .6, rise = 26) => { const k = out3((t - at) / dur); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * rise}px)`; return k; };
+  const fadeOut = (el, t, at, dur = .4) => { if (t > at) el.style.opacity = Math.min(+el.style.opacity, 1 - clamp((t - at) / dur)); };
+  /* Scene opacity: a slow cross-fade in and out. */
+  const ends = new Map();
+  const win = (s, t, a, b, fi = .5) => { ends.set(s, b); const v = (a <= 0 ? 1 : clamp((t - a) / fi)) * (t < b + .4 ? 1 : 0); s.style.opacity = v; s.style.display = v > 0 ? 'block' : 'none'; return v; };
+
+  /* Halftone prints: a pose PNG (or any mask) through a rotated screen, dots growing in as it prints. */
+  function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function screen(a, w, h, c, ang, tone, rk, delay, rnd) {
+    const out = [], ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / c / 2) + 2;
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+      const x = cx + (i * ca - j * sa) * c, y = cy + (i * sa + j * ca) * c;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const v = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255 * tone(x / w, y / h);
+      if (v < .05) continue;
+      out.push({ x, y, r: c * rk * Math.sqrt(Math.min(v, 1)), d: delay(x / w, y / h) + rnd() });
+    }
+    return out;
+  }
+  const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  async function printer(cv, { pose, mask, ink, water, seed = 5, dur = 1.4, cellK = 120, flat = false }) {
+    const w = cv.width = Math.round(cv.clientWidth), h = cv.height = Math.round(cv.clientHeight), g = cv.getContext('2d');
+    const m = document.createElement('canvas'); m.width = w; m.height = h;
+    const mg = m.getContext('2d', { willReadFrequently: true });
+    const cell = Math.max(6.5, w / cellK); mg.filter = `blur(${cell * .45}px)`;
+    if (pose) mg.drawImage(await load(`../../img/cygnet-${pose}-mark.png`), 0, 0, w, h); else mask(mg, w, h);
+    const a = mg.getImageData(0, 0, w, h).data, rnd = rng(seed);
+    const dl = (u, v) => (v * .35 + u * .65) * dur * .7, jit = () => rnd() * dur * .22;
+    const layers = [];
+    if (water) layers.push({ col: water, dx: 3 * cell / 4.5, dy: -2 * cell / 4.5, dots: screen(a, w, h, cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, dl, jit) });
+    layers.push({ col: ink, dx: 0, dy: 0, dots: screen(a, w, h, cell, 45 * Math.PI / 180, flat ? () => 1 : (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl, jit) });
+    const grow = .35;
+    return s => {
+      g.clearRect(0, 0, w, h);
+      for (const L of layers) { g.fillStyle = L.col; g.beginPath(); for (const d of L.dots) { const r = d.r * out3((s - d.d) / grow); if (r < .3) continue; g.moveTo(d.x + L.dx + r, d.y + L.dy); g.arc(d.x + L.dx, d.y + L.dy, r, 0, 6.2832); } g.fill(); }
+    };
+  }
+
+  /* The grains: solid second-ink dots, found as blobs in the grains PNG so each can drop in on its own. */
+  async function grains(cv, pose, col, seed = 3) {
+    const w = cv.width = Math.round(cv.clientWidth), h = cv.height = Math.round(cv.clientHeight), g = cv.getContext('2d');
+    const m = document.createElement('canvas'); m.width = w; m.height = h; const mg = m.getContext('2d', { willReadFrequently: true });
+    mg.drawImage(await load(`../../img/cygnet-${pose}-grains.png`), 0, 0, w, h);
+    const a = mg.getImageData(0, 0, w, h).data, seen = new Uint8Array(w * h), blobs = [], rnd = rng(seed);
+    for (let i = 0; i < w * h; i++) {
+      if (seen[i] || a[i * 4 + 3] < 128) continue;
+      let n = 0, sx = 0, sy = 0; const st = [i]; seen[i] = 1;
+      while (st.length) { const j = st.pop(), x = j % w, y = (j / w) | 0; n++; sx += x; sy += y;
+        for (const k of [j - 1, j + 1, j - w, j + w]) if (k >= 0 && k < w * h && !seen[k] && a[k * 4 + 3] >= 128 && Math.abs((k % w) - x) <= 1) { seen[k] = 1; st.push(k); } }
+      if (n > 6) blobs.push({ x: sx / n, y: sy / n, r: Math.sqrt(n / Math.PI), d: rnd() });
+    }
+    return (s, spread = .9) => {
+      g.clearRect(0, 0, w, h); g.fillStyle = col; g.beginPath();
+      for (const b of blobs) { const k = out3((s - b.d * spread) / .45); if (k <= 0) continue; const y = b.y - (1 - k) * 36; g.moveTo(b.x + 3 + b.r * k, y - 2); g.arc(b.x + 3, y - 2, b.r * k, 0, 6.2832); }
+      g.fill();
+    };
+  }
+  const canvasAt = (parent, x, y, w, h, z = 10) => mk(parent, `<canvas style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;z-index:${z}"></canvas>`);
+  const shot = (parent, name, x, y, w, crop) => mk(parent, `<div class="scr" style="left:${x}px;top:${y}px;width:${w}px;${crop ? `height:${crop}px` : ''}"><img src="ads-shots/${name}.png" alt=""></div>`);
+  const grainJitter = t => { const k = Math.floor(t * 12); document.querySelectorAll('.grain').forEach(g => g.style.transform = `translate(${(k * 37) % 40 - 20}px, ${(k * 53) % 40 - 20}px)`); };
+
+  /* End card: the family cygnet, Idyll., Free, for good. */
+  async function endCard(cls, water) {
+    const s = scene(cls); mk(s, '<div class="crop"></div>');
+    const pw = FEED ? 700 : 780, ph = Math.round(pw * 457 / 860);
+    const cv = canvasAt(s, (W - pw) / 2, FEED ? 150 : 330, pw, ph);
+    const paint = await printer(cv, { pose: 'family', ink: C.cream, water, seed: 21, dur: 1.1 });
+    const stop = cls === 'magenta' ? 'ik' : 'pk';
+    const top = FEED ? 600 : 860;
+    const a = mk(s, `<h1 class="cap" style="top:${top}px;font-size:${FEED ? 190 : 210}px;line-height:.9;letter-spacing:-.06em">Idyll<b class="${stop}">.</b></h1>`);
+    const b = mk(s, `<p class="cap s" style="top:${top + (FEED ? 210 : 235)}px;font-size:${FEED ? 84 : 92}px">Free, for good<b class="${stop}">.</b></p>`);
+    const c = mk(s, `<p class="cap xs" style="top:${top + (FEED ? 330 : 370)}px;opacity:.82">Coming soon to Android and iPhone.<br>No account.</p>`);
+    return (t, t0) => { paint(t - t0 - .05); land(a, t, t0 + .35, .6, 22); land(b, t, t0 + .65, .6, 18); land(c, t, t0 + .9, .6, 14); };
+  }
+
+  const ads = {};
+
+  /* 1. Keep the people, lose the feed. */
+  ads[1] = async () => {
+    const s1 = scene('blue'); mk(s1, '<div class="crop"></div>');
+    const c1 = mk(s1, `<h1 class="cap" style="top:${L.cap}px">Lose the feed<b class="pk">.</b></h1>`);
+    const c2 = mk(s1, `<h1 class="cap" style="top:${L.cap}px">Keep the people<b class="pk">.</b></h1>`);
+    /* The feed: cards of halftone noise, scrolling, then peeled off one by one. */
+    const feed = mk(s1, `<div style="position:absolute;left:0;right:0;top:${L.mid - 20}px;bottom:0;overflow:hidden;z-index:12"></div>`);
+    const cards = [];
+    const rnd = rng(9);
+    const marks = ['instagram', 'tiktok', 'youtube', 'facebook', 'x', 'reddit', 'snapchat', 'threads'];
+    let y = 0;
+    for (let i = 0; i < 8; i++) {
+      const hh = i % 3 === 1 ? 980 : 760;
+      const card = mk(feed, `<div class="card" style="top:${y}px;height:${hh}px"></div>`);
+      const inks = [C.pink, C.blue, C.ink];
+      const col = inks[i % 3], col2 = inks[(i + 1) % 3];
+      const cv = canvasAt(card, 0, 0, 894, hh - 6, 1);
+      const p = await printer(cv, { flat: true, ink: col, seed: 30 + i, dur: .01, cellK: 70, mask: (g, w, h) => {
+        g.fillStyle = '#000';
+        g.beginPath(); g.arc(70, 70, 38, 0, 7); g.fill();
+        g.fillRect(130, 48, 260, 22); g.globalAlpha = .5; g.fillRect(130, 84, 170, 16); g.globalAlpha = 1;
+        const top = 140, mh = h - 300;
+        const grad = g.createLinearGradient(0, top, w, top + mh); grad.addColorStop(0, 'rgba(0,0,0,.95)'); grad.addColorStop(1, 'rgba(0,0,0,.25)');
+        g.fillStyle = grad; g.fillRect(0, top, w, mh);
+        g.fillStyle = '#000'; g.globalAlpha = .55; g.fillRect(30, top + mh + 40, 520, 22); g.fillRect(30, top + mh + 80, 360, 22); g.globalAlpha = 1;
+      } });
+      p(5);
+      const cv2 = canvasAt(card, 0, 0, 894, hh - 6, 2);
+      const p2 = await printer(cv2, { flat: true, ink: col2, seed: 60 + i, dur: .01, cellK: 46, mask: (g, w, h) => {
+        g.fillStyle = '#000'; const top = 140, mh = h - 300;
+        const shape = i % 4;
+        if (shape === 0) { g.beginPath(); g.arc(w * .62, top + mh * .5, mh * .32, 0, 7); g.fill(); }
+        if (shape === 1) { for (let k = 0; k < 5; k++) g.fillRect(0, top + 40 + k * mh / 5, w, mh / 12); }
+        if (shape === 2) { g.beginPath(); g.moveTo(w * .15, top + mh * .85); g.lineTo(w * .5, top + mh * .15); g.lineTo(w * .85, top + mh * .85); g.fill(); }
+        if (shape === 3) { g.fillRect(w * .2, top + mh * .2, w * .6, mh * .6); }
+      } });
+      p2(5);
+      const m = mk(card, `<canvas style="right:24px;top:24px;width:104px;height:104px;z-index:3"></canvas>`);
+      const pm = await Print(m, { kind: 'mark', b: marks[i], ink: C.ink, strike: C.pink, n: 20, seed: 4 + i }); pm.paint(pm.end + 100);
+      cards.push({ card, y, h: hh, r: (rnd() - .5) * 3, dir: i % 2 ? 1 : -1 });
+      y += hh + 40;
+    }
+    const pw = FEED ? 860 : 920, ph = Math.round(pw * 347 / 900);
+    const pairCv = canvasAt(s1, (W - pw) / 2, L.mid + (FEED ? 150 : 300), pw, ph, 8);
+    const pair = await printer(pairCv, { pose: 'pair', ink: C.cream, water: C.pink, seed: 3, dur: 1.3 });
+    const lead = mk(s1, `<p class="leader" style="top:${L.leader - (FEED ? 30 : 0)}px"><span>Idyll</span><i></i><span>messages stay</span></p>`);
+
+    const s2 = scene('blue'); mk(s2, '<div class="crop"></div>');
+    const c3 = mk(s2, `<h2 class="cap s" style="top:${L.cap - 10}px">Messages, search and<br>who you follow stay<b class="pk">.</b></h2>`);
+    const sw = FEED ? 560 : 700;
+    const scr = shot(s2, 'home', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+
+    const end = await endCard('magenta', C.blue);
+    const s3 = stage.lastElementChild;
+    return t => {
+      win(s1, t, 0, 5.7); win(s2, t, 5.5, 7.9); win(s3, t, 7.7, 99);
+      land(c1, t, .35, .7, 24); fadeOut(c1, t, 2.75, .35);
+      /* Scroll: a slow, steady pull up, easing to a stop before the peel. */
+      const scroll = 520 * io(t / 1.9);
+      cards.forEach((c, i) => {
+        const at = 1.9 + i * .16, k = io((t - at) / .75);
+        const x = c.dir * k * 1200, rot = c.r + c.dir * k * 14, lift = -k * 260;
+        c.card.style.transform = `translate(${x}px, ${-scroll + lift}px) rotate(${rot}deg)`;
+        c.card.style.boxShadow = k > 0 && k < 1 ? `${10 + 20 * k}px ${10 + 20 * k}px 0 rgba(20,20,22,.35)` : 'none';
+      });
+      land(c2, t, 3.0, .7, 24);
+      pair(t - 2.55);
+      land(lead, t, 4.4, .6, 10);
+      land(c3, t, 5.7, .6, 20);
+      const k = out3((t - 5.8) / .9); scr.style.opacity = k; scr.style.transform = `translateY(${(1 - k) * 160}px)`;
+      end(t, 7.7);
+    };
+  };
+
+  /* 2. Tap Reels. */
+  ads[2] = async () => {
+    const s1 = scene('paper'); mk(s1, '<div class="crop"></div>');
+    const c1 = mk(s1, `<h1 class="cap" style="top:${L.cap}px">Tap Reels<b class="pk">.</b></h1>`);
+    const c1b = mk(s1, FEED ? `<h1 class="cap" style="top:${L.cap + 10}px;font-size:76px">Your friends<b class="pk">.</b> Not the feed<b class="pk">.</b></h1>` : `<h1 class="cap" style="top:${L.cap}px">Your friends<b class="pk">.</b><br><span style="font-size:.62em;letter-spacing:-.04em">Not the feed.</span></h1>`);
+    const aw = FEED ? 680 : 720, ax = (W - aw) / 2, ay = L.cap + (FEED ? 150 : 260), ah = (FEED ? 1350 : 1920) - ay + 60;
+    const phone = mk(s1, `<div class="scr" style="left:${ax}px;top:${ay}px;width:${aw}px;height:${ah}px;border:3px solid var(--ink)"></div>`);
+    const im = n => `<img src="../../img/photos/${n}.jpg" alt="">`;
+    const fp = (h, l, c, ph, t, cap) => `<div class="fp"><div class="h"><span class="av c${c}" style="background:${['', '#ffe1ef', '#e3e9ff', '#ffe8d4', '#ddf3e6'][c]};color:${['', '#a8105c', '#1a3fd6', '#9a4a12', '#1f6b45'][c]}">${l}</span><div><b>${h}</b><small>${t}</small></div></div>${im(ph)}<div class="ac">${I('heart')}${I('chat')}${I('send')}</div><div class="tx"><b>${h}</b>${cap}</div></div>`;
+    const tabsY = ah - 60 - 104 - (FEED ? 0 : 0);
+    const app = mk(phone, `<div class="app" style="bottom:60px"><div class="hd2"><b>Following</b><span style="display:flex;gap:26px">${I('heart')}${I('send')}</span></div>
+      <div class="vp"><div class="fd" style="position:absolute;left:0;right:0;top:0">${fp('maya.walks', 'M', 1, 128, '2h', 'Swam before breakfast. Freezing. Perfect.')}${fp('priya.reads', 'P', 2, 42, '4h', 'Long tables, three hours gone.')}</div>
+      <div class="reelv" style="opacity:0">${im(184)}</div></div>
+      <div class="tb2"><span>${I('home', 'f')}</span><span>${I('search')}</span><span class="rt">${I('reels')}</span><span>${I('chat')}</span><span>${I('user')}</span></div></div>`);
+    const reelv = app.querySelector('.reelv'), fd = app.querySelector('.fd');
+    /* Where the Reels tab sits on screen. */
+    const tabX = ax + aw * (5 / 10), tabY = ay + ah - 60 - 52;
+    const ring = mk(s1, `<i class="ring" style="left:${tabX}px;top:${tabY}px"></i>`), dot = mk(s1, `<i class="dot" style="left:${tabX}px;top:${tabY}px"></i>`);
+    const sw_ = mk(phone, `<div style="position:absolute;left:0;right:0;bottom:${60 + 104}px;height:330px;overflow:hidden;z-index:22"></div>`);
+    const strip = mk(sw_, `<div class="strip" style="bottom:40px"><canvas class="mk" style="position:relative"></canvas><div class="w"><b>Reels removed<i>.</i></b><small>Back to your feed.</small></div><u>OK</u></div>`);
+    if (FEED) strip.style.zoom = .84;
+    const smk = await Print(strip.querySelector('canvas'), { kind: 'mark', b: 'instagram', ink: C.cream, strike: C.blue, n: 18, seed: 2 }); smk.paint(smk.end + 50);
+
+    const s2 = scene('magenta'); mk(s2, '<div class="crop"></div>');
+    const c2 = mk(s2, `<h1 class="cap" style="top:${L.cap}px">Focus for<br>50 minutes<b class="ik">.</b></h1>`);
+    const fw = FEED ? 760 : 860, fh = Math.round(fw * 446 / 820);
+    const fcv = canvasAt(s2, (W - fw) / 2, L.mid + (FEED ? 120 : 260), fw, fh);
+    const glide = await printer(fcv, { pose: 'focus', ink: C.cream, water: C.blue, seed: 8, dur: 1.2 });
+    const lead = mk(s2, `<p class="leader" style="top:${L.leader - (FEED ? 30 : 0)}px"><span>Idyll</span><i></i><span>Focus</span></p>`);
+
+    const s3 = scene('paper'); mk(s3, '<div class="crop"></div>');
+    const c3 = mk(s3, `<h2 class="cap s" style="top:${L.cap - 10}px">Then the apps<br>come back<b class="pk">.</b></h2>`);
+    const sw = FEED ? 560 : 700;
+    const scr = shot(s3, 'focus', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+
+    const end = await endCard('blue', C.pink);
+    const s4 = stage.lastElementChild;
+    return t => {
+      win(s1, t, 0, 3.6); win(s2, t, 3.4, 5.8); win(s3, t, 5.6, 7.9); win(s4, t, 7.7, 99);
+      land(c1, t, .25, .6, 22); fadeOut(c1, t, 1.9, .35);
+      land(c1b, t, 2.35, .6, 22);
+      land(phone, t, 0, .01, 0);
+      /* Tap at 1.0 s. */
+      const tp = (t - 1.0) / .45; dot.style.opacity = tp > 0 && tp < 1 ? (1 - tp) * .9 : 0; dot.style.transform = `scale(${.8 + .3 * clamp(tp)})`;
+      ring.style.opacity = tp > 0 && tp < 1 ? 1 - tp : 0; ring.style.transform = `scale(${.5 + 1.1 * out3(tp)})`;
+      app.querySelector('.rt').style.color = t > 1.05 && t < 1.5 ? C.pink : '';
+      /* The reel shows for a breath, then fades back to friends. */
+      reelv.style.opacity = t < 1.1 ? 0 : t < 1.55 ? out3((t - 1.1) / .15) : 1 - out3((t - 1.55) / .5);
+      fd.style.transform = `translateY(${-120 * io((t - 2.2) / 1.2)}px)`;
+      const sk = out3((t - 1.45) / .5); strip.style.transform = `translateY(${(1 - sk) * 290}px)`;
+      land(c2, t, 3.65, .65, 22);
+      glide(t - 3.5);
+      fcv.style.transform = `translateX(${(t - 4.6) * -22}px)`;
+      land(lead, t, 4.3, .6, 10);
+      land(c3, t, 5.8, .6, 20);
+      const k = out3((t - 5.9) / .9); scr.style.opacity = k; scr.style.transform = `translateY(${(1 - k) * 160}px)`;
+      end(t, 7.7);
+    };
+  };
+
+  /* 3. Phones rest too. */
+  ads[3] = async () => {
+    const s1 = scene('night'); mk(s1, '<div class="crop"></div>');
+    const mw = FEED ? 180 : 210;
+    const moon = canvasAt(s1, (W - mw) / 2 + 250, L.mid - (FEED ? 0 : 40), mw, mw);
+    const pm = await printer(moon, { ink: C.cream, seed: 12, dur: .9, cellK: 26, mask: (g, w, h) => {
+      g.fillStyle = '#000'; g.beginPath(); g.arc(w / 2, h / 2, w * .44, 0, 7); g.fill();
+      g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(w * .68, h * .38, w * .36, 0, 7); g.fill(); g.globalCompositeOperation = 'source-over';
+    } });
+    const sw0 = FEED ? 700 : 780, sh0 = Math.round(sw0 * 463 / 780);
+    const scv = canvasAt(s1, (W - sw0) / 2, L.mid + (FEED ? 110 : 150), sw0, sh0);
+    const sleep = await printer(scv, { pose: 'sleep', ink: C.cream, water: C.pink, seed: 14, dur: 1.5 });
+    const c1 = mk(s1, `<h1 class="cap" style="top:${L.cap}px">Phones rest too<b class="pk">.</b></h1>`);
+    const lead = mk(s1, `<p class="leader" style="top:${L.leader - (FEED ? 30 : 0)}px"><span>Idyll</span><i></i><span>Sleep</span></p>`);
+
+    const s2 = scene('night'); mk(s2, '<div class="crop"></div>');
+    const c2 = mk(s2, `<h2 class="cap s" style="top:${L.cap - 10}px">Bedtime at 23:00<b class="pk">.</b></h2>`);
+    const sw = FEED ? 560 : 700;
+    const a = shot(s2, 'sleep', (W - sw) / 2, L.cap + (FEED ? 130 : 150), sw, FEED ? 1000 : 1400);
+    const s3 = scene('night'); mk(s3, '<div class="crop"></div>');
+    const c3 = mk(s3, `<h2 class="cap s" style="top:${L.cap - 10}px">The apps rest<br>until morning<b class="pk">.</b></h2>`);
+    const b = shot(s3, 'goodnight', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+
+    const s4 = scene('night');
+    const lk = mk(s4, `<div class="lock"><p class="reg" style="position:absolute;left:0;right:0;top:${FEED ? 330 : 520}px;font:300 ${FEED ? 230 : 280}px/1 var(--sans);letter-spacing:-.05em">23:12</p>
+      <p style="position:absolute;left:0;right:0;top:${FEED ? 590 : 840}px;font:400 44px/1.2 var(--sans);opacity:.7">Sunday</p>
+      <p class="cap s" style="top:${FEED ? 900 : 1240}px;opacity:0">Nothing to check<b class="pk">.</b></p></div>`);
+    const c4 = lk.querySelector('.cap');
+
+    const end = await endCard('night', C.blue);
+    const s5 = stage.lastElementChild;
+    return t => {
+      win(s1, t, 0, 3.3); win(s2, t, 3.1, 5.0); win(s3, t, 4.8, 6.6); win(s4, t, 6.4, 8.3, .6); win(s5, t, 8.1, 99);
+      pm(t - .1); sleep(t - .5);
+      land(c1, t, .9, .7, 22); land(lead, t, 1.7, .6, 10);
+      land(c2, t, 3.3, .6, 18);
+      let k = out3((t - 3.35) / .9); a.style.opacity = k; a.style.transform = `translateY(${(1 - k) * 140}px)`;
+      land(c3, t, 5.0, .6, 18);
+      k = out3((t - 4.95) / .9); b.style.opacity = k; b.style.transform = `translateY(${(1 - k) * 140}px)`;
+      land(c4, t, 6.9, .6, 14);
+      end(t, 8.1);
+    };
+  };
+
+
+  /* 4. Feed is for swans. */
+  ads[4] = async () => {
+    const s1 = scene('blue'); mk(s1, '<div class="crop"></div>');
+    const pw = FEED ? 860 : 900, ph = Math.round(pw * 481 / 900), py = FEED ? 160 : 420;
+    const gr1 = canvasAt(s1, (W - pw) / 2, py, pw, ph, 9), sw1 = canvasAt(s1, (W - pw) / 2, py, pw, ph, 10);
+    const g1 = await grains(gr1, 'skip', C.pink, 5);
+    const p1 = await printer(sw1, { pose: 'skip', ink: C.cream, seed: 6, dur: 1.2 });
+    const c1 = mk(s1, `<h1 class="cap" style="top:${FEED ? 800 : 1060}px;font-size:${FEED ? 140 : 150}px">Skip the feed<b class="pk">.</b></h1>`);
+    const l1 = mk(s1, `<p class="leader" style="top:${L.leader - (FEED ? 30 : 0)}px"><span>Idyll</span><i></i><span>keep your people</span></p>`);
+
+    const s2 = scene('magenta'); mk(s2, '<div class="crop"></div>');
+    const qh = Math.round(pw * 459 / 900);
+    const gr2 = canvasAt(s2, (W - pw) / 2, py, pw, qh, 9), sw2 = canvasAt(s2, (W - pw) / 2, py, pw, qh, 10);
+    const g2 = await grains(gr2, 'eat', C.blue, 9);
+    const p2 = await printer(sw2, { pose: 'eat', ink: C.cream, seed: 7, dur: 1.2 });
+    const c2 = mk(s2, `<h1 class="cap" style="top:${FEED ? 760 : 1010}px;font-size:${FEED ? 140 : 150}px;line-height:.9">Feed is<br>for swans<b class="ik">.</b></h1>`);
+    const l2 = mk(s2, `<p class="leader" style="top:${L.leader - (FEED ? 30 : 0)}px"><span>Idyll</span><i></i><span>free, for good</span></p>`);
+
+    const end = await endCard('night', C.pink);
+    const s3 = stage.lastElementChild;
+    return t => {
+      win(s1, t, 0, 3.9); win(s2, t, 3.7, 7.7); win(s3, t, 7.5, 99);
+      g1(t - .1, 1.0);
+      p1(t - .3); const gx = `translateX(${(1 - io((t - .2) / 3.6)) * 90}px)`; sw1.style.transform = gx; gr1.style.transform = gx;
+      land(c1, t, 1.0, .7, 22); land(l1, t, 1.8, .6, 10);
+      p2(t - 3.8); g2(t - 4.6, 1.1);
+      land(c2, t, 4.6, .7, 22); land(l2, t, 5.4, .6, 10);
+      end(t, 7.5);
+    };
+  };
+
+  await document.fonts.ready;
+  const run = await ads[AD]();
+  await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+  window.seek = t => { grainJitter(t); run(t);
+    /* Words leave before the picture dissolves, so two captions never overlap. */
+    for (const [s, b] of ends) if (b < 50 && t > b - .35) { const k = 1 - clamp((t - (b - .35)) / .3); s.querySelectorAll('.cap, .leader').forEach(e => e.style.opacity = Math.min(+e.style.opacity || 0, k)); }
+  };
+  window.seek(+(q.get('t') || 0));
+  window.ready = true;
+  if (!/HeadlessChrome/.test(navigator.userAgent) && !q.has('t')) { const t0 = performance.now(); const loop = () => { window.seek(((performance.now() - t0) / 1000) % 10); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+})();
+</script>
+</body>
+</html>

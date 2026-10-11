@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll Focus, round 2</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<style>
+/* The comparison sheet: one group, one mode, a plain label under each screen. ?g=focus|post|extras&mode=light|dark */
+:root { --bg: #e8e6e0; --fg: #161514; --soft: #5b5853; --edge: rgba(22,21,20,.22); --pink: #d81b7a; }
+.dk { --bg: #0b0b0c; --fg: #fff6ee; --soft: rgba(255,246,238,.62); --edge: rgba(255,246,238,.16); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.35 "Timeless Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.board { padding: 56px 64px 60px; width: max-content; }
+h2 { font: 500 30px/1 "Timeless Sans", sans-serif; letter-spacing: -.035em; margin: 0 0 26px 4px; }
+h2 b { color: var(--pink); font-weight: inherit; }
+.row { display: grid; grid-template-columns: repeat(var(--n), 393px); gap: 56px 40px; align-items: start; }
+img { display: block; width: 393px; height: 852px; border-radius: 40px; box-shadow: 0 0 0 1px var(--edge); }
+p { margin: 20px 6px 0; max-width: 383px; color: var(--soft); }
+</style>
+</head>
+<body>
+<div class="board" id="b"></div>
+<script>
+const q = new URLSearchParams(location.search), m = q.get('mode') || 'light', g = q.get('g') || 'focus';
+if (m === 'dark') document.documentElement.classList.add('dk');
+const G = {
+  focus: ['Focus', 5, [
+    [1, 'Setup. Lengths, apps, how ending early works, and Rounds.'],
+    [2, 'Custom, in 5 minute steps up to 4 hours.'],
+    [3, 'Rounds. 25 on, 5 off, four times.'],
+    [4, 'In a round. Same plate as Focus, with the rounds marked.'],
+    [5, 'A break. The apps are open; the plate breathes.'],
+    [6, 'Ending early with the 10 second wait.'],
+    [7, 'Locked, with one emergency exit a week.'],
+    [8, 'Schedule. Sleep\'s pattern, weekdays 9 to 12.'],
+    [9, 'The Quick Settings tile and the Focus notification.'],
+  ]],
+  post: ['Post Mode', 3, [
+    [10, 'Post Mode. One line, a length, and End when I leave the app.'],
+    [11, 'Custom, in 1 minute steps up to 30.'],
+    [12, 'When the time is up, inside the real app.'],
+  ]],
+  extras: ['Extras', 4, [
+    [13, 'A pause before a real app opens.'],
+    [14, 'Messages only: one line on Home, a door to each inbox.'],
+    [15, 'Saved for later, from the share menu.'],
+    [16, 'The Later list.'],
+    [17, 'The Sunday note.'],
+    [18, 'What the Sunday note opens.'],
+    [19, 'Widgets: 4 by 2, 2 by 2, and 2 by 2 during Focus.'],
+  ]],
+}[g];
+document.documentElement.style.setProperty('--n', G[1]);
+document.getElementById('b').innerHTML = `<h2>${G[0]}, ${m}<b>.</b></h2><div class="row">${G[2].map(([n, t]) => `<div><img src="png/${m}-${String(n).padStart(2, '0')}.png" alt=""><p>${t}</p></div>`).join('')}</div>`;
+Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }))).then(() => document.fonts.ready).then(() => { window.ready = true; });
+</script>
+</body>
+</html>

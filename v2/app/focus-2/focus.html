@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll Focus, Android</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<link rel="stylesheet" href="../kit.css">
+<!-- The approved tokens and components, copied unchanged from final/final.html. -->
+<link rel="stylesheet" href="final-tokens.css">
+<style>
+/* Focus, Post Mode and the extras, Android. Same tokens and components as final/; only the phone is Android sized
+   (393 x 852) with a punch hole and a gesture bar. ?mode=light|dark, ?only=N, ?accent=magenta|blue|black. */
+.cell { width: 393px; }
+.phone { width: 393px; height: 852px; }
+.island { width: 12px; height: 12px; margin-left: -6px; top: 17px; border-radius: 50%; }
+.sb { padding: 2px 26px 0 30px; font: 500 15px/1 var(--sys); }
+.hi { width: 108px; margin-left: -54px; height: 4px; bottom: 10px; }
+.row { flex-wrap: wrap; row-gap: 60px; }
+
+/* Square choices in the day chips' language (DesignSystem.kt ChoiceChips). */
+.lens { display: flex; flex-wrap: wrap; gap: 8px; }
+.lens span { height: 44px; padding: 0 14px; display: grid; place-items: center; font: 500 15px/1 var(--sans); box-shadow: inset 0 0 0 1px var(--box-edge); font-variant-numeric: tabular-nums; }
+.lens span.on { background: var(--fg); color: var(--bg); box-shadow: none; }
+/* One choice of several: a row with a line under it and the accent check when chosen. */
+.opt { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--hair); }
+.opt:first-child { border-top: 1px solid var(--hair); }
+.opt .tick, .opt .ring { width: 24px; height: 24px; flex: none; margin-left: auto; }
+.opt .t-small { margin-top: 1px; }
+/* Apps line, as on Sleep. */
+.appsline { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 12px 0; }
+.lrow2 { display: flex; align-items: center; gap: 12px; min-height: 50px; border-bottom: 1px solid var(--hair); }
+.cv { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.cv .ic { color: var(--chev); }
+
+/* Bottom sheet over a scrim (the custom length picker). */
+.scrim { position: absolute; inset: 0; background: rgba(10,10,12,.46); z-index: 5; }
+.bsheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--bg); padding: 26px 24px 42px; }
+.m-dark .bsheet { background: #1f1f22; }
+.wheel { margin-top: 18px; text-align: center; }
+.wheel p { height: 46px; display: grid; place-items: center; font: 500 22px/1 var(--sans); letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--soft); }
+.wheel p.f1 { opacity: .45; } .wheel p.f2 { opacity: .8; }
+.wheel p.on { height: 62px; color: var(--fg); font-size: 34px; letter-spacing: -.035em; }
+
+/* Round marks: one square per round, filled once done. */
+.rounds { display: flex; justify-content: center; gap: 8px; }
+.rounds i { width: 11px; height: 11px; box-shadow: inset 0 0 0 1.5px var(--cream); }
+.rounds i.done { background: var(--cream); }
+
+/* Android system surfaces: drawn in the system's own type, neutral greys. Only the icon and accent are Idyll's. */
+.sys { font-family: "Google Sans", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.m-light .phone.shade { --sh-bg: #eceae6; --sh-fg: #1b1b1a; --sh-soft: #5f5d59; --tl-off: #dcd9d3; --tl-on: #2e2d2b; --tl-onfg: #f6f4f0; --card: #fbfaf8; }
+.m-dark .phone.shade { --sh-bg: #121213; --sh-fg: #ecebe8; --sh-soft: #a3a19c; --tl-off: #2a2a2b; --tl-on: #e6e4df; --tl-onfg: #1b1b1a; --card: #222223; }
+.shade { background: var(--sh-bg); color: var(--sh-fg); }
+.shade .sb, .wall .sb { display: none; }
+.qs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.qs > div { height: 68px; border-radius: 22px; background: var(--tl-off); display: flex; align-items: center; gap: 12px; padding: 0 14px; }
+.qs > div.on { background: var(--tl-on); color: var(--tl-onfg); }
+.qs b { display: block; font-weight: 500; font-size: 15px; line-height: 1.2; }
+.qs small { display: block; font-size: 13px; opacity: .75; margin-top: 2px; }
+.ncard { background: var(--card); border-radius: 24px; padding: 16px 16px 6px; }
+.nhead { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--sh-soft); }
+.nico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex: none; }
+.nacts { display: flex; gap: 22px; padding: 12px 0 8px 34px; font-weight: 500; font-size: 14.5px; }
+/* Launcher and lock screen. */
+.wall { color: #fff; }
+.m-light .phone.wall { background: #d8d2c4; color: #1b1b1a; }
+.m-dark .phone.wall { background: #23252a; color: #f1efea; }
+.widget { position: absolute; border-radius: 22px; overflow: hidden; background: var(--bg); color: var(--fg); }
+.widget.plate { background: var(--plate, var(--pink)); }
+.dock { position: absolute; left: 34px; right: 34px; bottom: 44px; display: flex; justify-content: space-between; }
+.dock span { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; }
+.m-light .dock span { background: #f3f0ea; color: #3b3a37; } .m-dark .dock span { background: #3a3c42; color: #eceae5; }
+.dock img { width: 56px; height: 56px; border-radius: 50%; display: block; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7.5 16.5 16.5 7.5M9 7.5h7.5V15"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.3a9.5 9.5 0 0 1 13 0M8.6 15.5a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="1.2"/></symbol>
+  <symbol id="i-bt" viewBox="0 0 24 24"><path d="m7 7.5 10 9-5 4.5V3l5 4.5-10 9"/></symbol>
+  <symbol id="i-torch" viewBox="0 0 24 24"><path d="M8 3.5h8v3l-2 3.5v10.5h-4V10L8 6.5zM8 6.5h8"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 24 24"><path d="M3.5 8h4l1.5-2.5h6L16.5 8h4v11.5h-17z"/><circle cx="12" cy="13.5" r="3.5"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5s1-6 3.5-8.5z"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></symbol>
+</svg>
+<div class="board" id="board"></div>
+
+<template id="screens">
+  <!-- 1 Focus setup -->
+  <div class="cell" data-g="focus"><p class="cap">Focus setup</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Focus<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:8px">The real apps pause until the time is up.</p></div>
+    <div class="pad" style="margin-top:22px"><p class="t-label">Length</p>
+      <div class="lens" style="margin-top:12px"><span>25 min</span><span class="on">50 min</span><span>90 min</span><span>Until I stop</span><span>Custom</span></div></div>
+    <div class="pad" style="margin-top:20px"><div class="appsline"><span class="t-body" style="margin-right:auto">Apps to pause</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a></div></div>
+    <div class="pad" style="margin-top:22px"><p class="t-label">Ending early</p>
+      <ul style="margin-top:8px">
+        <li class="opt"><div><p class="t-body">Anytime</p></div><span class="ring"></span></li>
+        <li class="opt"><div><p class="t-body">Wait 10 seconds</p></div><span class="tick"><svg class="ic"><use href="#i-check"/></svg></span></li>
+        <li class="opt"><div><p class="t-body">Locked until it ends</p><p class="t-small soft">One emergency exit a week.</p></div><span class="ring"></span></li>
+      </ul></div>
+    <div class="pad"><div class="lrow2"><span class="t-body">Rounds</span><span class="cv"><span class="t-small soft">Off</span><svg class="ic"><use href="#i-chev"/></svg></span></div></div>
+    <div class="foot"><a class="btn primary">Start Focus</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 2 Focus setup, custom length -->
+  <div class="cell" data-g="focus"><p class="cap">Custom length</p>
+  <div class="phone sheeted2"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Focus<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:8px">The real apps pause until the time is up.</p></div>
+    <div class="pad" style="margin-top:22px"><p class="t-label">Length</p>
+      <div class="lens" style="margin-top:12px"><span>25 min</span><span>50 min</span><span>90 min</span><span>Until I stop</span><span class="on">2 h 15 min</span></div></div>
+    <div class="pad" style="margin-top:20px"><div class="appsline"><span class="t-body" style="margin-right:auto">Apps to pause</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a></div></div>
+    <div class="scrim"></div>
+    <div class="bsheet">
+      <p class="t-sheet">Custom length<b class="stop">.</b></p>
+      <p class="t-small soft" style="margin-top:6px">In 5 minute steps, up to 4 hours.</p>
+      <div class="wheel"><p class="f1">2 h 05 min</p><p class="f2">2 h 10 min</p><p class="on crop">2 h 15 min</p><p class="f2">2 h 20 min</p><p class="f1">2 h 25 min</p></div>
+      <div style="display:grid;gap:6px;margin-top:22px"><a class="btn primary">Set</a><a class="lnk">Cancel</a></div>
+    </div>
+  </div></div></div>
+
+  <!-- 3 Rounds setup -->
+  <div class="cell" data-g="focus"><p class="cap">Rounds</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Focus</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Rounds<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:8px">Focus, then a short break with the apps open. Then again.</p></div>
+    <div class="crop" style="margin:26px 24px 0;padding:18px 0;display:grid;grid-template-columns:1fr 1fr 1fr">
+      <div style="padding:0 18px"><p class="t-label">Focus</p><p class="t-num-l" style="margin-top:10px">25</p><p class="t-small soft">min</p></div>
+      <div style="padding:0 18px;border-left:1px solid var(--crop)"><p class="t-label">Break</p><p class="t-num-l" style="margin-top:10px">5</p><p class="t-small soft">min</p></div>
+      <div style="padding:0 18px;border-left:1px solid var(--crop)"><p class="t-label">Rounds</p><p class="t-num-l" style="margin-top:10px">4</p><p class="t-small soft">times</p></div>
+    </div>
+    <div class="pad" style="margin-top:22px">
+      <div style="display:flex;height:28px;background:var(--track)" data-tl="25,5,25,5,25,5,25"></div>
+      <p class="t-label" style="display:flex;justify-content:space-between;margin-top:8px"><span>Start</span><span>1 h 55 min</span></p>
+    </div>
+    <p class="t-small soft pad" style="margin-top:14px">During breaks the real apps open. They pause again when the next round starts.</p>
+    <div class="pad" style="margin-top:20px"><div class="appsline"><span class="t-body" style="margin-right:auto">Apps to pause</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a></div></div>
+    <div class="foot"><a class="btn primary">Start rounds</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 4 A round running -->
+  <div class="cell" data-g="focus"><p class="cap">In a round</p>
+  <div class="phone onplate"><div class="pcrop crop"></div><div class="scr" style="text-align:center;padding-top:0">
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:330px;margin:100px auto 0"></div>
+    <p class="t-count" style="margin-top:30px">18:42</p>
+    <p class="t-head" style="margin-top:12px">Round 2 of 4<b class="stop">.</b></p>
+    <div class="rounds" style="margin-top:16px"><i class="done"></i><i class="done"></i><i></i><i></i></div>
+    <p style="margin-top:24px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" style="width:34px;height:34px"></span></p>
+    <p class="t-small" style="margin-top:12px">A 5 minute break at 10:25.</p>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn secondary">Stop Focus</a><a class="lnk">Stop after this round</a></div>
+  </div></div></div>
+
+  <!-- 5 A break -->
+  <div class="cell" data-g="focus"><p class="cap">A break</p>
+  <div class="phone onplate"><div class="pcrop crop"></div><div class="scr" style="text-align:center;padding-top:0">
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:250px;margin:132px auto 0"></div>
+    <h1 class="t-hero" style="font-size:88px;margin-top:40px">Break<b class="stop">.</b></h1>
+    <p class="t-num-m" style="margin-top:26px">4:12</p>
+    <p class="t-small" style="margin:16px 40px 0">The apps are open. Round 3 starts at 10:30.</p>
+    <p style="margin-top:28px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" data-nostrike style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" data-nostrike style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" data-nostrike style="width:34px;height:34px"></span></p>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn secondary">Start round 3 now</a><a class="lnk">End rounds here</a></div>
+  </div></div></div>
+
+  <!-- 6 Ending early: the 10 second wait -->
+  <div class="cell" data-g="focus"><p class="cap">Ending early, the wait</p>
+  <div class="phone onplate"><div class="pcrop crop"></div><div class="scr" style="text-align:center;padding-top:0">
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:330px;margin:104px auto 0"></div>
+    <p class="t-count" style="margin-top:34px">38:12</p>
+    <p class="t-head" style="margin-top:12px">Focus until 15:20<b class="stop">.</b></p>
+    <p style="margin-top:28px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" style="width:34px;height:34px"></span></p>
+    <p class="t-small" style="margin-top:12px">Paused in the real apps. Idyll still works.</p>
+    <div class="foot" style="padding:0 34px 14px"><p class="t-small" style="margin:0 6px 10px">Take a breath. If you still want to stop, you can in a moment.</p><a class="btn secondary" style="opacity:.42">Stop Focus in 7</a><a class="lnk">Keep going</a></div>
+  </div></div></div>
+
+  <!-- 7 Locked -->
+  <div class="cell" data-g="focus"><p class="cap">Ending early, locked</p>
+  <div class="phone onplate"><div class="pcrop crop"></div><div class="scr" style="text-align:center;padding-top:0">
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:330px;margin:104px auto 0"></div>
+    <p class="t-count" style="margin-top:34px">38:12</p>
+    <p class="t-head" style="margin-top:12px">Locked until 15:20<b class="stop">.</b></p>
+    <p style="margin-top:28px;display:flex;justify-content:center;align-items:center;gap:12px">
+      <span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="x" data-n="22" style="width:34px;height:34px"></span>
+      <span class="print mk" data-print="mark" data-b="tiktok" data-n="22" style="width:34px;height:34px"></span></p>
+    <p class="t-small" style="margin-top:12px">Paused in the real apps. Idyll still works.</p>
+    <div class="foot" style="padding:0 34px 14px"><p class="t-small" style="margin:0 6px 10px">You chose this when you started. It ends by itself.</p><a class="btn secondary" style="height:64px;flex-direction:column;gap:6px">Emergency exit<span class="t-cap" style="opacity:.85">1 left this week</span></a><span style="height:44px"></span></div>
+  </div></div></div>
+
+  <!-- 8 Schedule -->
+  <div class="cell" data-g="focus"><p class="cap">Focus schedule</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Focus</div>
+    <h1 class="t-hero" style="font-size:72px;margin-top:14px">Schedule<b class="stop">.</b></h1>
+    <p class="t-body soft" style="text-align:center;margin:14px 34px 0">Focus starts by itself at these times, and ends by itself too.</p>
+    <div class="crop" style="margin:24px 24px 0;padding:18px 0;display:grid;grid-template-columns:1fr 1fr">
+      <div style="padding:0 20px"><p class="t-label">Starts</p><p class="t-num-l" style="margin-top:10px">09:00</p></div>
+      <div style="padding:0 20px;border-left:1px solid var(--crop)"><p class="t-label">Ends</p><p class="t-num-l" style="margin-top:10px">12:00</p></div>
+    </div>
+    <div class="pad" style="margin-top:22px">
+      <div style="position:relative;height:28px;background:var(--track)"><div style="position:absolute;left:18.75%;width:18.75%;top:0;bottom:0;background:var(--pink)"></div></div>
+      <p class="t-label" style="display:flex;justify-content:space-between;margin-top:8px"><span>06:00</span><span>10:00</span><span>14:00</span><span>18:00</span><span>22:00</span></p>
+    </div>
+    <div class="pad" style="margin-top:20px;display:flex;justify-content:space-between">
+      <span class="day on">M</span><span class="day on">T</span><span class="day on">W</span><span class="day on">T</span><span class="day on">F</span><span class="day off">S</span><span class="day off">S</span>
+    </div>
+    <div style="margin:18px 24px 0;display:flex;align-items:center;gap:8px;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:12px 0">
+      <span class="t-body" style="margin-right:auto">Apps to pause</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a>
+    </div>
+    <div class="pad"><div class="lrow2"><span class="t-body" style="margin-right:auto">Ending early</span><a class="t-small" style="font-size:15px">Wait 10 seconds</a></div></div>
+    <div class="foot"><a class="btn primary">Save</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 9 Quick Settings tile and the notification -->
+  <div class="cell" data-g="focus"><p class="cap">Quick Settings and the notification</p>
+  <div class="phone shade sys"><div class="scr" style="padding:0">
+    <div style="height:54px;display:flex;align-items:center;justify-content:space-between;padding:4px 26px 0 30px;font-size:15px;font-weight:500"><span style="display:flex;align-items:center;gap:8px">9:41 <span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" data-sysicon style="display:block;width:22px;height:13px"></span></span><span style="font-size:13px;color:var(--sh-soft)">Sat 11 Oct</span></div>
+    <div style="padding:10px 16px 0">
+      <div class="qs">
+        <div class="on"><svg class="ic"><use href="#i-wifi"/></svg><span><b>Internet</b><small>Home</small></span></div>
+        <div><svg class="ic"><use href="#i-bt"/></svg><span><b>Bluetooth</b><small>Off</small></span></div>
+        <div><svg class="ic"><use href="#i-torch"/></svg><span><b>Torch</b><small>Off</small></span></div>
+        <div class="on"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.7" data-tileicon style="display:block;width:26px;height:15.4px"></span><span><b>Focus</b><small>Until 15:20</small></span></div>
+      </div>
+      <div style="margin-top:10px;height:44px;border-radius:22px;background:var(--tl-off);position:relative;overflow:hidden"><div style="position:absolute;inset:0 42% 0 0;background:var(--tl-on);border-radius:22px;display:flex;align-items:center;padding-left:14px;color:var(--tl-onfg)"><svg class="ic" style="width:20px;height:20px"><use href="#i-sun"/></svg></div></div>
+      <p style="text-align:center;margin:14px 0 18px;color:var(--sh-soft);font-size:12px">Hold a tile to open its settings</p>
+      <div class="ncard">
+        <div class="nhead"><span class="nico" style="background:var(--pink)"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.3" data-ink="#fff6ee" style="display:block;width:17px;height:10px"></span></span><span style="color:var(--pink);font-weight:500">Idyll</span><span>Focus</span><span>now</span></div>
+        <p style="margin:10px 0 0 34px;font-weight:500;font-size:16px">Focus until 15:20</p>
+        <p style="margin:3px 0 0 34px;font-size:14.5px;color:var(--sh-soft)">Instagram, X and TikTok are paused. 38 minutes left.</p>
+        <div class="nacts" style="color:var(--pink)"><span>Stop Focus</span><span>Add 10 minutes</span></div>
+      </div>
+      <div class="ncard" style="margin-top:3px;border-radius:6px 6px 24px 24px;padding-bottom:16px">
+        <div class="nhead"><span class="nico" style="background:#4d6b5a;color:#fff"><svg class="ic" style="width:15px;height:15px"><use href="#i-msg"/></svg></span><span style="font-weight:500">Messages</span><span>4 min</span></div>
+        <p style="margin:10px 0 0 34px;font-weight:500;font-size:16px">Maya</p>
+        <p style="margin:3px 0 0 34px;font-size:14.5px;color:var(--sh-soft)">On my way, see you at six</p>
+      </div>
+    </div>
+  </div></div></div>
+
+  <!-- 10 Post Mode -->
+  <div class="cell" data-g="post"><p class="cap">Post Mode</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Post Mode<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px;max-width:19em">Open the real apps for a few minutes to post, then they close again.</p></div>
+    <div class="pad" style="margin-top:28px"><p class="t-label">Length</p>
+      <div class="lens" style="margin-top:12px"><span>5 min</span><span class="on">10 min</span><span>15 min</span><span>Custom</span></div></div>
+    <div class="pad" style="margin-top:24px"><div class="appsline"><span class="t-body" style="margin-right:auto">Apps to open</span><span data-t="instagram" class="sm"></span><span data-t="x" class="sm"></span><span data-t="tiktok" class="sm"></span><a class="t-small" style="margin-left:8px;font-size:15px">Change</a></div></div>
+    <div class="pad"><div class="lrow2" style="padding:12px 0;align-items:flex-start"><div><p class="t-body">End when I leave the app</p><p class="t-small soft" style="margin-top:2px;max-width:17em">Switch away and it closes, even with minutes left.</p></div><span class="sw on" style="margin-left:auto;margin-top:2px"></span></div></div>
+    <div class="foot"><a class="btn primary">Open the real apps</a><a class="lnk">Not now</a></div>
+  </div></div></div>
+
+  <!-- 11 Post Mode, custom -->
+  <div class="cell" data-g="post"><p class="cap">Post Mode, custom length</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Post Mode<b class="stop">.</b></h1>
+      <p class="t-body" style="margin-top:12px;max-width:19em">Open the real apps for a few minutes to post, then they close again.</p></div>
+    <div class="pad" style="margin-top:28px"><p class="t-label">Length</p>
+      <div class="lens" style="margin-top:12px"><span>5 min</span><span>10 min</span><span>15 min</span><span class="on">20 min</span></div></div>
+    <div class="scrim"></div>
+    <div class="bsheet">
+      <p class="t-sheet">Custom length<b class="stop">.</b></p>
+      <p class="t-small soft" style="margin-top:6px">In 1 minute steps, up to 30 minutes.</p>
+      <div class="wheel"><p class="f1">18 min</p><p class="f2">19 min</p><p class="on crop">20 min</p><p class="f2">21 min</p><p class="f1">22 min</p></div>
+      <div style="display:grid;gap:6px;margin-top:22px"><a class="btn primary">Set</a><a class="lnk">Cancel</a></div>
+    </div>
+  </div></div></div>
+
+  <!-- 12 Post Mode over -->
+  <div class="cell" data-g="post"><p class="cap">Post Mode over</p>
+  <div class="phone onplate"><div class="pcrop crop"></div><div class="scr" style="text-align:center;padding-top:0">
+    <div class="print cyg sigcyg" data-print="cygnet" style="width:250px;margin:132px auto 0"></div>
+    <p style="margin-top:44px;display:flex;justify-content:center"><span class="print mk" data-print="mark" data-b="instagram" data-n="22" style="width:44px;height:44px"></span></p>
+    <h1 class="t-title-m" style="margin-top:20px">Post Mode is over<b class="stop">.</b></h1>
+    <p class="t-body" style="margin:14px 40px 0">Instagram is closed again. Your messages are in Idyll.</p>
+    <div class="foot" style="padding:0 34px 14px"><a class="btn primary">Back to Idyll</a><a class="lnk">Add 5 minutes</a></div>
+  </div></div></div>
+
+  <!-- 13 What are you here for? -->
+  <div class="cell" data-g="extras"><p class="cap">What are you here for?</p>
+  <div class="phone sheeted"><div class="scr" style="padding:0">
+    <div class="splash" style="flex:1;display:grid;place-items:center;padding-bottom:380px"><span class="bm" data-b="instagram" style="width:64px;height:64px"></span></div>
+    <div class="plate sheet" style="height:452px">
+      <div class="crop"></div>
+      <div style="position:absolute;left:28px;right:28px;top:34px">
+        <p class="t-sheet">What are you here for<b class="stop">?</b></p>
+        <div style="margin-top:12px" data-why></div>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:15px"><a>Just open it</a><a>Back</a></div>
+      </div>
+    </div>
+  </div></div></div>
+
+  <!-- 14 Messages only, on Home -->
+  <div class="cell home" data-g="extras"><p class="cap">Messages only, on Home</p>
+  <div class="phone"><div class="scr">
+    <div class="navb" style="padding:0 20px 0 24px;margin-top:6px;justify-content:space-between"><span class="t-wordmark logo" style="display:flex;align-items:center;gap:10px"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.8" aria-hidden="true" style="display:block;width:34px;height:20.2px"></span><span>Idyll<b class="stop">.</b></span></span><a>Settings</a></div>
+    <div class="pad" style="margin-top:26px">
+      <p class="t-label">Today in the real apps</p>
+      <p class="t-num-l" style="font-size:50px;margin-top:10px">18 <span class="soft">of 30 min</span></p>
+      <div class="bar-track" style="margin-top:16px"><i style="width:60%"></i></div>
+      <p class="t-label" style="margin-top:9px;display:flex;justify-content:space-between"><span>Android's count</span><span>Sample numbers</span></p>
+    </div>
+    <ul class="rows pad" style="margin-top:24px">
+      <li style="height:54px"><span data-t="instagram"></span><span class="t-body-m">Instagram</span><span class="t-small soft n" style="margin-left:auto">11 min</span><span class="t-small soft" style="display:flex;align-items:center;width:44px;justify-content:flex-end">App<svg class="ic" style="width:16px;height:16px"><use href="#i-out"/></svg></span></li>
+      <li style="height:54px"><span data-t="youtube"></span><span class="t-body-m">YouTube</span><span class="t-small soft n" style="margin-left:auto">5 min</span><span class="t-small soft" style="display:flex;align-items:center;width:44px;justify-content:flex-end">App<svg class="ic" style="width:16px;height:16px"><use href="#i-out"/></svg></span></li>
+      <li style="height:54px"><span data-t="x"></span><span class="t-body-m">X</span><span class="t-small soft n" style="margin-left:auto">2 min</span><span class="t-small soft" style="display:flex;align-items:center;width:44px;justify-content:flex-end">App<svg class="ic" style="width:16px;height:16px"><use href="#i-out"/></svg></span></li>
+      <li style="height:54px"><span data-t="snapchat"></span><span class="t-body-m">Snapchat</span><span class="t-small soft n" style="margin-left:auto">0 min</span><span class="t-small soft" style="display:flex;align-items:center;width:44px;justify-content:flex-end">App<svg class="ic" style="width:16px;height:16px"><use href="#i-out"/></svg></span></li>
+    </ul>
+    <div class="pad" style="margin-top:14px"><div style="display:flex;align-items:center;gap:6px">
+      <span class="t-body-m" style="margin-right:auto">Messages</span>
+      <span class="door"><span data-t="instagram" class="sm"></span></span><span class="door"><span data-t="x" class="sm"></span></span><span class="door"><span data-t="snapchat" class="sm"></span></span><span class="door"><span data-t="facebook" class="sm"></span></span></div>
+      <p class="t-cap soft" style="margin-top:2px">Straight to the inbox. Nothing else on the way.</p></div>
+    <div class="pad" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px">
+      <a class="btn primary" style="height:64px;flex-direction:column;gap:5px">Focus<span class="t-cap" style="opacity:.8">50 min</span></a>
+      <a class="btn secondary" style="height:64px;flex-direction:column;gap:5px">Post Mode<span class="t-cap soft">Real apps, 10 min</span></a>
+    </div>
+    <div class="pad" style="margin-top:12px"><div class="field"><svg class="ic soft" style="width:20px"><use href="#i-link"/></svg><span class="t-body soft" style="font-size:16px">Paste a link</span><a class="t-small" style="margin-left:auto;font-size:15px">Paste</a></div></div>
+    <div class="pad" style="margin-top:auto;padding-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span class="t-small" style="display:flex;align-items:center;gap:8px"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" aria-hidden="true" style="display:block;width:26px;height:15.4px"></span>Resting from 23:00</span><span class="t-small soft">Free, for good.</span></div>
+  </div></div></div>
+
+  <!-- 15 Saved for later, the share landing -->
+  <div class="cell" data-g="extras"><p class="cap">Saved for later</p>
+  <div class="phone ytphone"><div class="scr" style="padding:44px 0 24px">
+    <div data-site="yt-mode"></div>
+    <div class="plate" style="position:absolute;left:12px;right:12px;bottom:96px;height:84px;color:var(--cream);display:flex;align-items:center;gap:14px;padding:0 16px;z-index:4">
+      <span class="print mk" data-print="mark" data-b="youtube" data-n="22" data-nostrike style="width:40px;height:40px"></span>
+      <div style="flex:1"><p class="t-note">Saved for later<b class="ik">.</b></p><p class="t-small" style="margin-top:2px">It waits under Later, in Idyll.</p></div>
+      <a class="t-small" style="font-size:15px">OK</a>
+    </div>
+  </div></div></div>
+
+  <!-- 16 Later, the quiet list -->
+  <div class="cell" data-g="extras"><p class="cap">The Later list</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px"><h1 class="t-title-l">Later<b class="stop">.</b></h1>
+      <p class="t-body soft" style="margin-top:8px">Things you saved from the share menu. Each opens on its own, with nothing after it.</p></div>
+    <ul class="rows pad" style="margin-top:24px">
+      <li style="padding:14px 0;align-items:flex-start"><span data-t="youtube" class="sm"></span><div><p class="t-body-m" style="line-height:1.3">Loading 35mm film without the fuss</p><p class="t-small soft" style="margin-top:3px">Grain and Glass, saved today</p></div></li>
+      <li style="padding:14px 0;align-items:flex-start"><span data-t="instagram" class="sm"></span><div><p class="t-body-m" style="line-height:1.3">maya.walks, a swim before breakfast</p><p class="t-small soft" style="margin-top:3px">Saved yesterday</p></div></li>
+      <li style="padding:14px 0;align-items:flex-start"><span data-t="reddit" class="sm"></span><div><p class="t-body-m" style="line-height:1.3">Is it normal for the first frames of a roll to be blank?</p><p class="t-small soft" style="margin-top:3px">r/AnalogCommunity, saved Thursday</p></div></li>
+      <li style="padding:14px 0;align-items:flex-start"><span data-t="linkedin" class="sm"></span><div><p class="t-body-m" style="line-height:1.3">Priya's post about leaving her studio</p><p class="t-small soft" style="margin-top:3px">Saved Tuesday</p></div></li>
+      <li style="padding:14px 0;align-items:flex-start"><span data-t="youtube" class="sm"></span><div><p class="t-body-m" style="line-height:1.3">One roll of Portra on a New York morning</p><p class="t-small soft" style="margin-top:3px">Wren Walks, saved last week</p></div></li>
+    </ul>
+    <div class="pad" style="margin-top:auto;padding-bottom:10px;display:flex;justify-content:space-between;align-items:center"><span class="t-small soft">Kept on this phone.</span><a class="t-small" style="font-size:15px;height:44px;display:flex;align-items:center">Clear the ones I've seen</a></div>
+  </div></div></div>
+
+  <!-- 17 Sunday note, the notification -->
+  <div class="cell" data-g="extras"><p class="cap">Sunday note, on the lock screen</p>
+  <div class="phone wall shade sys"><div class="scr" style="padding:0">
+    <div style="height:54px;display:flex;align-items:center;justify-content:space-between;padding:4px 26px 0 30px;font-size:15px;font-weight:500"><span></span><span style="font-size:13px">82%</span></div>
+    <p style="text-align:center;margin-top:70px;font-size:17px;font-weight:500">Sunday 12 October</p>
+    <p style="text-align:center;font-size:104px;line-height:1;font-weight:300;letter-spacing:-.03em;margin-top:6px;font-variant-numeric:tabular-nums">18:00</p>
+    <div style="margin:auto 16px 120px">
+      <div class="ncard" style="padding-bottom:16px">
+        <div class="nhead"><span class="nico" style="background:var(--pink)"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.3" data-ink="#fff6ee" style="display:block;width:17px;height:10px"></span></span><span style="color:var(--pink);font-weight:500">Idyll</span><span>now</span></div>
+        <p style="margin:10px 0 0 34px;font-weight:500;font-size:16px">Your week</p>
+        <p style="margin:3px 0 0 34px;font-size:14.5px;color:var(--sh-soft)">2 h 40 min less in the real apps than last week. Instagram was opened most.</p>
+      </div>
+    </div>
+    <div style="position:absolute;left:0;right:0;bottom:46px;display:flex;justify-content:space-between;padding:0 40px;opacity:.8"><svg class="ic"><use href="#i-phone"/></svg><svg class="ic"><use href="#i-cam"/></svg></div>
+  </div></div></div>
+
+  <!-- 18 Sunday note, the screen -->
+  <div class="cell" data-g="extras"><p class="cap">Your week</p>
+  <div class="phone"><div class="scr">
+    <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Home</div>
+    <div class="pad" style="margin-top:8px">
+      <h1 class="t-title-l">Your week<b class="stop">.</b></h1>
+      <p class="t-num-m" style="margin-top:18px">2 h 40 min less</p>
+      <p class="t-small soft" style="margin-top:6px">In the real apps than last week, by Android's count.</p>
+      <p class="t-label" style="margin-top:6px">Sample numbers</p>
+    </div>
+    <div class="pad" style="margin-top:22px"><div class="week" data-week data-ink="var(--fg)" data-rule="var(--soft)" data-hi="var(--today, var(--pink))" data-lab="var(--soft)" style="color:var(--fg)"></div></div>
+    <ul class="rows pad" style="margin-top:22px">
+      <li style="height:54px"><span data-t="instagram" class="sm"></span><span class="t-body">Opened most</span><span class="t-small soft n" style="margin-left:auto">Instagram, 31 times</span></li>
+      <li style="height:54px"><span class="tile sm" style="background:var(--pink);box-shadow:none"><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.3" data-ink="#fff6ee" style="display:block;width:20px;height:12px"></span></span><span class="t-body">In Focus</span><span class="t-small soft n" style="margin-left:auto">6 h 10 min</span></li>
+      <li style="height:54px"><span class="tile sm" style="box-shadow:inset 0 0 0 1px var(--tile-edge)"><svg class="ic" style="width:16px;height:16px"><use href="#i-bookmark"/></svg></span><span class="t-body">Saved for later</span><span class="t-small soft n" style="margin-left:auto">3</span></li>
+    </ul>
+    <div class="pad" style="margin-top:auto;padding-bottom:4px"><p class="t-small soft">This note comes on Sunday evenings. It's worked out on this phone.</p><a class="t-body" style="height:44px;display:flex;align-items:center;font-size:16px">Turn off the Sunday note</a></div>
+  </div></div></div>
+
+  <!-- 19 Home screen widgets -->
+  <div class="cell" data-g="extras"><p class="cap">Home screen widgets</p>
+  <div class="phone wall sys"><div class="scr" style="padding:0">
+    <div style="height:54px;display:flex;align-items:center;justify-content:space-between;padding:4px 26px 0 30px;font-size:15px;font-weight:500"><span>9:41</span><span style="font-size:13px">82%</span></div>
+    <p style="margin:40px 0 0 28px;font-size:44px;font-weight:300;letter-spacing:-.02em">Sat 11 Oct</p>
+    <!-- 4 x 2 -->
+    <div class="widget" style="left:16px;right:16px;top:180px;height:178px;padding:18px 18px 16px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span class="t-label">Today in the real apps</span><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" style="display:block;width:26px;height:15.4px"></span></div>
+      <p class="t-num-m" style="margin-top:8px">18 <span class="soft">of 30 min</span></p>
+      <div class="bar-track" style="margin-top:12px"><i style="width:60%"></i></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:auto">
+        <a class="btn primary" style="height:48px;font-size:17px">Focus<span class="t-cap" style="opacity:.8;margin-left:8px">50 min</span></a>
+        <a class="btn secondary" style="height:48px;font-size:17px">Post Mode</a>
+      </div>
+    </div>
+    <!-- 2 x 2 -->
+    <div class="widget" style="left:16px;top:376px;width:172px;height:172px;padding:16px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between"><span class="t-label">Today</span><span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" style="display:block;width:26px;height:15.4px"></span></div>
+      <p class="t-num-m" style="margin-top:10px">18 min</p>
+      <div class="bar-track" style="margin-top:10px"><i style="width:60%"></i></div>
+      <a class="btn primary" style="height:46px;font-size:17px;margin-top:auto">Focus</a>
+    </div>
+    <!-- 2 x 2 during Focus -->
+    <div class="widget plate" style="right:16px;top:376px;width:172px;height:172px;padding:16px;display:flex;flex-direction:column;color:var(--cream)">
+      <div class="crop" style="position:absolute;inset:8px;--c:var(--cream)"></div>
+      <span class="print smallcyg" data-print="cygnet" data-flat data-water="none" data-cell="1.6" data-ink="#fff6ee" style="display:block;width:26px;height:15.4px;margin-left:auto"></span>
+      <p class="t-num-l" style="font-size:44px;margin-top:auto">38:12</p>
+      <p class="t-small" style="margin-top:6px">Focus until 15:20<b class="ik">.</b></p>
+    </div>
+    <div class="dock"><span><svg class="ic"><use href="#i-phone"/></svg></span><span><svg class="ic"><use href="#i-msg"/></svg></span><img data-icon alt=""><span><svg class="ic"><use href="#i-cam"/></svg></span></div>
+  </div></div></div>
+</template>
+
+<script>
+window.IDYLL_ROOT = '../../../';
+(() => {
+  const q = new URLSearchParams(location.search), want = q.get('mode');
+  const accent = q.get('accent') || 'magenta';
+  const board = document.getElementById('board');
+  const modes = ['light', 'dark'].filter(m => !want || m === want);
+  const ACCENTS = { magenta: ['#d81b7a', '#2d5bff'], blue: ['#2d5bff', '#d81b7a'], black: ['#161514', '#d81b7a'] };
+  const ICON = { magenta: 'H2-white-on-magenta', blue: 'H4-white-on-electric-blue', black: 'H7-white-on-ink' };
+  /* The "what are you here for" choices, in the per-app choice's pattern (onboarding-2, option D). */
+  const ch = (title, line) => `<a style="display:flex;align-items:center;gap:12px;padding:14px 0;text-decoration:none"><span style="flex:1"><span class="t-note" style="display:block">${title}</span><span class="t-small" style="display:block;margin-top:4px;font-size:15px">${line}</span></span><svg class="ic" style="opacity:.8"><use href="#i-chev"/></svg></a>`;
+  const rule = '<div style="border-top:1px solid var(--cream);opacity:.45"></div>';
+  const why = rule + ch('Message someone', 'Straight to your messages. 5 minutes.') + rule + ch('Post something', '10 minutes, then Instagram closes.') + rule + ch('Look something up', 'Search only. 5 minutes.') + rule;
+  function prep(root, mode) {
+    const dark = mode === 'dark', [acc, ink2] = ACCENTS[accent];
+    root.querySelectorAll('[data-site="yt-mode"]').forEach(s => s.dataset.site = dark ? 'yt-dark' : 'yt');
+    root.querySelectorAll('[data-why]').forEach(s => s.innerHTML = why);
+    root.querySelectorAll('[data-icon]').forEach(i => i.src = `../../../img/icons/${ICON[accent]}.png`);
+    root.querySelectorAll('.ytphone').forEach(p => p.style.background = dark ? '#0f0f0f' : '#fff');
+    root.querySelectorAll('.splash').forEach(s => { s.style.background = dark ? '#000' : '#fff'; });
+    /* Rounds timeline: focus in the accent, breaks left as track. */
+    root.querySelectorAll('[data-tl]').forEach(t => { const v = t.dataset.tl.split(',').map(Number), sum = v.reduce((a, b) => a + b);
+      t.innerHTML = v.map((x, i) => `<span style="width:${x / sum * 100}%;${i % 2 ? '' : 'background:var(--pink)'}"></span>`).join(''); });
+    root.querySelectorAll('.phone').forEach(p => {
+      const light = dark || p.classList.contains('onplate');
+      if (light) p.classList.add('lightbar');
+      if (light || p.classList.contains('sheeted')) p.classList.add('lighthi');
+      if (p.classList.contains('shade') || p.classList.contains('wall')) { p.classList.toggle('lighthi', dark); }
+    });
+    root.querySelectorAll('.smallcyg').forEach(g => { if (g.dataset.ink) return;
+      if (g.hasAttribute('data-sysicon')) g.dataset.ink = dark ? '#ecebe8' : '#1b1b1a';
+      else if (g.hasAttribute('data-tileicon')) g.dataset.ink = dark ? '#1b1b1a' : '#f6f4f0';
+      else g.dataset.ink = dark ? '#fff6ee' : acc; });
+    root.querySelectorAll('.sigcyg').forEach(g => g.dataset.water = ink2);
+    root.querySelectorAll('.print[data-print="mark"]').forEach(g => { g.dataset.strike = g.hasAttribute('data-nostrike') ? 'none' : ink2; });
+  }
+  modes.forEach(m => {
+    board.insertAdjacentHTML('beforeend', `<p class="rowname">${m === 'dark' ? 'Dark' : 'Light'}<b class="stop">.</b></p>`);
+    const row = document.createElement('section'); row.className = 'row';
+    [...document.getElementById('screens').content.cloneNode(true).children].forEach(c => {
+      c.classList.add(`m-${m}`); if (m === 'dark') c.classList.add('mono'); if (accent !== 'magenta') c.classList.add(`acc-${accent}`);
+      row.appendChild(c); prep(c, m);
+    });
+    board.appendChild(row);
+  });
+})();
+</script>
+<script src="../kit.js"></script>
+</body>
+</html>

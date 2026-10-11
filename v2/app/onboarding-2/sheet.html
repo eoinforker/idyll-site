@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll onboarding, round 2</title>
+<link rel="stylesheet" href="../../../fonts.css">
+<style>
+/* The comparison sheet: the flow in order, a plain label under each. ?mode=light|dark */
+:root { --bg: #e8e6e0; --fg: #161514; --soft: #5b5853; --edge: rgba(22,21,20,.22); --pink: #d81b7a; }
+.dk { --bg: #0b0b0c; --fg: #fff6ee; --soft: rgba(255,246,238,.62); --edge: rgba(255,246,238,.16); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font: 400 17px/1.35 "Timeless Sans", "Helvetica Neue", Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.board { padding: 56px 64px 60px; width: max-content; }
+h2 { font: 500 30px/1 "Timeless Sans", sans-serif; letter-spacing: -.035em; margin: 0 0 26px 4px; }
+h2 b { color: var(--pink); font-weight: inherit; }
+h2:not(:first-child) { margin-top: 64px; }
+.row { display: flex; gap: 40px; align-items: flex-start; }
+.row > div { width: 393px; }
+img { display: block; width: 393px; height: 852px; border-radius: 40px; box-shadow: 0 0 0 1px var(--edge); }
+p { margin: 20px 6px 0; max-width: 383px; }
+p b { font-weight: 500; margin-right: 6px; }
+p span { color: var(--soft); }
+</style>
+</head>
+<body>
+<div class="board" id="b"></div>
+<script>
+const m = new URLSearchParams(location.search).get('mode') || 'light';
+if (m === 'dark') document.documentElement.classList.add('dk');
+const FLOW = [
+  [1, 'Unchanged.', 'Hello.'],
+  [2, 'Unchanged.', 'Pick the apps you use.'],
+  [3, 'New.', 'The real apps or In Idyll, and what each can\'t do. Replaces "Use your apps as normal."'],
+  [4, 'Changed.', 'The Accessibility disclosure, shorter, and only in the apps you picked.'],
+  [5, 'Changed.', 'Shows which switch to turn on and which to leave off.'],
+  [6, 'Changed.', 'Now before On, and says why. One page for every maker that closes apps. This phone\'s steps are open. Not shown on Pixel or other phones.'],
+  [7, 'Changed.', 'On. The apps you picked, in the website\'s halftone prints, struck through.'],
+  [8, 'Unchanged.', 'That\'s Idyll. Everything else is optional.'],
+];
+const LATER = [
+  [9, 'Unchanged.', 'The first tap of each app on Home asks once. From the In Idyll set.'],
+  [10, 'Unchanged.', 'Sign in, the first time an app opens in Idyll.'],
+  [11, 'Changed.', 'One line for background play, on YouTube\'s first open in Idyll.'],
+];
+const cell = ([n, k, t]) => `<div><img src="png/${m}-${String(n).padStart(2, '0')}.png" alt=""><p><b>${k}</b><span>${t}</span></p></div>`;
+document.getElementById('b').innerHTML =
+  `<h2>Onboarding<b>.</b></h2><div class="row">${FLOW.map(cell).join('')}</div>` +
+  `<h2>Later, at first use<b>.</b></h2><div class="row">${LATER.map(cell).join('')}</div>`;
+Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }))).then(() => document.fonts.ready).then(() => { window.ready = true; });
+</script>
+</body>
+</html>
