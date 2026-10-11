@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll privacy</title>
+<meta name="description" content="How Idyll handles your data: it doesn't collect any.">
+<link rel="icon" href="./img/icons/H2-white-on-magenta.png" type="image/png">
+<link rel="stylesheet" href="./fonts.css">
+<style>
+/* Quiet paper, near-black ink, one magenta plate, then night. */
+:root {
+  --paper: #f6f5f1;
+  --ink: #161514;
+  --soft: #5b5853;
+  --pink: #d81b7a;
+  --blue: #2d5bff;
+  --cream: #fff6ee;
+  --night: #141416;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Timeless Serif", Georgia, serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(16px, 4vw, 48px);
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { color: var(--pink); }
+::selection { background: var(--pink); color: var(--cream); }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--pad); }
+
+
+.doc { max-width: 680px; margin: 0 auto; padding: 0 var(--pad) 96px; }
+.top { display: flex; justify-content: space-between; align-items: center; padding: 22px var(--pad); max-width: 1440px; margin: 0 auto; }
+.wm { display: inline-flex; gap: 10px; align-items: center; text-decoration: none; font: 500 19px/1 var(--sans); }
+.wm img { width: 24px; height: 24px; border-radius: 6px; }
+h1 { font: 500 clamp(44px, 8vw, 88px)/.9 var(--sans); letter-spacing: -.05em; margin: 56px 0 18px; }
+h1 i { font-style: normal; color: var(--pink); }
+.meta { font: 400 13px/1.4 var(--mono); color: var(--soft); margin-bottom: 40px; }
+h2 { font: 500 22px/1.2 var(--sans); letter-spacing: -.02em; margin: 40px 0 10px; }
+.doc p, .doc li { font-size: 17px; line-height: 1.55; color: #2a2826; }
+.doc p + p { margin-top: 12px; }
+.doc ul { margin-top: 10px; }
+.doc li { padding-left: 18px; position: relative; margin-top: 8px; }
+.doc li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; background: var(--pink); }
+.foot { border-top: 1px solid var(--ink); margin-top: 56px; padding-top: 14px; font-size: 14px; color: var(--soft); display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
+</style>
+</head>
+<body>
+<header class="top"><a class="wm" href="./"><img src="./img/icons/H2-white-on-magenta.png" alt="" width="24" height="24">Idyll</a><a href="./">Home</a></header>
+<main class="doc">
+<h1>Privacy<i>.</i></h1>
+<p class="meta">Last updated 11 October 2026</p>
+<p>Idyll doesn't collect your data. There's no Idyll account, no analytics, no advertising and no trackers in any version of Idyll. Nothing you do in Idyll is sent to us, because Idyll has no servers that receive it.</p>
+
+<h2>Your logins</h2>
+<p>When you open YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn or Threads inside Idyll, you sign in directly with that service on its own page. Idyll doesn't read, keep or send your username or password. The service sets its usual login cookie, which your phone keeps on the device so you stay signed in. Deleting Idyll or using Sign out everywhere in settings removes it.</p>
+
+<h2>What stays on your device</h2>
+<ul>
+<li>Your settings: which sites are on and which parts of each feed are hidden.</li>
+<li>Your schedules and limits: Focus, Sleep, Post Mode and daily allowances.</li>
+<li>Your time stats, kept only so Idyll can show you your week. They never leave the device.</li>
+</ul>
+
+<h2>iPhone</h2>
+<p>The Safari content blocker gives Safari a list of rules, and Safari applies them itself. Idyll can't read the pages you visit. Daily allowances, Focus and Sleep use Apple's Screen Time frameworks, which give Idyll anonymous tokens for the apps you choose, not your activity. That information stays on your iPhone.</p>
+
+<h2>Android</h2>
+<p>Idyll uses Android's Accessibility permission to notice, on your phone, when a feed like Reels or Shorts opens inside a supported app, and to step away from it. It looks only at the supported apps, only for that purpose, and doesn't store or send anything it sees. Usage access is used to show your own screen time stats on the device.</p>
+
+<h2>Chrome</h2>
+<p>The Idyll extension runs only on the sites it cleans. It saves your settings in the browser's local storage on your computer and makes no network requests of its own.</p>
+
+<h2>Tips</h2>
+<p>Tipping is optional and unlocks nothing. If you tip, Apple or Google handles the payment through your App Store or Google Play account, and Idyll never learns who you are. On Android this uses Google Play's own payment library, the one piece of code in Idyll that isn't ours, and it only starts if you open the tip screen.</p>
+
+<h2>Check it yourself</h2>
+<p>Idyll shows you every site its browser has talked to in the last week, under What Idyll connects to in settings. On iPhone, Settings, Privacy and Security, App Privacy Report shows the same from Apple's side.</p>
+
+<h2>The services themselves</h2>
+<p>When you use YouTube, Instagram and the others through Idyll, you're still using their services, and their own privacy policies apply to what you do there.</p>
+
+<h2>Children</h2>
+<p>Idyll is a general audience app and collects no data from anyone, including children.</p>
+
+<h2>Changes</h2>
+<p>If this policy ever changes, the new version will be posted here with a new date. Idyll will not start collecting data in exchange for keeping it free.</p>
+
+<h2>Contact</h2>
+<p>Questions about privacy go to <a href="mailto:eoinfr7@gmail.com">eoinfr7@gmail.com</a>.</p>
+<p class="foot"><span>Idyll. Social without the scroll. Free, for good.</span><span><a href="./privacy.html">Privacy</a> &nbsp; <a href="./support.html">Support</a></span></p>
+</main>
+</body>
+</html>
