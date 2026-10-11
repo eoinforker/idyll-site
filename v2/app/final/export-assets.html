@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll asset exporter</title>
+<link rel="stylesheet" href="../kit.css">
+</head>
+<body>
+<!-- Renders every halftone asset through kit.js (the site's halftone code) and prints them as data URLs.
+     Regenerate with: Chrome --headless=new --virtual-time-budget=8000 --dump-dom <this page>, then decode #out. -->
+<div id="stage" style="position:absolute;left:0;top:0"></div>
+<pre id="out"></pre>
+<script>window.IDYLL_ROOT = '../../../'; window.IDYLL_NO_AUTO = true;</script>
+<script src="../kit.js"></script>
+<script>
+(async () => {
+  const CREAM = '#fff6ee', INK = '#161514', BLUE = '#2d5bff';
+  /* name, width pt, height pt, attrs, inks */
+  const cyg = [
+    ['cygnet-hello', 300, 300 * 380 / 640, { cell: '' }, { cream: CREAM }, true],
+    ['cygnet-focus', 330, 330 * 380 / 640, { cell: '' }, { cream: CREAM }, true],
+    ['cygnet-support', 120, 120 * 380 / 640, { cell: 3.4 }, { cream: CREAM, ink: INK }, false],
+    ['cygnet-chapters', 84, 84 * 380 / 640, { cell: 3 }, { cream: CREAM, ink: INK }, false],
+    ['cygnet-glint', 26, 16, { cell: 1.6 }, { cream: CREAM, ink: INK }, false],
+  ];
+  const out = {}, stage = document.getElementById('stage');
+  async function render(name, w, h, data) {
+    const el = document.createElement('div'); el.className = 'print';
+    el.style.width = w + 'px'; el.style.height = h + 'px';
+    for (const [k, v] of Object.entries(data)) if (v !== '') el.dataset[k] = v;
+    stage.appendChild(el); await IdyllPrint(el);
+    out[name] = el.querySelector('canvas').toDataURL('image/png'); el.remove();
+  }
+  for (const s of [2, 3, 4]) {
+    for (const [name, w, h, a, inks, water] of cyg) for (const [ik, col] of Object.entries(inks))
+      await render(`${name}-${ik}@${s}x`, w, h, { print: 'cygnet', ink: col, water: water ? BLUE : 'none', dpr: s, ...a });
+    for (const b of ['instagram', 'x', 'tiktok', 'youtube', 'facebook', 'snapchat', 'reddit', 'linkedin', 'threads'])
+      for (const [ik, col] of Object.entries({ cream: CREAM }))
+        await render(`mark-struck-${b}-${ik}@${s}x`, 34, 34, { print: 'mark', b, n: 22, ink: col, dpr: s });
+  }
+  document.getElementById('out').textContent = JSON.stringify(out);
+})();
+</script>
+</body>
+</html>

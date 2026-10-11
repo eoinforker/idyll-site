@@ -2,7 +2,7 @@
 (() => {
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
   const BLUE = '#2d5bff', CREAM = '#fff6ee';
-  const ROOT = '../../';
+  const ROOT = window.IDYLL_ROOT || '../../';
 
   /* Icons. */
   const sprite = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -110,7 +110,7 @@
   const load = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
   async function print(el) {
     const cv = document.createElement('canvas'); el.appendChild(cv);
-    const kind = el.dataset.print, dpr = Math.min(devicePixelRatio || 1, 3);
+    const kind = el.dataset.print, dpr = +el.dataset.dpr || Math.min(devicePixelRatio || 1, 3);
     const cw = el.clientWidth, w = Math.round(cw * dpr), h = Math.round(el.clientHeight * dpr);
     if (!w || !h) return;
     cv.width = w; cv.height = h;
@@ -142,5 +142,7 @@
       }
     }
   }
+  window.IdyllPrint = print;
+  if (window.IDYLL_NO_AUTO) return;
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => marks).then(() => Promise.all($$('.print').map(print))).then(() => { document.documentElement.dataset.ready = '1'; });
 })();
