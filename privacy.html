@@ -74,13 +74,16 @@ h2 { font: 500 22px/1.2 var(--sans); letter-spacing: -.02em; margin: 40px 0 10px
 <p>The Safari content blocker gives Safari a list of rules, and Safari applies them itself. Idyll can't read the pages you visit. Daily allowances, Focus and Sleep use Apple's Screen Time frameworks, which give Idyll anonymous tokens for the apps you choose, not your activity. That information stays on your iPhone.</p>
 
 <h2>Android</h2>
-<p>Idyll uses Android's Accessibility permission to notice, on your phone, when a feed like Reels or Shorts opens inside a supported app, and to step away from it. It looks only at the supported apps, only for that purpose, and doesn't store or send anything it sees. If you lock a Focus, it also notices Idyll's own pages in Settings until that Focus ends, so switching Idyll off or uninstalling it waits 10 seconds first. It never stops you. Usage access is used to show your own screen time stats on the device.</p>
+<p>Idyll uses Android's Accessibility permission to notice, on your phone, when a feed like Reels or Shorts opens inside a supported app, and to step away from it. It checks which app is in front, looks at the screen only when that is a supported app, uses it only for that purpose, and doesn't store or send anything it sees. If you lock a Focus, it also notices Idyll's own pages in Settings until that Focus ends, so switching Idyll off or uninstalling it waits 10 seconds first. It never stops you. Usage access is used to show your own screen time stats on the device.</p>
+<p>Idyll's browser on Android is Android System WebView, with Google Safe Browsing on: WebView checks the addresses you visit against Google's list of dangerous sites, as Chrome does. That check is Google's, not Idyll's, and Idyll sees none of it.</p>
 
 <h2>Chrome</h2>
 <p>The Idyll extension runs only on the sites it cleans. It saves your settings in the browser's local storage on your computer and makes no network requests of its own.</p>
 
 <h2>Tips</h2>
-<p>Tipping is optional and unlocks nothing. If you tip, Apple or Google handles the payment through your App Store or Google Play account, and Idyll never learns who you are. On Android this uses Google Play's own payment library, the one piece of code in Idyll that isn't ours, and it only starts if you open the tip screen.</p>
+<p>Tipping is optional and unlocks nothing. If you tip, Apple or Google handles the payment through your App Store or Google Play account, and Idyll never learns who you are.</p>
+<p>On Android, tips use Google Play Billing, Google's own payment library and the one piece of code in Idyll that isn't ours. It only starts if you open the tip screen.</p>
+<p>On iPhone, tips use Apple's StoreKit. Apple handles the payment, and Idyll keeps nothing about it.</p>
 
 <p>You can also tip on <a href="https://ko-fi.com/idyllsocial">Ko-fi</a> from the website. Ko-fi handles that payment, under its own privacy policy, and Idyll gets no data from it beyond what you choose to share there.</p>
 
