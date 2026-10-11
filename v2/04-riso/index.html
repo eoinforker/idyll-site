@@ -2,969 +2,1101 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Idyll</title>
 <meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
-<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
-<link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+<meta name="theme-color" content="#d81b7a">
+<link rel="icon" href="../../img/icons/H2-white-on-magenta.png" type="image/png">
+<link rel="apple-touch-icon" href="../../img/icons/H2-white-on-magenta.png">
 <link rel="stylesheet" href="../../fonts.css">
 <style>
-/* A two-colour risograph poster. Federal Blue is the key drum, Fluorescent
-   Pink the second pass: it lands a little off, and where the inks cross they
-   multiply into the purple you only get from real overprint. */
-@property --mx { syntax: "<length>"; inherits: true; initial-value: 2.5px; }
-@property --my { syntax: "<length>"; inherits: true; initial-value: -1.5px; }
 :root {
-  --paper: #f0ebdd;
-  --wall: #d9d3c4;
-  --blue: #3d5588;
-  --pink: #ff48b0;
-  --mx: 2.5px;
-  --my: -1.5px;
+  --magenta: #d81b7a;
+  --magenta-deep: #a8105c;
+  --magenta-tint: #ffe1ef;
+  --blue: #2d5bff;
+  --blue-deep: #1a3fd6;
+  --blue-tint: #e3e9ff;
+  --cream: #fff6ee;
+  --cream-2: #f7eadf;
+  --ink: #0e0f14;
+  --ink-2: #1b1d26;
+  --ink-soft: #5b5e6b;
+  --line: rgba(14, 15, 20, .12);
   --ease: cubic-bezier(.2, .7, .1, 1);
+  --spring: cubic-bezier(.34, 1.4, .5, 1);
   --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
-  --pad: clamp(18px, 4.4vw, 64px);
-  --gap: clamp(88px, 11vw, 150px);
-  --tint: radial-gradient(circle, var(--pink) 34%, transparent 38%) 0 0 / 5px 5px;
+  --serif: "Timeless Serif", Georgia, serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(20px, 5vw, 80px);
+  --max: 1440px;
 }
 * { box-sizing: border-box; }
-html { background: var(--wall); scroll-behavior: smooth; scroll-padding-top: 80px; }
-body {
-  margin: 0; color: var(--blue); background: var(--wall);
-  font: 500 17px/1.5 var(--sans);
-  -webkit-font-smoothing: antialiased; overflow-x: hidden;
-}
-p, h1, h2, h3, h4, ul, figure { margin: 0; padding: 0; }
-ul { list-style: none; }
-h1, h2, h3 { font-weight: 900; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--cream); color: var(--ink); font: 400 17px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+p, h1, h2, h3, h4, ul, ol, figure, dl, dd { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
 a { color: inherit; }
 button { font: inherit; color: inherit; }
-::selection { background: var(--pink); color: var(--blue); }
-:focus-visible { outline: 2px solid var(--blue); outline-offset: 4px; box-shadow: 0 0 0 6px rgba(255, 72, 176, .45); border-radius: 2px; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--magenta); color: var(--cream); }
+:focus-visible { outline: 2.5px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+.on-dark :focus-visible, .hero :focus-visible, .free :focus-visible { outline-color: var(--cream); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: var(--max); margin: 0 auto; padding-inline: var(--pad); }
+.bm { display: inline-block; width: 18px; height: 18px; flex: none; background: currentColor; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+.hand { font: italic 400 1em/1 var(--serif); letter-spacing: -.01em; }
 
-/* Inks. */
-.b, .p { mix-blend-mode: multiply; }
-.b { color: var(--blue); }
-.p { color: var(--pink); transform: translate(var(--mx), var(--my)); }
-.inked { filter: url(#ink); }
-@keyframes register {
-  from { transform: translate(calc(var(--mx) + 18px), calc(var(--my) - 26px)); opacity: 0; }
-  40% { opacity: 1; }
-  to { transform: translate(var(--mx), var(--my)); }
-}
-@keyframes jolt { from { --mx: 11px; --my: -7px; } to { --mx: 2.5px; --my: -1.5px; } }
+/* Reveal: transforms and opacity only, from a visible resting state. */
+.js [data-rv] { opacity: 0; transform: translateY(32px); transition: opacity .9s var(--ease), transform 1.1s var(--ease); transition-delay: calc(var(--d, 0) * 80ms); }
+.js [data-rv].in { opacity: 1; transform: none; }
 
-/* Navigation: a strip of paper that condenses once you start reading. */
-.nav {
-  position: sticky; top: 0; z-index: 60;
-  display: flex; align-items: center; gap: 28px;
-  padding: 18px var(--pad); max-width: 1240px; margin: 0 auto;
-  transition: padding .45s var(--ease);
-}
-.nav::before {
-  content: ""; position: absolute; inset: 0 0 0 0; z-index: -1; background: var(--paper);
-  border-bottom: 2px solid var(--blue); opacity: 0; transition: opacity .35s var(--ease);
-}
-.nav.small { padding-block: 9px; }
-.nav.small::before { opacity: 1; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 900 21px/1 var(--sans); letter-spacing: -.02em; }
-.brand img { width: 30px; height: 30px; border-radius: 22.5%; transition: transform .45s var(--ease), width .45s var(--ease), height .45s var(--ease); }
-.nav.small .brand img { width: 26px; height: 26px; }
-.brand:hover img { transform: rotate(-8deg); }
-.links { display: flex; gap: 26px; margin-left: auto; font: 700 14px/1 var(--sans); }
-.links a { text-decoration: none; position: relative; padding: 6px 0; }
-.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--pink); mix-blend-mode: multiply; transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
-.links a:hover::after { transform: scaleX(1); }
+/* Handwritten marks: strokes that draw themselves. */
+.draw path, .draw line, .draw polyline { stroke-dasharray: var(--len, 400); stroke-dashoffset: var(--len, 400); }
+.inked .draw path, .inked .draw line, .inked .draw polyline { stroke-dashoffset: 0; transition: stroke-dashoffset .9s var(--ease); transition-delay: calc(var(--sd, 0) * 1ms); }
+.write { display: inline-block; clip-path: inset(-20% 100% -20% 0); }
+.inked .write, .write.inked { clip-path: inset(-20% -5% -20% 0); transition: clip-path .9s steps(14); transition-delay: calc(var(--sd, 0) * 1ms); }
 
-/* Stamp: the house button. A pink tint, a blue keyline, printed slightly off. */
-.stamp {
-  position: relative; display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 14px 9px; border: 2px solid var(--blue); background: transparent;
-  font: 900 13px/1 var(--sans); letter-spacing: .05em; text-transform: uppercase; text-decoration: none; white-space: nowrap;
-  cursor: pointer; transition: transform .25s var(--ease);
-}
-.stamp::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--tint); mix-blend-mode: multiply; transform: translate(var(--mx), var(--my)); transition: transform .3s var(--ease); }
-.stamp:hover::before { transform: translate(5px, -4px); }
-.stamp:active { transform: translateY(1px) scale(.98); }
-.nav .stamp { margin-left: 8px; }
-.nav .stamp i { width: 7px; height: 7px; border-radius: 50%; background: var(--pink); mix-blend-mode: multiply; animation: blink 2.4s ease-in-out infinite; }
-@keyframes blink { 50% { opacity: .25; } }
+/* Nav. */
+.nav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; color: var(--cream); transition: color .35s var(--ease); }
+.nav::before { content: ""; position: absolute; inset: 0; background: rgba(255, 246, 238, .97); border-bottom: 1px solid var(--line); transform: translateY(-101%); transition: transform .45s var(--ease); }
+.nav.solid { color: var(--ink); }
+.nav.solid::before { transform: none; }
+.nav-in { position: relative; max-width: var(--max); margin: 0 auto; padding: 18px var(--pad); display: flex; align-items: center; gap: 30px; transition: padding .45s var(--ease); }
+.nav.solid .nav-in { padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; font: 800 21px/1 var(--sans); letter-spacing: -.02em; }
+.brand img { width: 34px; height: 34px; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 6px 14px -6px rgba(0,0,0,.4); transition: transform .5s var(--spring), width .45s var(--ease), height .45s var(--ease); }
+.nav.solid .brand img { width: 30px; height: 30px; box-shadow: 0 4px 10px -5px rgba(168,16,92,.6); }
+.brand:hover img { transform: rotate(-8deg) scale(1.06); }
+.links { display: flex; gap: 28px; margin-left: auto; font: 600 15px/1 var(--sans); }
+.links a { position: relative; text-decoration: none; padding: 8px 0; opacity: .88; transition: opacity .2s; }
+.links a:hover { opacity: 1; }
+.links a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 2px; height: 2px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .35s var(--ease); }
+.links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.pill { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 20px; border-radius: 99px; border: 0; cursor: pointer; text-decoration: none; white-space: nowrap; font: 700 15px/1 var(--sans); transition: transform .3s var(--spring), box-shadow .3s var(--ease), background .3s; }
+.pill:hover { transform: translateY(-2px); }
+.pill:active { transform: translateY(0) scale(.97); }
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 0 currentColor; animation: pulse 2.2s ease-out infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(216,27,122,.5); } 80%, 100% { box-shadow: 0 0 0 8px rgba(216,27,122,0); } }
+.nav .pill { margin-left: 4px; background: var(--cream); color: var(--magenta); }
+.nav.solid .pill { background: var(--magenta); color: var(--cream); box-shadow: 0 8px 18px -10px rgba(168,16,92,.8); }
+.nav.solid .pill .dot { animation-name: pulse2; }
+@keyframes pulse2 { 0% { box-shadow: 0 0 0 0 rgba(255,246,238,.7); } 80%, 100% { box-shadow: 0 0 0 8px rgba(255,246,238,0); } }
 
-/* The sheet of newsprint, pinned to the wall. */
-.sheet {
-  position: relative; isolation: isolate;
-  max-width: 1240px; margin: 6px auto 0; padding: var(--pad);
-  background: var(--paper);
-  box-shadow: 0 1px 0 rgba(60,50,30,.10), 0 24px 60px -28px rgba(60,48,24,.5);
-  overflow: hidden;
-}
-.sheet::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 40;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .27 0 0 0 0 .2 2.6 0 0 0 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply; opacity: .32;
-}
-.sheet::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 41;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .05' numOctaves='2' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .48 0 0 0 0 .36 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
-  mix-blend-mode: multiply; opacity: .4;
-}
+/* Hero. */
+.hero { position: relative; overflow: hidden; background: var(--magenta); color: var(--cream); padding: clamp(104px, 13vh, 150px) 0 clamp(56px, 8vw, 110px); isolation: isolate; }
+.hero::after { content: ""; position: absolute; inset: auto 0 0 0; height: 40%; z-index: -1; background: linear-gradient(180deg, rgba(168,16,92,0), rgba(168,16,92,.55)); pointer-events: none; }
+.vword { position: absolute; left: clamp(10px, 1.6vw, 26px); top: 50%; transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl; font: 700 12px/1 var(--mono); letter-spacing: .32em; text-transform: uppercase; opacity: .7; }
+.hero .stage { position: relative; }
+.hero h1 { position: relative; z-index: 2; font: 900 clamp(54px, min(14vw, 17.5vh), 214px)/.82 var(--sans); letter-spacing: -.048em; text-transform: uppercase; }
+.hero h1 .ln { display: block; overflow: hidden; padding: .04em .04em .12em; margin: -.04em -.04em -.12em; }
+.hero h1 .in { display: inline-block; will-change: transform; }
+.js .hero h1 .in { transform: translateY(108%); }
+.js .hero.go h1 .in { transform: translateY(0); transition: transform 1.15s var(--ease); }
+.js .hero.go h1 .ln:nth-child(2) .in { transition-delay: .09s; }
+.js .hero.go h1 .ln:nth-child(3) .in { transition-delay: .18s; }
+.js .hero.go h1 .ln:nth-child(4) .in { transition-delay: .27s; }
+.hero h1 .r { text-align: right; }
+.hero h1 .k { display: block; will-change: transform; }
+/* "media", crossed out after SOCIAL. */
+.anno-media { position: absolute; z-index: 4; left: 3.62em; top: .02em; font-size: clamp(54px, min(14vw, 17.5vh), 214px); width: 0; height: 0; pointer-events: none; }
+.anno-media .w { position: absolute; left: .22em; top: .16em; font-size: .3em; white-space: nowrap; transform: rotate(-6deg); }
+.anno-media svg { position: absolute; left: .2em; top: .02em; width: 1.25em; height: .5em; overflow: visible; }
+.anno-media .above { position: absolute; left: .5em; top: -.3em; font-size: .19em; white-space: nowrap; transform: rotate(-8deg); }
+.cyg { position: absolute; z-index: 3; right: auto; bottom: auto; width: min(46%, 72vh); aspect-ratio: 640 / 380; pointer-events: none; will-change: transform; }
+.cyg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scale { position: absolute; z-index: 3; right: calc(-1 * var(--pad) + 14px); top: 30%; bottom: 2%; width: 36px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; font: 500 11px/1 var(--mono); pointer-events: none; }
+.scale span { position: relative; padding-right: 16px; opacity: .85; }
+.scale span::after { content: ""; position: absolute; right: 0; top: 50%; width: 11px; height: 1.5px; background: currentColor; }
+.scale::before { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 6px; background: repeating-linear-gradient(currentColor 0 1px, transparent 1px 9.6px); opacity: .55; }
+.scale .mark { position: absolute; right: 16px; width: 0; height: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; top: calc(var(--p, 0) * 100% - 5px); transition: top .1s linear; }
+.hero-foot { position: relative; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px clamp(28px, 6vw, 96px); margin-top: clamp(30px, 5vw, 64px); align-items: end; }
+.lockup { display: flex; align-items: center; gap: 18px; padding: 14px 22px 14px 14px; border-radius: 28px; background: rgba(255, 246, 238, .1); box-shadow: inset 0 0 0 1px rgba(255, 246, 238, .22); }
+.lockup img { width: 76px; height: 76px; border-radius: 22.5%; box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 18px 30px -14px rgba(60,0,30,.7), 0 0 0 1px rgba(255,255,255,.18); }
+.lockup b { display: block; font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; }
+.lockup span { display: block; font: 500 14px/1.35 var(--sans); opacity: .88; }
+.lockup .pill { margin-top: 10px; min-height: 40px; padding: 0 16px; font-size: 14px; background: var(--cream); color: var(--magenta); }
+.hero .lede { font: 600 clamp(19px, 1.9vw, 25px)/1.32 var(--sans); letter-spacing: -.012em; max-width: 30em; }
+.works { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 18px; font: 600 14px/1 var(--sans); }
+.works .lbl { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; opacity: .8; }
+.works .s { display: inline-flex; align-items: center; gap: 8px; }
 
-/* Reveal: sections enter on considered easing; pink lands after blue. */
-.rv [data-rv] { transition: opacity .9s var(--ease), transform 1s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
-.rv [data-rv]:not(.in) { opacity: 0; transform: translateY(30px); }
-.rv .p { animation: none; }
-.rv .in .p, .rv .p.in { animation: register 1.1s var(--ease) both; animation-delay: calc(var(--d, 0) * 90ms + 200ms); }
+/* Section heads: wide uppercase statement with a smaller indented second line. */
+.sec { position: relative; padding: clamp(80px, 10vw, 150px) 0; }
+.head h2 { font: 900 clamp(40px, 7.4vw, 112px)/.86 var(--sans); letter-spacing: -.045em; text-transform: uppercase; }
+.head .sub { margin: 18px 0 0 clamp(0px, 9vw, 150px); max-width: 34em; font: 500 clamp(18px, 1.7vw, 23px)/1.4 var(--sans); letter-spacing: -.008em; }
+.figlbl { display: flex; align-items: baseline; gap: 14px; font: 500 12px/1.3 var(--mono); letter-spacing: .04em; margin-bottom: 18px; }
+.figlbl b { font-weight: 700; }
 
-/* Hero: kept exactly as the poster it was. */
-.hero { position: relative; padding-top: clamp(8px, 2vw, 22px); }
-.hero h1 {
-  position: relative; z-index: 2;
-  font: 900 clamp(60px, 14.4vw, 196px)/.8 var(--sans);
-  letter-spacing: -.045em; text-transform: uppercase;
-}
-.hero h1 span { display: block; }
-.hero h1 .indent { text-align: right; }
-.cyg { position: absolute; z-index: 3; pointer-events: none; right: 0; top: 47%; width: 50%; aspect-ratio: 640 / 380; }
-.cyg canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; }
+/* fig. 1: before and after. */
+.diff { background: var(--cream); }
+.notebook { scroll-margin-top: 90px; position: relative; margin-top: clamp(36px, 5vw, 64px); padding: clamp(18px, 3vw, 40px); border: 1px solid var(--line); border-radius: 28px; background:
+  linear-gradient(var(--cream), var(--cream)) padding-box,
+  linear-gradient(var(--line), var(--line)) border-box; }
+.notebook::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .55;
+  background: linear-gradient(rgba(45,91,255,.07) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(45,91,255,.07) 1px, transparent 1px) 0 0 / 24px 24px; }
+.nb-top { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.apps { display: inline-flex; padding: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px var(--line), 0 10px 24px -16px rgba(14,15,20,.35); position: relative; }
+.apps .knob { position: absolute; top: 5px; bottom: 5px; left: 0; border-radius: 99px; background: var(--ink); transition: transform .5s var(--ease), width .5s var(--ease); }
+.apps button { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border: 0; background: none; border-radius: 99px; font: 700 15px/1 var(--sans); cursor: pointer; transition: color .35s; }
+.apps button[aria-pressed="true"] { color: var(--cream); }
+.apps button:not([aria-pressed="true"]):hover { color: var(--magenta); }
+.apps .bm { width: 16px; height: 16px; }
+.view { display: none; padding: 5px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px var(--line); }
+.view button { min-height: 40px; padding: 0 14px; border: 0; border-radius: 99px; background: none; font: 700 14px/1 var(--sans); cursor: pointer; }
+.view button[aria-pressed="true"] { background: var(--magenta); color: var(--cream); }
+.pair { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, auto)); justify-content: center; gap: clamp(32px, 7vw, 120px); margin-top: clamp(28px, 4vw, 48px); }
+.side { display: flex; flex-direction: column; align-items: center; position: relative; }
+.side .tag { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 18px; font: 800 15px/1 var(--sans); letter-spacing: .01em; }
+.side .tag i { width: 10px; height: 10px; border-radius: 50%; }
+.side.before .tag i { background: var(--ink-soft); }
+.side.after .tag i { background: var(--magenta); box-shadow: 0 0 0 4px var(--magenta-tint); }
+.side .cap { margin-top: 22px; max-width: 300px; text-align: center; font: 500 15px/1.45 var(--sans); color: var(--ink-soft); min-height: 4.4em; }
+.side .cap b { color: var(--ink); font-weight: 700; }
+.nb-foot { position: relative; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 30px; margin-top: 30px; padding-top: 16px; border-top: 1px dashed rgba(14,15,20,.25); font: 500 13px/1.5 var(--sans); color: var(--ink-soft); }
+.nb-foot .figlbl { margin: 0; color: var(--ink); }
+.anno-ends { position: absolute; z-index: 5; left: calc(100% + 6px); top: 34%; width: 150px; color: var(--blue); pointer-events: none; }
+.anno-ends .t1 { position: relative; display: inline-block; font-size: 22px; }
+.anno-ends .t2 { display: block; margin: 0 0 4px 30px; font-size: 26px; transform: rotate(-5deg); }
+.anno-ends svg { position: absolute; overflow: visible; }
 
-.dek { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px 48px; margin-top: clamp(26px, 4vw, 48px); align-items: end; }
-.dek .name { font: 900 clamp(88px, 13vw, 184px)/.8 var(--sans); letter-spacing: -.05em; margin-bottom: -.06em; }
-.dek .lede { font: 700 clamp(20px, 2.2vw, 28px)/1.22 var(--sans); letter-spacing: -.012em; max-width: 24em; }
-.works { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; margin-top: 22px; padding-top: 16px; border-top: 1.5px solid var(--blue); font: 700 13px/1 var(--sans); }
-.works > span:first-child { letter-spacing: .06em; text-transform: uppercase; }
-.works .site { display: inline-flex; align-items: center; gap: 8px; }
-.bm { display: inline-block; width: 18px; height: 18px; flex: none; background: var(--blue); -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+/* The device. */
+.device { --w: clamp(204px, min(24vw, calc((100svh - 330px) / 2.16)), 336px); position: relative; width: var(--w); aspect-ratio: 9 / 19.4; flex: none; border-radius: calc(var(--w) * .165); padding: calc(var(--w) * .032);
+  background: linear-gradient(150deg, #4a4d57 0%, #1d1f26 18%, #0c0d11 50%, #2a2d35 82%, #5a5d67 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 0 0 calc(var(--w) * .011) #08090c, inset 0 2px 3px rgba(255,255,255,.15),
+    0 2px 3px rgba(14,15,20,.12), 0 28px 50px -22px rgba(14,15,20,.5), 0 70px 110px -40px rgba(14,15,20,.38); }
+.device .btn { position: absolute; width: 3px; border-radius: 2px; background: linear-gradient(90deg, #15161b, #555863); }
+.device .b1 { left: -2px; top: 16%; height: 4.5%; } .device .b2 { left: -2px; top: 24%; height: 8%; } .device .b3 { left: -2px; top: 34%; height: 8%; } .device .b4 { right: -2px; left: auto; top: 26%; height: 12%; background: linear-gradient(270deg, #15161b, #555863); }
+.screen { position: relative; height: 100%; overflow: hidden; border-radius: calc(var(--w) * .135); background: #fff; isolation: isolate; font: 400 calc(var(--w) * .039)/1.3 var(--sans); color: #0e0f14; transform: translateZ(0); }
+.screen::after { content: ""; position: absolute; inset: 0; z-index: 40; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,0) 32%, rgba(255,255,255,0) 70%, rgba(255,255,255,.07) 100%); }
+.island { position: absolute; z-index: 41; top: calc(var(--w) * .028); left: 50%; width: 31%; height: calc(var(--w) * .088); transform: translateX(-50%); border-radius: 99px; background: #000; }
+.island::after { content: ""; position: absolute; right: 16%; top: 30%; width: calc(var(--w) * .03); height: calc(var(--w) * .03); border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2b3a63, #05060a 70%); }
 
-/* Section head: oversized pink across a blue rule. Consistent across the page. */
-section.s { margin-top: var(--gap); }
-.head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; border-bottom: 3px solid var(--blue); }
-.head h2 { font: 900 clamp(46px, 8.4vw, 120px)/.82 var(--sans); letter-spacing: -.045em; text-transform: uppercase; margin-bottom: -.07em; }
-.head small { font: 800 13px/1.2 var(--sans); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; padding-bottom: 10px; font-variant-numeric: tabular-nums; }
-.kicker { font: 800 13px/1.2 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+/* App screens. */
+.app { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; transition: opacity .35s var(--ease); }
+.app.fading { opacity: 0; }
+.sb { flex: none; height: 3.55em; display: flex; justify-content: space-between; align-items: center; padding: .55em 2.05em 0 2.35em; font-weight: 700; font-size: 1.02em; }
+.sb .ri { display: flex; align-items: center; gap: .32em; }
+.sb svg { height: .82em; width: auto; }
+.hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: .35em 1.05em .5em; }
+.hd b { font: 800 1.42em/1 var(--sans); letter-spacing: -.025em; display: flex; align-items: center; gap: .2em; }
+.hd .ri { display: flex; gap: .95em; }
+.ic { width: 1.6em; height: 1.6em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.f { fill: currentColor; }
+.vp { position: relative; flex: 1; overflow: hidden; }
+.feed { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.tb { flex: none; height: 4.4em; padding: .55em 1.5em 1.55em; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #ececef; position: relative; }
+.tb::after { content: ""; position: absolute; left: 50%; bottom: .45em; width: 36%; height: .3em; transform: translateX(-50%); border-radius: 9px; background: #0e0f14; }
+.tb .on { color: #0e0f14; }
+.tb .ic { color: #0e0f14; }
+.av { display: inline-grid; place-items: center; flex: none; width: 2.4em; height: 2.4em; border-radius: 50%; font: 800 .92em/1 var(--sans); }
+.c1 { background: #ffe1ef; color: #a8105c; } .c2 { background: #e3e9ff; color: #1a3fd6; } .c3 { background: #ffe8d4; color: #9a4a12; } .c4 { background: #ddf3e6; color: #1f6b45; } .c5 { background: #efe4ff; color: #5b2bb0; } .c6 { background: #fff1c9; color: #7a5a00; }
+.mut { color: #6b6e78; }
+.ph { position: relative; overflow: hidden; background: #e9e6e2; }
+.ph img { width: 100%; height: 100%; object-fit: cover; }
+.dot-sep::before { content: "·"; margin: 0 .3em; }
 
-/* Before and after. */
-.flip { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px clamp(32px, 6vw, 96px); align-items: center; margin-top: 44px; }
-.flip h3 { font: 900 clamp(34px, 4.4vw, 60px)/.95 var(--sans); letter-spacing: -.035em; max-width: 11em; }
-.seg { display: inline-flex; margin-top: 30px; border: 2px solid var(--blue); position: relative; isolation: isolate; }
-.seg button { position: relative; border: 0; background: none; padding: 13px 18px 12px; font: 900 14px/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; cursor: pointer; transition: transform .2s var(--ease); }
-.seg button + button { border-left: 2px solid var(--blue); }
-.seg button:active { transform: translateY(1px); }
-.seg .knob { position: absolute; z-index: -1; top: 0; bottom: 0; left: 0; width: 50%; background: var(--tint); mix-blend-mode: multiply; transform: translate(calc(var(--k, 0) * 100% + var(--mx)), var(--my)); transition: transform .55s var(--ease); }
-.seg button:not([aria-pressed="true"]):hover { background: rgba(61,85,136,.07); }
-.say { display: grid; margin-top: 26px; max-width: 30em; }
-.say p { grid-area: 1 / 1; font: 600 18px/1.5 var(--sans); transition: opacity .5s var(--ease), transform .6s var(--ease); }
-.say p[aria-hidden="true"] { opacity: 0; transform: translateY(10px); }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 28px; padding-top: 14px; border-top: 1.5px solid var(--blue); font: 700 13px/1.4 var(--sans); }
-.legend span { display: inline-flex; align-items: center; gap: 8px; }
+/* Instagram-style. */
+.stories { display: flex; gap: .75em; padding: .2em 1em .75em; border-bottom: 1px solid #efeff2; overflow: hidden; }
+.story { display: flex; flex-direction: column; align-items: center; gap: .3em; font-size: .82em; width: 4.7em; flex: none; }
+.story .ring { padding: .17em; border-radius: 50%; background: conic-gradient(from 200deg, #d81b7a, #ff8a3d, #d81b7a); }
+.story .ring .av { width: 3.7em; height: 3.7em; box-shadow: 0 0 0 .17em #fff; font-size: 1em; }
+.post { padding-bottom: .9em; }
+.post .ph-h { display: flex; align-items: center; gap: .6em; padding: .7em 1em; }
+.post .ph-h .av { width: 2.25em; height: 2.25em; font-size: .85em; }
+.post .ph-h b { font-weight: 700; }
+.post .ph-h small { display: block; font-size: .85em; color: #6b6e78; }
+.post .ph-h .more { margin-left: auto; }
+.post .sq { aspect-ratio: 1; }
+.post .acts { display: flex; gap: .95em; padding: .7em 1em .35em; }
+.post .acts .sv { margin-left: auto; }
+.post .likes { padding: 0 1em; font-weight: 700; }
+.post .pc { padding: .2em 1em 0; }
+.post .pc b { font-weight: 700; margin-right: .3em; }
+.post .cm { padding: .25em 1em 0; color: #6b6e78; font-size: .92em; }
+.reel .tall { aspect-ratio: 4 / 5; }
+.reel .tall img { animation: kb 9s ease-in-out infinite alternate; transform-origin: 60% 40%; }
+@keyframes kb { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.18) translate(-3%, -2%); } }
+.reel .badge { position: absolute; left: .7em; top: .7em; display: flex; align-items: center; gap: .3em; padding: .25em .55em; border-radius: 99px; background: rgba(0,0,0,.45); color: #fff; font-weight: 700; font-size: .85em; }
+.reel .badge .ic { width: 1.1em; height: 1.1em; }
+.reel .mute { position: absolute; right: .7em; bottom: 1em; width: 2em; height: 2em; border-radius: 50%; background: rgba(0,0,0,.45); color: #fff; display: grid; place-items: center; }
+.reel .mute .ic { width: 1.05em; height: 1.05em; }
+.reel .audio { position: absolute; left: .7em; bottom: 1em; color: #fff; font-size: .85em; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.rbar { position: absolute; left: 0; right: 0; bottom: 0; height: .22em; background: rgba(255,255,255,.35); }
+.rbar i { display: block; height: 100%; background: #fff; transform-origin: left; animation: rbar 7s linear infinite; }
+@keyframes rbar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.shop { display: flex; justify-content: space-between; align-items: center; padding: .7em 1em; background: #2d5bff; color: #fff; font-weight: 700; }
+.sugg { padding: .8em 0 1em; border-top: 1px solid #efeff2; border-bottom: 1px solid #efeff2; background: #fafafa; margin-bottom: .6em; }
+.sugg .row { display: flex; justify-content: space-between; padding: 0 1em .7em; font-weight: 700; }
+.sugg .row a { color: #2d5bff; text-decoration: none; }
+.sugg .cards { display: flex; gap: .6em; padding-left: 1em; animation: drift 14s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translateX(-38%); } }
+.sugg .card { flex: none; width: 8.4em; padding: 1em .6em .7em; border-radius: .8em; background: #fff; box-shadow: 0 0 0 1px #ececef; text-align: center; }
+.sugg .card .av { width: 4.4em; height: 4.4em; font-size: 1.1em; margin: 0 auto .5em; }
+.sugg .card b { display: block; font-weight: 700; }
+.sugg .card small { display: block; color: #6b6e78; font-size: .82em; margin: .1em 0 .6em; }
+.btn-b { display: block; padding: .5em; border-radius: .55em; background: #2d5bff; color: #fff; font-weight: 700; font-size: .9em; text-align: center; }
+.caught { padding: 2.2em 1.4em 4em; text-align: center; border-top: 1px solid #efeff2; }
+.caught .ck { width: 4.2em; height: 4.2em; margin: 0 auto 1em; border-radius: 50%; display: grid; place-items: center; color: #d81b7a; background: conic-gradient(#d81b7a, #ff8a3d, #d81b7a); padding: .2em; }
+.caught .ck span { width: 100%; height: 100%; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+.caught b { display: block; font: 800 1.25em/1.2 var(--sans); }
+.caught p { margin-top: .4em; color: #6b6e78; }
 
-/* The phone, printed: a blue body, a paper screen, and a pink tint plate
-   for a shadow that slipped on the drum. */
-.stage { position: relative; isolation: isolate; padding: 0 28px 28px 0; }
-.stage.jolt { animation: jolt .9s var(--ease); }
-.phone {
-  --w: 300px; position: relative; width: var(--w); aspect-ratio: 9 / 19.5; flex: none;
-  border-radius: calc(var(--w) * .16); background: var(--blue); padding: calc(var(--w) * .034);
-}
-.plate { position: absolute; z-index: -1; inset: 22px 0 0 22px; border-radius: calc(var(--w, 300px) * .16); background: var(--tint); mix-blend-mode: multiply; transform: translate(var(--mx), var(--my)); }
-.phone .k { position: absolute; width: 3px; background: var(--blue); border-radius: 2px; }
-.phone .k1 { left: -3px; top: 17%; height: 5%; }
-.phone .k2 { left: -3px; top: 25%; height: 9%; }
-.phone .k3 { left: -3px; top: 36%; height: 9%; }
-.phone .k4 { right: -3px; top: 27%; height: 14%; }
-.screen {
-  position: relative; height: 100%; overflow: hidden; isolation: isolate;
-  border-radius: calc(var(--w) * .128); background: #f8f4ea;
-  font: 500 calc(var(--w) * .042)/1.32 var(--sans); color: var(--blue);
-}
-.screen::after { content: ""; position: absolute; inset: 0; z-index: 30; pointer-events: none; background: linear-gradient(118deg, transparent 30%, rgba(255,255,255,.5) 42%, transparent 54%); mix-blend-mode: screen; }
-.island { position: absolute; z-index: 31; top: calc(var(--w) * .03); left: 50%; width: 31%; height: calc(var(--w) * .088); transform: translateX(-50%); border-radius: 99px; background: var(--blue); }
-.sbar { position: relative; z-index: 20; height: 3.9em; display: flex; justify-content: space-between; align-items: center; padding: 0 2.1em 0 2.3em; font-weight: 800; font-size: .95em; }
-.sbar .sig { display: flex; gap: .25em; align-items: flex-end; }
-.sbar .sig i { width: .25em; background: currentColor; border-radius: 1px; }
-.sbar .sig i:nth-child(1) { height: .4em; } .sbar .sig i:nth-child(2) { height: .6em; } .sbar .sig i:nth-child(3) { height: .8em; }
-.sbar .bat { width: 1.9em; height: .9em; border: 1.5px solid currentColor; border-radius: .3em; padding: 1px; margin-left: .45em; }
-.sbar .bat::before { content: ""; display: block; height: 100%; width: 70%; background: currentColor; border-radius: 1px; }
-.ic { width: 1.7em; height: 1.7em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-.tabs { position: absolute; z-index: 20; left: 0; right: 0; bottom: 0; height: 4.6em; padding: .7em 1.6em 1.6em; display: flex; justify-content: space-between; align-items: center; background: #fffcf4; border-top: 1px solid rgba(61,85,136,.25); }
-.tabs::after { content: ""; position: absolute; left: 50%; bottom: .55em; width: 34%; height: .3em; transform: translateX(-50%); border-radius: 9px; background: var(--blue); }
-.av { display: inline-grid; place-items: center; flex: none; width: 2.6em; height: 2.6em; border-radius: 50%; font-weight: 900; font-size: .95em; color: var(--blue); background: var(--tint); position: relative; }
-.av::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid var(--blue); }
-.av.alt { background: radial-gradient(circle, var(--blue) 26%, transparent 30%) 0 0 / 4px 4px; }
-.ph { position: relative; overflow: hidden; background: rgba(61,85,136,.08); }
-.ph canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; mix-blend-mode: multiply; }
+/* YouTube-style. */
+.chips { display: flex; gap: .45em; padding: .1em 1em .7em; overflow: hidden; }
+.chip { flex: none; padding: .38em .8em; border-radius: .55em; background: #f0f0f2; font-weight: 600; font-size: .92em; }
+.chip.on { background: #0e0f14; color: #fff; }
+.pre { position: relative; aspect-ratio: 16 / 9; }
+.pre .adl { position: absolute; left: .6em; bottom: .9em; padding: .2em .45em; border-radius: .3em; background: rgba(0,0,0,.6); color: #fff; font-size: .82em; font-weight: 700; }
+.pre .skip { position: absolute; right: 0; bottom: .9em; padding: .45em .8em; background: rgba(0,0,0,.65); color: #fff; font-size: .88em; font-weight: 700; display: flex; align-items: center; gap: .3em; }
+.pre .ybar { position: absolute; left: 0; right: 0; bottom: 0; height: .25em; background: rgba(255,255,255,.3); }
+.pre .ybar i { display: block; height: 100%; background: #f2b705; transform-origin: left; animation: rbar 5s linear infinite; }
+.adrow { display: flex; align-items: center; gap: .6em; padding: .65em 1em; border-bottom: 1px solid #efeff2; }
+.adrow b { display: block; font-weight: 700; }
+.adrow small { color: #6b6e78; font-size: .85em; }
+.adrow .lm { margin-left: auto; padding: .45em .8em; border-radius: 99px; background: #2d5bff; color: #fff; font-weight: 700; font-size: .85em; }
+.shelf { padding: .8em 0 1em; border-bottom: .4em solid #f0f0f2; }
+.shelf .tt { display: flex; align-items: center; gap: .4em; padding: 0 1em .6em; font: 800 1.08em/1 var(--sans); }
+.shelf .tt .sh { width: 1.2em; height: 1.4em; border-radius: .3em; background: #e3182d; position: relative; }
+.shelf .tt .sh::after { content: ""; position: absolute; left: .42em; top: .42em; border-left: .45em solid #fff; border-top: .28em solid transparent; border-bottom: .28em solid transparent; }
+.shelf .row { display: grid; grid-template-columns: 1fr 1fr; gap: .45em; padding: 0 1em; }
+.short { position: relative; aspect-ratio: 9 / 15; border-radius: .6em; }
+.short img { animation: kb 8s ease-in-out infinite alternate; }
+.short span { position: absolute; left: .5em; right: .5em; bottom: .5em; color: #fff; font-weight: 700; font-size: .88em; line-height: 1.2; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.vid { padding-bottom: 1em; }
+.vid .th { aspect-ratio: 16 / 9; }
+.vid .dur { position: absolute; right: .45em; bottom: .45em; padding: .08em .35em; border-radius: .25em; background: rgba(0,0,0,.78); color: #fff; font-size: .8em; font-weight: 700; }
+.vid .meta { display: flex; gap: .65em; padding: .65em 1em 0; }
+.vid .meta .av { width: 2.3em; height: 2.3em; font-size: .85em; }
+.vid .meta b { display: block; font-weight: 700; line-height: 1.25; }
+.vid .meta small { display: block; margin-top: .2em; color: #6b6e78; font-size: .85em; }
+.vid .meta .more { margin-left: auto; }
+.chans { display: flex; gap: .7em; padding: .2em 1em .8em; overflow: hidden; }
+.chans span { display: flex; flex-direction: column; align-items: center; gap: .3em; font-size: .78em; width: 4.4em; flex: none; text-align: center; }
+.chans .av { width: 3.3em; height: 3.3em; font-size: 1.05em; }
 
-/* State layers. */
-.st { position: absolute; inset: 0; }
-.st[aria-hidden="true"] { pointer-events: none; }
-/* Without: full-bleed vertical videos that never stop. */
-.reels { position: absolute; inset: 0; overflow: hidden; transition: transform .7s var(--ease), opacity .55s var(--ease); transform-origin: 50% 20%; }
-.track { height: 100%; }
-.reel { position: relative; height: 100%; }
-.reel .ph { position: absolute; inset: 0; background: none; }
-.reel .cap { position: absolute; left: .9em; right: 4.2em; bottom: 6.2em; background: #fffcf4; padding: .6em .8em .65em; border: 1.5px solid var(--blue); }
-.reel .cap b { display: block; font-weight: 900; }
-.reel .cap .spon { display: inline-block; margin: .15em 0 .25em; padding: .15em .45em; background: var(--tint); font-weight: 900; font-size: .85em; letter-spacing: .04em; text-transform: uppercase; }
-.reel .cap .shop { display: block; margin-top: .45em; padding: .5em; text-align: center; font-weight: 900; background: var(--blue); color: #fffcf4; }
-.rtop { position: absolute; z-index: 15; top: 3.9em; left: 0; right: 0; display: flex; justify-content: center; gap: 1.4em; font-weight: 800; transition: transform .55s var(--ease), opacity .45s; }
-.rtop span, .rtop b { background: #fffcf4; padding: .3em .7em; border-radius: 99px; }
-.rtop b { box-shadow: inset 0 -.2em 0 var(--pink); }
-.prog { position: absolute; z-index: 15; top: 3.3em; left: 1.2em; right: 1.2em; height: .3em; background: rgba(61,85,136,.25); transition: opacity .3s; }
-.prog i { display: block; height: 100%; width: 100%; background: var(--blue); transform-origin: left; transform: scaleX(0); }
-.prog.run i { animation: prog var(--t, 2.6s) linear forwards; }
-@keyframes prog { to { transform: scaleX(1); } }
-.acts { position: absolute; z-index: 15; right: .8em; bottom: 6.4em; display: grid; gap: .7em; transition: transform .55s var(--ease), opacity .45s; }
-.acts span { display: grid; place-items: center; width: 2.6em; height: 2.6em; border-radius: 50%; background: #fffcf4; border: 1.5px solid var(--blue); }
-.acts .ic { width: 1.35em; height: 1.35em; }
-.acts span:first-child .ic { fill: var(--pink); stroke: var(--blue); }
+/* X-style. */
+.xtabs { flex: none; display: flex; border-bottom: 1px solid #ececef; }
+.xtabs span { flex: 1; text-align: center; padding: .6em 0 .7em; font-weight: 600; color: #6b6e78; position: relative; }
+.xtabs span.on { color: #0e0f14; font-weight: 800; }
+.xtabs span.on::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 3.4em; height: .25em; transform: translateX(-50%); border-radius: 9px; background: #2d5bff; }
+.tw { display: flex; gap: .65em; padding: .75em 1em; border-bottom: 1px solid #efeff2; }
+.tw .av { width: 2.5em; height: 2.5em; font-size: .9em; }
+.tw .bd { min-width: 0; flex: 1; }
+.tw .bd b { font-weight: 800; }
+.tw p { margin-top: .15em; }
+.tw .ph { margin-top: .55em; border-radius: .9em; aspect-ratio: 16 / 10; box-shadow: 0 0 0 1px #ececef; }
+.tw .ac { display: flex; justify-content: space-between; margin-top: .6em; color: #6b6e78; font-size: .85em; }
+.tw .ac span { display: flex; align-items: center; gap: .25em; }
+.tw .ac .ic { width: 1.25em; height: 1.25em; }
+.tw .adt { margin-top: .4em; font-size: .82em; color: #6b6e78; }
+.wtf { padding: .8em 1em; border-bottom: .4em solid #f2f2f4; }
+.wtf h5 { margin: 0 0 .6em; font: 800 1.12em/1 var(--sans); }
+.wtf .r { display: flex; align-items: center; gap: .6em; padding: .45em 0; }
+.wtf .r b { display: block; font-weight: 800; }
+.wtf .r small { color: #6b6e78; }
+.wtf .r .fl { margin-left: auto; padding: .4em .9em; border-radius: 99px; background: #0e0f14; color: #fff; font-weight: 700; font-size: .88em; }
 
-/* With: messages, and the one video a friend sent. */
-.st1 > .in-pane { position: absolute; inset: 3.9em 0 4.6em; padding: .4em 1.2em 0; }
-.st1 .t { display: flex; justify-content: space-between; align-items: center; font: 900 1.75em/1 var(--sans); letter-spacing: -.02em; margin: .2em 0 .5em; }
-.srch { display: flex; align-items: center; gap: .5em; padding: .55em .8em; border-radius: 99px; border: 1.5px solid var(--blue); font-weight: 600; opacity: .9; }
-.srch .ic { width: 1.2em; height: 1.2em; }
-.thread { margin-top: 1em; padding-bottom: .9em; border-bottom: 1px solid rgba(61,85,136,.3); }
-.who { display: flex; align-items: center; gap: .65em; }
-.who b { font-weight: 900; }
-.who time { margin-left: auto; font-size: .85em; }
-.bub { display: inline-block; margin: .65em 0 0 3.25em; padding: .45em .8em; border-radius: 1.1em 1.1em 1.1em .3em; border: 1.5px solid var(--blue); font-weight: 600; }
-.vid { margin: .5em 0 0 3.25em; width: 60%; aspect-ratio: 4 / 5; border-radius: .9em; }
-.vid .play { position: absolute; z-index: 2; left: 50%; top: 50%; width: 3em; height: 3em; transform: translate(-50%, -50%); border-radius: 50%; background: #fffcf4; border: 1.5px solid var(--blue); display: grid; place-items: center; }
-.vid .play::before { content: ""; margin-left: .2em; border-left: .9em solid var(--blue); border-top: .55em solid transparent; border-bottom: .55em solid transparent; }
-.once { margin: .45em 0 0 3.25em; font-weight: 800; font-size: .9em; }
-.threads li { display: flex; align-items: center; gap: .65em; padding: .55em 0; }
-.threads li div { min-width: 0; }
-.threads li b { display: block; font-weight: 900; }
-.threads li span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .92em; }
-.threads time { margin-left: auto; font-size: .85em; }
+.paused * { animation-play-state: paused !important; }
 
-/* Choreography. Without leaving: the feed folds up and slides away. */
-.phone[data-s="1"] .reels { transform: translateY(-14%) scale(.86, .5); opacity: 0; }
-.phone[data-s="1"] .rtop { transform: translateY(-160%); opacity: 0; }
-.phone[data-s="1"] .acts { transform: translateX(160%); opacity: 0; }
-.phone[data-s="1"] .prog { opacity: 0; }
-.phone[data-s="1"] .st0 .tabs { transform: translateY(100%); transition: transform .5s var(--ease); }
-.st0 .tabs { transition: transform .6s var(--ease) .3s; }
-.st0 .reels { transition-delay: .15s; }
-.phone[data-s="1"] .st0 .reels { transition-delay: 0s; }
-/* With settling in, item by item. */
-.st1 [data-i] { transition: transform .7s var(--ease), opacity .5s var(--ease); transition-delay: calc(.32s + var(--i) * 70ms); }
-.phone[data-s="0"] .st1 [data-i] { transform: translateY(1.6em); opacity: 0; transition-delay: 0s; transition-duration: .3s; }
-.st1 .tabs { transition: transform .6s var(--ease) .3s; }
-.phone[data-s="0"] .st1 .tabs { transform: translateY(100%); transition-delay: 0s; }
+/* Not appearing: the electric blue field. */
+.gone { background: var(--blue); color: var(--cream); overflow: hidden; }
+.gone .head .sub { color: rgba(255,246,238,.88); }
+.hatch { position: absolute; right: var(--pad); top: clamp(80px, 10vw, 150px); width: clamp(90px, 14vw, 220px); height: clamp(90px, 12vw, 180px); background: repeating-linear-gradient(-45deg, rgba(255,246,238,.75) 0 1.5px, transparent 1.5px 9px); border: 1.5px solid rgba(255,246,238,.75); }
+.hatch span { position: absolute; left: 10px; bottom: -26px; font: 500 11px/1 var(--mono); letter-spacing: .06em; opacity: .85; }
+.bill { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: clamp(40px, 6vw, 80px); border-top: 1.5px solid rgba(255,246,238,.5); }
+.venue { padding: 26px 26px 10px 0; }
+.venue + .venue { padding-left: 26px; border-left: 1.5px solid rgba(255,246,238,.25); }
+.venue h3 { display: flex; align-items: center; gap: 12px; font: 800 clamp(22px, 2.2vw, 30px)/1 var(--sans); letter-spacing: -.02em; margin-bottom: 22px; }
+.venue h3 .bm { width: 24px; height: 24px; }
+.venue h4 { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .75; margin-bottom: 12px; }
+.venue .out li { position: relative; width: fit-content; font: 700 clamp(17px, 1.5vw, 21px)/1.2 var(--sans); margin-bottom: 12px; }
+.venue .out li .x { position: absolute; left: -4px; right: -6px; top: 52%; height: 3px; border-radius: 3px; background: var(--magenta); transform-origin: left center; transform: scaleX(var(--s, 1)) rotate(-1.5deg); box-shadow: 0 0 0 1px rgba(255,246,238,.15); }
+.venue .out li:nth-child(2n) .x { transform: scaleX(var(--s, 1)) rotate(1.2deg); }
+.venue .in2 { margin-top: 22px; padding-top: 16px; border-top: 1px dashed rgba(255,246,238,.4); }
+.venue .in2 li { font: 500 15.5px/1.35 var(--sans); margin-bottom: 7px; display: flex; gap: 9px; align-items: baseline; }
+.venue .in2 li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--cream); flex: none; transform: translateY(-1px); }
+.tally { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 30px; margin-top: 34px; padding-top: 16px; border-top: 1.5px solid rgba(255,246,238,.5); font: 500 14px/1.5 var(--sans); color: rgba(255,246,238,.88); }
+.tally b { font: 500 13px/1.5 var(--mono); letter-spacing: .04em; color: var(--cream); font-variant-numeric: tabular-nums; }
 
-/* Not appearing: the bill, struck through as you read down it. */
-.bill { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-.venue { padding: 24px 24px 30px 0; }
-.venue + .venue { padding-left: 24px; border-left: 1.5px solid var(--blue); }
-.venue h3 { display: flex; align-items: center; gap: 10px; font: 900 clamp(26px, 2.7vw, 36px)/1 var(--sans); letter-spacing: -.03em; margin-bottom: 18px; }
-.venue h3 .bm { width: 22px; height: 22px; }
-.venue li { position: relative; width: fit-content; font: 800 clamp(18px, 1.7vw, 22px)/1.12 var(--sans); letter-spacing: -.012em; margin-bottom: 11px; }
-.venue .ln { display: block; position: relative; width: fit-content; }
-.x { position: absolute; left: -4px; right: -6px; top: 47%; height: .32em; background: var(--pink); transform-origin: left center; rotate: -2deg; }
-.venue li:nth-child(2n) .x { rotate: 1.4deg; top: 50%; }
-.venue li:nth-child(3n) .x { rotate: -.8deg; }
-.venue .ln + .ln .x { rotate: 1.2deg; }
-.bill-foot { display: flex; justify-content: space-between; gap: 20px; padding-top: 14px; border-top: 1.5px solid var(--blue); font: 700 14px/1.45 var(--sans); }
-.bill-foot p { max-width: 40em; }
+/* What stays: a collage of grainy photographs. */
+.stays { background: var(--cream); overflow: hidden; }
+.stays-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(36px, 6vw, 100px); align-items: center; }
+.kept { margin-top: 30px; }
+.kept li { display: flex; align-items: baseline; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); font: 600 clamp(18px, 1.6vw, 21px)/1.35 var(--sans); }
+.kept li span { font: 500 12px/1 var(--mono); color: var(--magenta); flex: none; width: 2em; }
+.collage { position: relative; aspect-ratio: 1 / 1.02; }
+.snap { position: absolute; margin: 0; background: #fff; padding: 8px 8px 30px; box-shadow: 0 1px 2px rgba(14,15,20,.1), 0 22px 40px -22px rgba(14,15,20,.45); will-change: transform; }
+.snap .g { position: relative; overflow: hidden; }
+.snap .g img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.08) saturate(.9); }
+.snap .g::after { content: ""; position: absolute; inset: 0; opacity: .32; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.snap figcaption { position: absolute; left: 12px; bottom: 6px; font: italic 400 17px/1 var(--serif); color: var(--blue); }
+.s1 { left: 0; top: 4%; width: 52%; transform: rotate(-4deg); } .s1 .g { aspect-ratio: 1; }
+.s2 { right: 2%; top: 0; width: 42%; transform: rotate(3.5deg); } .s2 .g { aspect-ratio: 4 / 5; }
+.s3 { left: 22%; bottom: 0; width: 46%; transform: rotate(2deg); z-index: 2; } .s3 .g { aspect-ratio: 5 / 4; }
+.s4 { right: 0; bottom: 10%; width: 32%; transform: rotate(-6deg); z-index: 3; } .s4 .g { aspect-ratio: 1; }
+.collage .note { position: absolute; z-index: 4; left: 2%; bottom: 8%; color: var(--blue); font-size: 24px; transform: rotate(-7deg); white-space: nowrap; }
 
-/* Still playing: three printed phones, what you keep. */
-.kept { margin-top: 30px; font: 900 clamp(28px, 3.9vw, 54px)/1.02 var(--sans); letter-spacing: -.032em; max-width: 21em; }
-.kept .dot { color: var(--pink); }
-.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-top: 56px; }
-.trio figure { display: flex; flex-direction: column; align-items: center; }
-.trio .stage { padding: 0 20px 20px 0; }
-.trio .phone { --w: 252px; }
-.trio .plate { inset: 16px 0 0 16px; }
-.trio figure:nth-child(2) { transform: translateY(46px); }
-.trio figcaption { width: 252px; margin-top: 20px; font: 600 14px/1.45 var(--sans); }
-.trio figcaption b { display: flex; align-items: center; gap: 8px; font: 900 16px/1.2 var(--sans); margin-bottom: 4px; }
-.scr { position: absolute; inset: 3.9em 0 4.6em; padding: .3em 1em 0; overflow: hidden; }
-.scr .t { font: 900 1.6em/1 var(--sans); letter-spacing: -.02em; margin: .25em 0 .6em; display: flex; align-items: baseline; justify-content: space-between; }
-.scr .t small { font: 700 .5em/1 var(--sans); letter-spacing: .04em; text-transform: uppercase; }
-.chips { display: flex; gap: .55em; margin-bottom: .9em; }
-.chips .av { width: 2.3em; height: 2.3em; }
-.v { margin-bottom: .9em; }
-.v .ph { aspect-ratio: 16 / 9; border-radius: .7em; }
-.v .dur { position: absolute; z-index: 2; right: .45em; bottom: .45em; padding: .1em .35em; background: #fffcf4; font-weight: 800; font-size: .85em; }
-.vm { display: flex; gap: .6em; margin-top: .55em; }
-.vm .av { width: 2.2em; height: 2.2em; }
-.vm b { display: block; font-weight: 900; line-height: 1.15; }
-.vm small { font-size: .88em; }
-.post { display: flex; gap: .65em; padding: .65em 0; border-bottom: 1px solid rgba(61,85,136,.25); }
-.post b { font-weight: 900; }
-.post small { font-size: .9em; }
-.post p { margin-top: .2em; }
-.post .ph { margin-top: .5em; aspect-ratio: 4 / 3; border-radius: .7em; }
-.xtabs { display: flex; gap: 1.2em; font-weight: 900; border-bottom: 1px solid rgba(61,85,136,.3); margin: 0 -1em; padding: 0 1em; }
-.xtabs b { padding: .5em 0 .55em; box-shadow: inset 0 -.25em 0 var(--blue); }
-.fb { padding: .7em 0; border-bottom: 1px solid rgba(61,85,136,.25); }
-.fb header { display: flex; gap: .6em; align-items: center; }
-.fb header b { display: block; font-weight: 900; line-height: 1.15; }
-.fb header small { font-size: .88em; }
-.fb p { margin-top: .5em; }
-.fb .ph { margin: .55em -1em 0; aspect-ratio: 4 / 3; }
-
-/* Dates. */
-.date { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto; gap: 14px 40px; padding: 28px 0 30px; border-bottom: 1.5px solid var(--blue); align-items: start; }
-.date h3 { font: 900 clamp(38px, 5vw, 70px)/.88 var(--sans); letter-spacing: -.04em; }
-.date p { font: 600 17px/1.55 var(--sans); max-width: 36em; }
-.date p + p { margin-top: 12px; }
-.date .tag { display: inline-block; margin-bottom: 8px; font: 800 12px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
-.date .stamp { rotate: -4deg; margin-top: 4px; cursor: default; }
+/* Platforms: ink. */
+.plat { background: var(--ink); color: var(--cream); }
+.plat .head .sub { color: rgba(255,246,238,.75); }
+.plat-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(40px, 7vw, 120px); align-items: center; margin-top: clamp(40px, 6vw, 72px); }
+.tour li { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr); gap: 10px 32px; padding: 26px 0; border-top: 1px solid rgba(255,246,238,.16); }
+.tour li:last-child { border-bottom: 1px solid rgba(255,246,238,.16); }
+.tour h3 { font: 900 clamp(28px, 3.2vw, 44px)/.95 var(--sans); letter-spacing: -.035em; }
+.tour .soon { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; padding: 6px 11px; border-radius: 99px; background: rgba(216,27,122,.18); color: #ff8cc4; font: 700 12.5px/1 var(--sans); letter-spacing: .02em; }
+.tour .soon::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.tour p { font: 400 16.5px/1.6 var(--sans); color: rgba(255,246,238,.82); }
+.tour p + p { margin-top: 10px; }
+.tour p b { color: var(--cream); font-weight: 700; }
+.plat .device { --w: clamp(230px, 22vw, 300px); background: linear-gradient(150deg, #d9d2cc 0%, #8e8a88 20%, #3b3c42 55%, #8a8786 85%, #e6e0da 100%); box-shadow: inset 0 0 0 1px rgba(255,255,255,.4), inset 0 0 0 calc(var(--w) * .011) #08090c, 0 40px 80px -30px rgba(216,27,122,.35), 0 30px 60px -30px rgba(0,0,0,.8); }
+.allow { position: absolute; inset: 0; display: flex; flex-direction: column; background: #f4f2f7; }
+.allow .hd b { font-size: 1.6em; }
+.allow .lead { padding: 0 1.05em .9em; color: #6b6e78; }
+.allow .card { margin: 0 .9em .7em; padding: .85em .9em; border-radius: .9em; background: #fff; box-shadow: 0 1px 0 #ececef; }
+.allow .card .t { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; }
+.allow .card .t small { font-weight: 500; color: #6b6e78; }
+.allow .meter { margin-top: .6em; height: .55em; border-radius: 99px; background: #ececef; overflow: hidden; }
+.allow .meter i { display: block; height: 100%; border-radius: inherit; background: var(--c, #2d5bff); transform-origin: left; transform: scaleX(var(--f, .5)); transition: transform 1.4s var(--ease); }
+.js .allow:not(.in) .meter i { transform: scaleX(0); }
+.allow .card.paused-app { background: #0e0f14; color: #fff; }
+.allow .card.paused-app small { color: rgba(255,255,255,.7); }
+.allow .card.paused-app .meter { background: rgba(255,255,255,.18); }
+.allow .sites { margin-top: .5em; display: grid; grid-template-columns: 1fr 1fr; gap: .3em .5em; font-size: .92em; }
+.allow .sites li { display: flex; align-items: center; gap: .3em; }
+.allow .sites .ic { width: 1.1em; height: 1.1em; color: #1f9d55; stroke-width: 2.6; }
+.allow .opt { margin-top: .35em; color: #6b6e78; font-size: .92em; padding-right: 3em; }
+.allow .card { position: relative; }
+.allow .tg { position: absolute; right: .9em; top: 50%; width: 2.6em; height: 1.55em; margin-top: -.3em; border-radius: 99px; background: #34c759; }
+.allow .tg::after { content: ""; position: absolute; right: .15em; top: .15em; width: 1.25em; height: 1.25em; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.allow .note2 { margin: .2em 1.2em; color: #6b6e78; font-size: .9em; }
+.alt-icon { display: flex; align-items: center; gap: 14px; margin-top: 28px; font: 500 13px/1.4 var(--sans); color: rgba(255,246,238,.7); }
+.alt-icon img { width: 44px; height: 44px; border-radius: 22.5%; }
 
 /* Free. */
-.free h2 { font: 900 clamp(96px, 17vw, 238px)/.78 var(--sans); letter-spacing: -.055em; text-transform: uppercase; }
-.free h2 span { display: block; }
-.terms { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 56px; margin-top: 36px; padding-top: 18px; border-top: 3px solid var(--blue); }
-.terms .big { font: 900 clamp(24px, 2.6vw, 34px)/1.08 var(--sans); letter-spacing: -.02em; }
-.terms p:not(.big) { font: 600 17px/1.55 var(--sans); max-width: 30em; }
+.free { background: var(--magenta); color: var(--cream); overflow: hidden; }
+.free h2 { font: 900 clamp(64px, 15.5vw, 236px)/.8 var(--sans); letter-spacing: -.055em; text-transform: uppercase; }
+.free h2 .k2 { display: block; will-change: transform; }
+.free-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto); gap: 40px clamp(40px, 7vw, 120px); align-items: end; margin-top: clamp(36px, 5vw, 64px); }
+.free .terms { margin-left: clamp(0px, 9vw, 150px); }
+.free .terms p:first-child { font: 800 clamp(22px, 2.5vw, 34px)/1.15 var(--sans); letter-spacing: -.02em; max-width: 20em; }
+.free .terms p + p { margin-top: 16px; font: 500 18px/1.55 var(--sans); max-width: 32em; opacity: .92; }
+.bill0 { position: relative; width: clamp(200px, 22vw, 300px); padding: 22px 22px 18px; border: 1.5px solid rgba(255,246,238,.8); font: 500 13px/1.5 var(--mono); }
+.bill0 .hz { position: absolute; inset: 0; background: repeating-linear-gradient(-45deg, rgba(255,246,238,.22) 0 1.5px, transparent 1.5px 9px); pointer-events: none; }
+.bill0 dl > div { position: relative; display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed rgba(255,246,238,.5); }
+.bill0 .tot { position: relative; display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; font: 900 34px/1 var(--sans); }
+.bill0 .tot small { font: 500 12px/1 var(--mono); }
 
-/* Small print. */
-.fine { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 56px; }
-.fine h3 { font: 900 22px/1.15 var(--sans); letter-spacing: -.015em; margin: 18px 0 8px; }
-.fine p { font: 600 15.5px/1.55 var(--sans); max-width: 34em; }
+/* Privacy and the honest bit. */
+.trust { background: var(--cream); }
+.trust-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px clamp(40px, 6vw, 100px); margin-top: clamp(36px, 5vw, 64px); }
+.trust article { padding-top: 22px; border-top: 2px solid var(--ink); }
+.trust .k { font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--magenta); }
+.trust h3 { margin: 14px 0 12px; font: 800 clamp(24px, 2.4vw, 32px)/1.1 var(--sans); letter-spacing: -.025em; }
+.trust article p { font: 400 17px/1.6 var(--sans); color: #3a3c46; max-width: 34em; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.facts span { padding: 9px 14px; border-radius: 99px; background: #fff; box-shadow: 0 0 0 1px var(--line); font: 700 14px/1 var(--sans); }
 
-/* Footer: a row of tear-off tabs, like every good gig poster. */
-.foot { margin-top: var(--gap); }
-.tear { border-top: 2px dashed var(--blue); }
-.tear { display: flex; align-items: flex-start; }
-.tear > span {
-  flex: 1 1 0; min-width: 0; display: flex; justify-content: center; align-items: center; height: 170px;
-  border-right: 2px dashed var(--blue); transform-origin: 50% 0; transition: transform .5s var(--ease);
-}
-.tear > span:last-child { border-right: 0; }
-.tear em { writing-mode: vertical-rl; font: 900 15px/1 var(--sans); font-style: normal; letter-spacing: .02em; white-space: nowrap; }
-.tear em small { font: 700 12px/1 var(--sans); margin-top: 10px; }
-.tear > span:hover { transform: rotate(4deg); }
-.tear > span.gone { height: 16px; }
-.tear > span.gone em { visibility: hidden; }
-.fcols { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 32px; margin-top: 52px; font: 600 14px/1.5 var(--sans); }
-.fcols h4 { font: 900 13px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
-.fcols li { margin-bottom: 8px; }
-.fcols a { text-decoration: none; background: linear-gradient(var(--pink), var(--pink)) 0 100% / 0 3px no-repeat; transition: background-size .35s var(--ease); }
-.fcols a:hover { background-size: 100% 3px; }
-.fbrand { display: flex; gap: 14px; align-items: flex-start; }
-.fbrand img { width: 56px; height: 56px; border-radius: 22.5%; }
-.fbrand b { display: block; font: 900 22px/1 var(--sans); margin-bottom: 6px; }
-.fsmall { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: 48px; padding-top: 14px; border-top: 1.5px solid var(--blue); font: 600 12.5px/1.45 var(--sans); }
+/* Footer: the lab notebook signature strip. */
+.foot { background: var(--cream); padding: 0 0 40px; }
+.strip { position: relative; border: 1.5px solid var(--ink); background:
+  linear-gradient(rgba(45,91,255,.12) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(45,91,255,.12) 1px, transparent 1px) 0 0 / 16px 16px, #fffdf9; }
+.strip-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.3fr; }
+.strip-grid > div { padding: 14px 16px 18px; min-height: 104px; border-right: 1.5px solid var(--ink); display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+.strip-grid > div:last-child { border-right: 0; }
+.strip label { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.strip .val { font: 700 17px/1.25 var(--sans); padding-bottom: 6px; border-bottom: 1px solid var(--ink); }
+.strip .val.h { font: italic 400 26px/1 var(--serif); color: var(--blue); border-bottom-color: var(--ink); }
+.foot-row { display: grid; grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); gap: 30px; margin-top: 46px; }
+.fbrand { display: flex; gap: 16px; align-items: flex-start; }
+.fbrand img { width: 60px; height: 60px; border-radius: 22.5%; box-shadow: 0 14px 26px -14px rgba(168,16,92,.7); }
+.fbrand b { display: block; font: 800 22px/1 var(--sans); letter-spacing: -.02em; margin-bottom: 6px; }
+.fbrand p { font: 500 14.5px/1.5 var(--sans); color: var(--ink-soft); }
+.foot h4 { font: 500 11px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 14px; color: var(--ink-soft); }
+.foot li { margin-bottom: 9px; font: 600 15px/1.35 var(--sans); }
+.foot li a { text-decoration: none; background: linear-gradient(var(--magenta), var(--magenta)) 0 100% / 0 2px no-repeat; transition: background-size .35s var(--ease), color .2s; }
+.foot li a:hover { background-size: 100% 2px; color: var(--magenta); }
+.fine { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 28px; margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); font: 500 13px/1.5 var(--sans); color: var(--ink-soft); }
 
-@media (max-width: 1000px) {
+/* Responsive. */
+@media (max-width: 1100px) {
   .links { display: none; }
-  .nav .stamp { margin-left: auto; }
+  .nav .pill { margin-left: auto; }
   .bill { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .venue { padding: 20px 14px 22px 0; border-bottom: 1.5px solid var(--blue); }
+  .venue { padding: 24px 22px 14px 0; border-bottom: 1.5px solid rgba(255,246,238,.25); }
   .venue + .venue { padding-left: 0; border-left: 0; }
-  .venue:nth-child(2n) { padding-left: 18px; border-left: 1.5px solid var(--blue); }
-  .flip { grid-template-columns: 1fr; justify-items: start; }
-  .flip .stage { justify-self: center; }
-  .trio { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 24px; margin-inline: calc(var(--pad) * -1); padding: 0 var(--pad) 12px; scrollbar-width: none; }
-  .trio::-webkit-scrollbar { display: none; }
-  .trio figure { scroll-snap-align: center; flex: none; }
-  .trio figure:nth-child(2) { transform: none; }
-  .date { grid-template-columns: minmax(0, 1fr) auto; }
-  .date .body { grid-column: 1 / -1; grid-row: 2; }
-  .fcols { grid-template-columns: 1fr 1fr; }
+  .venue:nth-child(2n) { padding-left: 24px; border-left: 1.5px solid rgba(255,246,238,.25); }
+  .anno-ends { display: none; }
+  .scale { display: none; }
+  .vword { display: none; }
 }
-@media (max-width: 640px) {
+@media (max-width: 960px) {
+  .hero-foot { grid-template-columns: 1fr; }
+  .stays-grid, .plat-grid { grid-template-columns: 1fr; }
+  .plat-grid .device { justify-self: center; }
+  .collage { max-width: 560px; width: 100%; justify-self: center; }
+  .free-row { grid-template-columns: 1fr; }
+  .free .terms { margin-left: 0; }
+  .cyg { position: relative; display: block; right: auto; bottom: auto; width: min(60%, 440px); margin: -4px -2% 0 auto; }
+  .bill0 { width: min(100%, 360px); }
+  .strip-grid { grid-template-columns: 1fr 1fr; }
+  .strip-grid > div:nth-child(2) { border-right: 0; }
+  .strip-grid > div:nth-child(-n+2) { border-bottom: 1.5px solid var(--ink); }
+  .foot-row { grid-template-columns: 1fr 1fr; }
+  .fbrand { grid-column: 1 / -1; }
+  .hatch { display: none; }
+}
+@media (max-width: 760px) {
+  .pair { grid-template-columns: minmax(0, auto); }
+  .pair .side { grid-area: 1 / 1; transition: opacity .45s var(--ease), transform .55s var(--ease); }
+  .pair[data-view="after"] .side.before, .pair[data-view="before"] .side.after { opacity: 0; transform: translateX(var(--off, 18px)) scale(.97); pointer-events: none; visibility: hidden; transition: opacity .45s var(--ease), transform .55s var(--ease), visibility 0s .45s; }
+  .pair .side.before { --off: -18px; }
+  .view { display: inline-flex; }
+  .device { --w: min(300px, 76vw); }
+  .nb-top { justify-content: center; }
+  .apps button { padding: 0 13px; font-size: 14px; }
+  .trust-grid { grid-template-columns: 1fr; }
+  .tour li { grid-template-columns: 1fr; }
+  .anno-media { display: none; }
+}
+@media (max-width: 560px) {
   body { font-size: 16px; }
-  .sheet { margin: 4px 8px 0; }
-  .dek { grid-template-columns: 1fr; margin-top: 30px; }
-  .cyg { width: 66%; right: -2%; top: 52%; }
-  .head small { display: none; }
-  .phone { --w: 272px; }
-  .stage { padding: 0 20px 20px 0; }
-  .plate { inset: 16px 0 0 16px; }
-  .seg button { padding: 12px 13px 11px; font-size: 13px; }
-  .terms, .fine { grid-template-columns: 1fr; }
-  .tear > span:nth-child(n+7) { display: none; }
-  .bill-foot { flex-direction: column; }
-}
-@media (max-width: 420px) {
+  .hero { padding-top: 96px; }
+  .lockup { padding: 12px 16px 12px 12px; gap: 14px; }
+  .lockup img { width: 62px; height: 62px; }
   .bill { grid-template-columns: 1fr; }
   .venue:nth-child(2n) { padding-left: 0; border-left: 0; }
-  .fcols { grid-template-columns: 1fr; }
+  .notebook { border-radius: 20px; padding: 16px 12px 20px; margin-inline: calc(var(--pad) * -.5); }
+  .apps { padding: 4px; }
+  .apps button { padding: 0 11px; gap: 6px; }
+  .strip-grid { grid-template-columns: 1fr; }
+  .strip-grid > div { border-right: 0 !important; border-bottom: 1.5px solid var(--ink); min-height: 84px; }
+  .strip-grid > div:last-child { border-bottom: 0; }
+  .foot-row { grid-template-columns: 1fr; }
+  .collage .note { font-size: 19px; }
+  .collage { aspect-ratio: 1 / 1.4; }
+  .collage .note { display: none; }
+  .s1 { width: 62%; } .s2 { width: 50%; } .s3 { width: 58%; left: 14%; } .s4 { width: 42%; bottom: 14%; }
+  .snap { padding: 6px 6px 26px; }
+  .snap figcaption { font-size: 15px; }
+  .bill0 { width: 100%; }
+}
+@media (max-width: 380px) {
+  .apps .bm { display: none; }
+  .brand { font-size: 19px; }
+  .nav .pill { padding: 0 14px; font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: .01ms !important; animation: none !important; }
   html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <!-- Riso ink, kept subtle: softened edges and a gentle variation in density. -->
-  <filter id="ink" x="-3%" y="-3%" width="106%" height="106%" color-interpolation-filters="sRGB">
-    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="3" result="t"/>
-    <feDisplacementMap in="SourceGraphic" in2="t" scale="1.7" xChannelSelector="R" yChannelSelector="G" result="d"/>
-    <feTurbulence type="fractalNoise" baseFrequency="2.2" numOctaves="1" seed="11" result="s"/>
-    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -24 18.6" result="holes"/>
-    <feTurbulence type="fractalNoise" baseFrequency=".006" numOctaves="2" seed="7" result="lo"/>
-    <feColorMatrix in="lo" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 .66" result="even"/>
-    <feComposite in="d" in2="even" operator="in"/>
-  </filter>
-  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5V20h-5.5v-5.5h-6V20H3.5z"/></symbol>
-  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.8l8.5 6.7V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.8 15.8 4.6 4.6"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M12 8v8M8 12h8"/></symbol>
-  <symbol id="i-play" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="m10 8.5 5.5 3.5-5.5 3.5z"/></symbol>
+  <symbol id="i-reels" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M3.5 8.5h17M8.5 3.5l2.5 5M14 3.5l2.5 5"/><path d="m10.5 12 4 2.3-4 2.3z"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></symbol>
-  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol>
-  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L4 20z"/></symbol>
-  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.5l7.2 2.8L13 21z"/><path d="m10.2 13.3 4.6-4.6"/></symbol>
-  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
-  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5h4"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.6-4.6-7.6-10.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.6 2.5C19.6 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.4l7.3 2.5L13 21z"/><path d="m10.3 12.9 5-5"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-6-4.5-6 4.5z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+  <symbol id="i-cast" viewBox="0 0 24 24"><path d="M3.5 8V6a1.5 1.5 0 0 1 1.5-1.5h14A1.5 1.5 0 0 1 20.5 6v12a1.5 1.5 0 0 1-1.5 1.5h-5"/><path d="M3.5 12a8 8 0 0 1 7.5 7.5M3.5 15.5a4.5 4.5 0 0 1 4 4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.6 1.6H4.4z"/><path d="M10 20.5h4"/></symbol>
+  <symbol id="i-subs" viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="12.5" rx="2"/><path d="M6 5h12M8.5 2.5h7"/><path d="m10.5 11.5 4 2.5-4 2.5z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m15.5 9.5 5 5M20.5 9.5l-5 5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-repost" viewBox="0 0 24 24"><path d="M7 7h11v6M17 17H6v-6"/><path d="m15 4 3 3-3 3M9 20l-3-3 3-3"/></symbol>
+  <symbol id="i-views" viewBox="0 0 24 24"><path d="M5 20V12M10 20V6M15 20v-9M20 20v-5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5"/></symbol>
+  <symbol id="i-feather" viewBox="0 0 24 24"><path d="M20 4c-8 0-13 5-14 14l-2 2"/><path d="M9 15h5c3 0 5.5-2.5 6-11"/></symbol>
   <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.5"/><path d="M2.5 19.5c.8-3.3 3.3-5 6.5-5s5.7 1.7 6.5 5"/><circle cx="17" cy="8" r="2.8"/><path d="M17.5 13.5c2.3.3 3.6 1.8 4 4.5"/></symbol>
 </svg>
 
 <header class="nav" id="nav">
-  <a class="brand" href="#top"><img src="../../img/icon-riso.png" width="30" height="30" alt="" onerror="this.onerror=null;this.src='../../img/icon.png'">Idyll</a>
-  <nav class="links" aria-label="Sections">
-    <a href="#flip">Before and after</a>
-    <a href="#bill">What goes</a>
-    <a href="#kept">What stays</a>
-    <a href="#dates">Devices</a>
-    <a href="#free">Price</a>
-  </nav>
-  <a class="stamp" href="#dates"><i></i>Coming soon</a>
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Idyll, back to top"><img src="../../img/icons/H2-white-on-magenta.png" width="34" height="34" alt="">Idyll</a>
+    <nav class="links" aria-label="Sections">
+      <a href="#difference">See the difference</a>
+      <a href="#gone">What goes</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#free">Free</a>
+      <a href="#privacy">Privacy</a>
+    </nav>
+    <a class="pill" href="#platforms"><span class="dot" aria-hidden="true"></span>Coming soon</a>
+  </div>
 </header>
 
-<main class="sheet" id="top">
+<main id="top">
+  <!-- Hero. -->
+  <section class="hero" id="hero" aria-labelledby="h">
+    <span class="vword" aria-hidden="true">Idyll, social without the scroll</span>
+    <div class="wrap">
+      <div class="stage">
+        <h1 id="h">
+          <span class="ln"><span class="in"><span class="k" data-k="-1">Social</span></span></span>
+          <span class="ln r"><span class="in"><span class="k" data-k="1">without</span></span></span>
+          <span class="ln"><span class="in"><span class="k" data-k="-.6">the</span></span></span>
+          <span class="ln"><span class="in"><span class="k" data-k="-.5">scroll.</span></span></span>
+        </h1>
+        <div class="anno-media" id="annoMedia" aria-hidden="true">
+          <span class="above hand write" style="--sd:1500">just social.</span>
+          <span class="w hand write" style="--sd:700">media</span>
+          <svg class="draw" viewBox="0 0 125 50"><path d="M4 30 C 30 22, 60 30, 86 22 S 116 20, 122 18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="--len:130;--sd:1150"/><path d="M8 36 C 40 28, 70 33, 118 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="--len:120;--sd:1300"/></svg>
+        </div>
+        <div class="cyg" id="cyg" role="img" aria-label="The Idyll cygnet, made of cream halftone dots">
+          <canvas id="cygC" aria-hidden="true"></canvas>
+        </div>
+        <div class="scale" id="scale" aria-hidden="true"><span>9</span><span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><i class="mark"></i></div>
+      </div>
 
-  <section class="hero" aria-labelledby="h">
-    <h1 id="h" class="b inked"><span>Social</span><span class="indent">without</span><span>the scroll.</span></h1>
-    <div class="cyg" id="cyg" role="img" aria-label="A cygnet sitting on the water, printed as a halftone in pink and blue">
-      <canvas class="b" id="cygB" aria-hidden="true"></canvas>
-      <canvas class="p" id="cygP" aria-hidden="true"></canvas>
+      <div class="hero-foot">
+        <div class="lockup" data-rv>
+          <img src="../../img/icons/H2-white-on-magenta.png" width="76" height="76" alt="The Idyll app icon">
+          <div>
+            <b>Idyll</b>
+            <span>For iPhone, Android, Chrome and Mac</span>
+            <a class="pill" href="#difference">See the difference<svg class="ic" style="width:1.1em;height:1.1em" aria-hidden="true"><use href="#i-chev"/></svg></a>
+          </div>
+        </div>
+        <div data-rv style="--d:1">
+          <p class="lede">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. You keep your friends, your messages and the one video someone actually sent you.</p>
+          <div class="works">
+            <span class="lbl">Works with</span>
+            <span class="s"><span class="bm" style="--m:url(../../img/brands/youtube.svg)"></span>YouTube</span>
+            <span class="s"><span class="bm" style="--m:url(../../img/brands/instagram.svg)"></span>Instagram</span>
+            <span class="s"><span class="bm" style="--m:url(../../img/brands/facebook.svg)"></span>Facebook</span>
+            <span class="s"><span class="bm" style="--m:url(../../img/brands/x.svg)"></span>X</span>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <div class="dek" data-rv>
-    <div class="name p inked" aria-hidden="true">Idyll</div>
-    <div>
-      <p class="lede b">Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. What's left is what you opened the app for.</p>
-      <div class="works b">
-        <span>Works with</span>
-        <span class="site"><span class="bm" style="--m:url(../../img/brands/youtube.svg)"></span>YouTube</span>
-        <span class="site"><span class="bm" style="--m:url(../../img/brands/instagram.svg)"></span>Instagram</span>
-        <span class="site"><span class="bm" style="--m:url(../../img/brands/facebook.svg)"></span>Facebook</span>
-        <span class="site"><span class="bm" style="--m:url(../../img/brands/x.svg)"></span>X</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Before and after. -->
-  <section class="s" id="flip" aria-labelledby="fl">
-    <div class="head b" data-rv>
-      <h2 id="fl" class="p inked">Two pulls</h2>
-      <small>The same app, printed twice</small>
-    </div>
-    <div class="flip">
-      <div data-rv style="--d:1">
-        <h3 class="b inked">You opened it to answer Niamh.</h3>
-        <div class="seg b" role="group" aria-label="Show Instagram without or with Idyll">
-          <span class="knob" aria-hidden="true"></span>
-          <button type="button" aria-pressed="true" data-s="0">Without Idyll</button>
-          <button type="button" aria-pressed="false" data-s="1">With Idyll</button>
-        </div>
-        <div class="say b" aria-live="polite">
-          <p data-s="0">Then a Reel started. Then the next one, and the one after that. There's a sponsored post somewhere in there too. The message can wait, apparently.</p>
-          <p data-s="1" aria-hidden="true">You answer Niamh. The video she sent plays once, with nothing queued after it. Then you put the phone down, which was the plan all along.</p>
-        </div>
-        <div class="legend b">
-          <span><span class="bm" style="--m:url(../../img/brands/instagram.svg)"></span>Shown on Instagram</span>
-          <span>The same idea on YouTube, Facebook and X</span>
-        </div>
+  <!-- fig. 1: before and after. -->
+  <section class="sec diff" id="difference" aria-labelledby="dh">
+    <div class="wrap">
+      <div class="head" data-rv>
+        <p class="figlbl"><b>fig. 1</b><span>The same feed, twice</span></p>
+        <h2 id="dh">Same app.<br>Minus the pull.</h2>
+        <p class="sub">On the left, the feed as it ships. On the right, the same feed with Idyll. Both scroll at the same speed. Only one of them runs out.</p>
       </div>
 
-      <div class="stage" id="stage" data-rv style="--d:2">
-        <span class="plate p" aria-hidden="true"></span>
-        <div class="phone" id="phone" data-s="0" role="img" aria-label="A phone showing Instagram. Without Idyll it plays endless Reels and a sponsored post. With Idyll it shows your messages and the one video a friend sent.">
-          <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
-          <div class="screen" aria-hidden="true">
-            <span class="island"></span>
-            <div class="sbar"><span>9:41</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i></span><span class="bat"></span></span></div>
-
-            <div class="st st0">
-              <div class="reels"><div class="track" id="track">
-                <figure class="reel"><div class="ph"><canvas data-photo="184"></canvas></div><div class="cap"><b>dune.days</b>Golden hour, again. Wait for the end.</div></figure>
-                <figure class="reel"><div class="ph"><canvas data-photo="102"></canvas></div><div class="cap"><b>berrybox</b><span class="spon">Sponsored</span><br>Fresh every week, straight to your door.<span class="shop">Shop now</span></div></figure>
-                <figure class="reel"><div class="ph"><canvas data-photo="237"></canvas></div><div class="cap"><b>pupdates</b>He knows exactly what he did.</div></figure>
-                <figure class="reel"><div class="ph"><canvas data-photo="250"></canvas></div><div class="cap"><b>film.club</b>Five cameras under fifty quid. Number four.</div></figure>
-              </div></div>
-              <div class="prog" id="prog"><i></i></div>
-              <div class="rtop"><span>Following</span><b>For you</b></div>
-              <div class="acts"><span><svg class="ic"><use href="#i-heart"/></svg></span><span><svg class="ic"><use href="#i-chat"/></svg></span><span><svg class="ic"><use href="#i-send"/></svg></span></div>
-              <nav class="tabs"><svg class="ic"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-plus"/></svg><svg class="ic" style="color:var(--pink)"><use href="#i-play"/></svg><svg class="ic"><use href="#i-user"/></svg></nav>
-            </div>
-
-            <div class="st st1">
-              <div class="in-pane">
-                <div class="t" data-i style="--i:0">Messages<svg class="ic" style="font-size:.6em"><use href="#i-pen"/></svg></div>
-                <div class="srch" data-i style="--i:1"><svg class="ic"><use href="#i-search"/></svg>Search</div>
-                <div class="thread" data-i style="--i:2">
-                  <div class="who"><span class="av">N</span><b>Niamh</b><time>now</time></div>
-                  <div class="bub">You have to see this lake</div>
-                  <div class="vid ph"><canvas data-photo="128"></canvas><span class="play"></span></div>
-                  <p class="once">Plays once. Nothing queued after it.</p>
-                </div>
-                <ul class="threads">
-                  <li data-i style="--i:3"><span class="av alt">A</span><div><b>Aoife</b><span>See you at eight then</span></div><time>12m</time></li>
-                  <li data-i style="--i:4"><span class="av">C</span><div><b>Ciarán</b><span>Ha, that's the one</span></div><time>1h</time></li>
-                  <li data-i style="--i:5"><span class="av alt">T</span><div><b>Tom</b><span>Sunday works for me</span></div><time>3h</time></li>
-                </ul>
-              </div>
-              <nav class="tabs"><svg class="ic"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-plus"/></svg><svg class="ic" style="color:var(--pink)"><use href="#i-send"/></svg><svg class="ic"><use href="#i-user"/></svg></nav>
-            </div>
+      <div class="notebook" id="nb" data-rv style="--d:1">
+        <div class="nb-top">
+          <div class="apps" role="group" aria-label="Choose an app">
+            <span class="knob" aria-hidden="true"></span>
+            <button type="button" aria-pressed="true" data-app="ig"><span class="bm" style="--m:url(../../img/brands/instagram.svg)"></span>Instagram</button>
+            <button type="button" aria-pressed="false" data-app="yt"><span class="bm" style="--m:url(../../img/brands/youtube.svg)"></span>YouTube</button>
+            <button type="button" aria-pressed="false" data-app="x"><span class="bm" style="--m:url(../../img/brands/x.svg)"></span>X</button>
           </div>
+          <div class="view" role="group" aria-label="Show without or with Idyll">
+            <button type="button" aria-pressed="true" data-view="before">Without Idyll</button>
+            <button type="button" aria-pressed="false" data-view="after">With Idyll</button>
+          </div>
+        </div>
+
+        <div class="pair" id="pair" data-view="before">
+          <div class="side before">
+            <span class="tag"><i></i>Without Idyll</span>
+            <div class="device" role="img" id="devB" aria-label="">
+              <i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i>
+              <div class="screen" aria-hidden="true"><span class="island"></span><div class="app" id="appB"></div></div>
+            </div>
+            <p class="cap" id="capB"></p>
+          </div>
+          <div class="side after">
+            <span class="tag"><i></i>With Idyll</span>
+            <div class="device" role="img" id="devA" aria-label="">
+              <i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i>
+              <div class="screen" aria-hidden="true"><span class="island"></span><div class="app" id="appA"></div></div>
+              <div class="anno-ends" id="annoEnds" aria-hidden="true">
+                <span class="t2 hand write" style="--sd:900">it ends.</span>
+                <span class="t1 hand write" style="--sd:0">never ends</span>
+                <svg class="draw" style="left:-4px;top:30px;width:120px;height:20px" viewBox="0 0 120 20"><path d="M2 12 C 30 6, 70 14, 116 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="--len:120;--sd:500"/></svg>
+                <svg class="draw" style="left:-58px;top:54px;width:70px;height:60px" viewBox="0 0 70 60"><path d="M64 4 C 50 30, 30 46, 6 52" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="--len:90;--sd:1300"/><path d="M6 52 l 10 -9 M6 52 l 13 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="--len:30;--sd:1700"/></svg>
+              </div>
+            </div>
+            <p class="cap" id="capA"></p>
+          </div>
+        </div>
+
+        <div class="nb-foot">
+          <p class="figlbl"><b>fig. 1</b><span>Mock screens, scrolling in sync</span></p>
+          <p>Illustrative screens. On iPhone and laptops Idyll cleans the websites, and the official iPhone apps get a daily allowance instead. On Android, Idyll also guards the real apps.</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Not appearing. -->
-  <section class="s" id="bill" aria-labelledby="na">
-    <div class="head b" data-rv>
-      <h2 id="na" class="p inked">Not appearing</h2>
-      <small id="count">Cancelled at every venue</small>
-    </div>
-    <div class="bill" data-rv style="--d:1">
-      <div class="venue b">
-        <h3><span class="bm" role="img" aria-label="YouTube" style="--m:url(../../img/brands/youtube.svg)"></span><span aria-hidden="true">YouTube</span></h3>
-        <ul>
-          <li><span class="sr">Removed: </span>Video ads<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>Shorts<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span><span class="ln">The recommended<i class="x p"></i></span> <span class="ln">home feed<i class="x p"></i></span></li>
-          <li><span class="sr">Removed: </span>Up next<i class="x p"></i></li>
-        </ul>
+  <section class="sec gone on-dark" id="gone" aria-labelledby="gh">
+    <div class="hatch" aria-hidden="true"><span>space where the feed was</span></div>
+    <div class="wrap">
+      <div class="head" data-rv>
+        <p class="figlbl"><b>fig. 2</b><span>The bill, as you scroll</span></p>
+        <h2 id="gh">Not appearing.</h2>
+        <p class="sub">Fourteen things built to keep you watching, struck off the bill. Everything you actually opened the app for stays exactly where it was.</p>
       </div>
-      <div class="venue b">
-        <h3><span class="bm" role="img" aria-label="Instagram" style="--m:url(../../img/brands/instagram.svg)"></span><span aria-hidden="true">Instagram</span></h3>
-        <ul>
-          <li><span class="sr">Removed: </span>Sponsored posts<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>The Reels feed<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>The Explore grid<i class="x p"></i></li>
-        </ul>
+      <div class="bill" id="bill">
+        <div class="venue" data-rv>
+          <h3><span class="bm" style="--m:url(../../img/brands/youtube.svg)"></span>YouTube</h3>
+          <h4>Goes</h4>
+          <ul class="out"><li><span class="sr">Removed: </span>Video ads<i class="x"></i></li><li><span class="sr">Removed: </span>Shorts<i class="x"></i></li><li><span class="sr">Removed: </span>Recommended home feed<i class="x"></i></li><li><span class="sr">Removed: </span>Up next<i class="x"></i></li></ul>
+          <div class="in2"><h4>Stays</h4><ul><li>Your subscriptions</li><li>Search</li><li>The one video a friend sends</li></ul></div>
+        </div>
+        <div class="venue" data-rv style="--d:1">
+          <h3><span class="bm" style="--m:url(../../img/brands/instagram.svg)"></span>Instagram</h3>
+          <h4>Goes</h4>
+          <ul class="out"><li><span class="sr">Removed: </span>Sponsored posts<i class="x"></i></li><li><span class="sr">Removed: </span>The Reels feed<i class="x"></i></li><li><span class="sr">Removed: </span>The Explore grid<i class="x"></i></li></ul>
+          <div class="in2"><h4>Stays</h4><ul><li>Messages</li><li>Search</li><li>Whatever a friend sends you</li></ul></div>
+        </div>
+        <div class="venue" data-rv style="--d:2">
+          <h3><span class="bm" style="--m:url(../../img/brands/facebook.svg)"></span>Facebook</h3>
+          <h4>Goes</h4>
+          <ul class="out"><li><span class="sr">Removed: </span>Reels<i class="x"></i></li><li><span class="sr">Removed: </span>Watch<i class="x"></i></li><li><span class="sr">Removed: </span>The algorithmic feed<i class="x"></i></li></ul>
+          <div class="in2"><h4>Stays</h4><ul><li>Friends, in order</li><li>Groups</li><li>Messages</li></ul></div>
+        </div>
+        <div class="venue" data-rv style="--d:3">
+          <h3><span class="bm" style="--m:url(../../img/brands/x.svg)"></span>X</h3>
+          <h4>Goes</h4>
+          <ul class="out"><li><span class="sr">Removed: </span>For you<i class="x"></i></li><li><span class="sr">Removed: </span>Promoted posts<i class="x"></i></li><li><span class="sr">Removed: </span>Trends<i class="x"></i></li><li><span class="sr">Removed: </span>Who to follow<i class="x"></i></li></ul>
+          <div class="in2"><h4>Stays</h4><ul><li>Following</li><li>Messages</li><li>Search</li></ul></div>
+        </div>
       </div>
-      <div class="venue b">
-        <h3><span class="bm" role="img" aria-label="Facebook" style="--m:url(../../img/brands/facebook.svg)"></span><span aria-hidden="true">Facebook</span></h3>
-        <ul>
-          <li><span class="sr">Removed: </span>Reels<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>Watch<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>The algorithmic feed<i class="x p"></i></li>
-        </ul>
-      </div>
-      <div class="venue b">
-        <h3><span class="bm" role="img" aria-label="X" style="--m:url(../../img/brands/x.svg)"></span><span aria-hidden="true">X</span></h3>
-        <ul>
-          <li><span class="sr">Removed: </span>For you<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>Promoted posts<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>Trends<i class="x p"></i></li>
-          <li><span class="sr">Removed: </span>Who to follow<i class="x p"></i></li>
-        </ul>
-      </div>
-    </div>
-    <div class="bill-foot b" data-rv style="--d:2">
-      <p>Fourteen acts, all of them built to keep you watching. Idyll takes them off the bill on the websites. On Android, a feed guard also skips the ads and stops the swipe inside the real apps.</p>
-      <p>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</p>
+      <div class="tally"><b id="count">0 of 14 struck off</b><span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span></div>
     </div>
   </section>
 
-  <!-- Still playing. -->
-  <section class="s" id="kept" aria-labelledby="st">
-    <div class="head b" data-rv>
-      <h2 id="st" class="p inked">Still playing</h2>
-      <small>Everything you came for</small>
-    </div>
-    <p class="kept b" data-rv style="--d:1">Messages<span class="dot">.</span> Search<span class="dot">.</span> Your subscriptions<span class="dot">.</span> Following<span class="dot">.</span> Friends, in order<span class="dot">.</span> Groups<span class="dot">.</span> And whatever a friend sends you, one video at a time<span class="dot">.</span></p>
-
-    <div class="trio">
-      <figure data-rv style="--d:1">
-        <div class="stage"><span class="plate p" aria-hidden="true"></span>
-          <div class="phone" role="img" aria-label="YouTube with Idyll: a subscriptions list of new videos from channels you follow, with no Shorts and no recommendations.">
-            <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
-            <div class="screen" aria-hidden="true"><span class="island"></span>
-              <div class="sbar"><span>9:41</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i></span><span class="bat"></span></span></div>
-              <div class="scr">
-                <div class="t">Subscriptions</div>
-                <div class="chips"><span class="av">T</span><span class="av alt">S</span><span class="av">P</span><span class="av alt">A</span><span class="av">N</span></div>
-                <article class="v"><div class="ph"><canvas data-photo="29" data-cell="3"></canvas><span class="dur">14:02</span></div><div class="vm"><span class="av">T</span><div><b>Three days on the high route</b><small>Tom walks · 2 days ago</small></div></div></article>
-                <article class="v"><div class="ph"><canvas data-photo="76" data-cell="3"></canvas><span class="dur">8:45</span></div><div class="vm"><span class="av alt">S</span><div><b>Bringing an old bike back</b><small>Sam's shed · 5 days ago</small></div></div></article>
-              </div>
-              <nav class="tabs"><svg class="ic"><use href="#i-home"/></svg><svg class="ic" style="color:var(--pink)"><use href="#i-play"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-user"/></svg></nav>
-            </div>
-          </div>
-        </div>
-        <figcaption class="b"><b><span class="bm" style="--m:url(../../img/brands/youtube.svg)"></span>YouTube</b>Your subscriptions, newest first. No Shorts shelf, no home feed, nothing up next.</figcaption>
-      </figure>
-
-      <figure data-rv style="--d:2">
-        <div class="stage"><span class="plate p" aria-hidden="true"></span>
-          <div class="phone" role="img" aria-label="X with Idyll: only the Following timeline, posts from people you follow in order.">
-            <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
-            <div class="screen" aria-hidden="true"><span class="island"></span>
-              <div class="sbar"><span>9:41</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i></span><span class="bat"></span></span></div>
-              <div class="scr">
-                <div class="xtabs"><b>Following</b></div>
-                <article class="post"><span class="av">P</span><div><b>Priya</b> <small>@priya · 1h</small><p>Found a café with long tables and no music. Stayed three hours.</p><div class="ph"><canvas data-photo="42" data-cell="3"></canvas></div></div></article>
-                <article class="post"><span class="av alt">C</span><div><b>Ciarán</b> <small>@ciaran · 3h</small><p>The river from the bridge tonight. Cold hands, worth it.</p><div class="ph"><canvas data-photo="122" data-cell="3"></canvas></div></div></article>
-              </div>
-              <nav class="tabs"><svg class="ic" style="color:var(--pink)"><use href="#i-home"/></svg><svg class="ic"><use href="#i-search"/></svg><svg class="ic"><use href="#i-bell"/></svg><svg class="ic"><use href="#i-send"/></svg></nav>
-            </div>
-          </div>
-        </div>
-        <figcaption class="b"><b><span class="bm" style="--m:url(../../img/brands/x.svg)"></span>X</b>Following, and only Following. No For you, no trends, nobody suggested.</figcaption>
-      </figure>
-
-      <figure data-rv style="--d:3">
-        <div class="stage"><span class="plate p" aria-hidden="true"></span>
-          <div class="phone" role="img" aria-label="Facebook with Idyll: posts from friends and groups, most recent first.">
-            <i class="k k1"></i><i class="k k2"></i><i class="k k3"></i><i class="k k4"></i>
-            <div class="screen" aria-hidden="true"><span class="island"></span>
-              <div class="sbar"><span>9:41</span><span style="display:flex;align-items:center"><span class="sig"><i></i><i></i><i></i></span><span class="bat"></span></span></div>
-              <div class="scr">
-                <div class="t">Friends <small>Newest first</small></div>
-                <article class="fb"><header><span class="av alt">A</span><div><b>Aoife</b><small>20 min</small></div></header><p>The highland cattle were out on the cliff path again.</p><div class="ph"><canvas data-photo="200" data-cell="3"></canvas></div></article>
-                <article class="fb"><header><span class="av">N</span><div><b>Allotment swap</b><small>Group · Niamh posted</small></div></header><p>Spare red onions, free to a good home.</p><div class="ph"><canvas data-photo="292" data-cell="3"></canvas></div></article>
-              </div>
-              <nav class="tabs"><svg class="ic" style="color:var(--pink)"><use href="#i-home"/></svg><svg class="ic"><use href="#i-people"/></svg><svg class="ic"><use href="#i-bell"/></svg><svg class="ic"><use href="#i-user"/></svg></nav>
-            </div>
-          </div>
-        </div>
-        <figcaption class="b"><b><span class="bm" style="--m:url(../../img/brands/facebook.svg)"></span>Facebook</b>Friends in the order they posted, and your groups. No Reels, no Watch.</figcaption>
-      </figure>
+  <!-- What stays. -->
+  <section class="sec stays" id="stays" aria-labelledby="sh">
+    <div class="wrap stays-grid">
+      <div data-rv>
+        <p class="figlbl"><b>fig. 3</b><span>What's left when the feed goes</span></p>
+        <div class="head"><h2 id="sh">Still playing.</h2>
+        <p class="sub" style="margin-left:clamp(0px,4vw,60px)">The people you follow, in the order they posted. Then you're done, and the phone goes back in your pocket.</p></div>
+        <ol class="kept">
+          <li><span>01</span>Messages and search, untouched</li>
+          <li><span>02</span>YouTube subscriptions, newest first</li>
+          <li><span>03</span>X Following, and only Following</li>
+          <li><span>04</span>Facebook friends in order, and your groups</li>
+          <li><span>05</span>The one video a friend sends, not the feed after it</li>
+        </ol>
+      </div>
+      <div class="collage" id="collage" aria-label="Photos from friends: a lake, a café, a bike, and honey on the table" role="img">
+        <figure class="snap s1" data-par="-.06"><div class="g"><img src="../../img/photos/128.jpg" width="480" height="480" alt="" loading="lazy"></div><figcaption>Maya, the lake</figcaption></figure>
+        <figure class="snap s2" data-par=".08"><div class="g"><img src="../../img/photos/42.jpg" width="480" height="480" alt="" loading="lazy"></div><figcaption>Priya's café</figcaption></figure>
+        <figure class="snap s3" data-par="-.03"><div class="g"><img src="../../img/photos/76.jpg" width="480" height="480" alt="" loading="lazy"></div><figcaption>Leo fixed the bike</figcaption></figure>
+        <figure class="snap s4" data-par=".12"><div class="g"><img src="../../img/photos/312.jpg" width="480" height="480" alt="" loading="lazy"></div><figcaption>Jess</figcaption></figure>
+        <span class="note hand" aria-hidden="true">all caught up</span>
+      </div>
     </div>
   </section>
 
-  <!-- Dates. -->
-  <section class="s" id="dates" aria-labelledby="td">
-    <div class="head b" data-rv>
-      <h2 id="td" class="p inked">Dates</h2>
-      <small>All to be confirmed</small>
-    </div>
-    <div class="date b" data-rv>
-      <h3 class="inked">iPhone</h3>
-      <div class="body">
-        <span class="tag">The websites</span>
-        <p>A Safari content blocker cleans YouTube, Instagram, Facebook and X in the browser. Safari applies the rules itself, and iOS shows that Idyll can't read or send anything from the pages. The optional Idyll Plus extension also skips video ads and turns Shorts into normal videos.</p>
-        <span class="tag" style="margin-top:18px">The apps</span>
-        <p>The real apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p>
+  <!-- Platforms. -->
+  <section class="sec plat on-dark" id="platforms" aria-labelledby="ph">
+    <div class="wrap">
+      <div class="head" data-rv>
+        <p class="figlbl"><b>fig. 4</b><span>Dates to be announced</span></p>
+        <h2 id="ph">Coming soon.</h2>
+        <p class="sub">To iPhone, Android, Chrome and Mac. No download yet, and no waiting list to join: this page will change when it's ready.</p>
       </div>
-      <span class="stamp">Coming soon</span>
-    </div>
-    <div class="date b" data-rv>
-      <h3 class="inked">Android</h3>
-      <div class="body">
-        <p>A clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
+      <div class="plat-grid">
+        <ol class="tour">
+          <li data-rv><div><h3>iPhone</h3><span class="soon">Coming soon</span></div><div>
+            <p><b>The websites, cleaned.</b> A Safari content blocker takes the feeds out of YouTube, Instagram, Facebook and X in the browser. Safari applies the rules itself, and iOS shows that Idyll can't read or send anything from the pages. The optional Idyll Plus extension also skips video ads and turns Shorts into normal videos.</p>
+            <p><b>The apps, on an allowance.</b> The real apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p></div></li>
+          <li data-rv><div><h3>Android</h3><span class="soon">Coming soon</span></div><div>
+            <p>A clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p></div></li>
+          <li data-rv><div><h3>Chrome and Mac</h3><span class="soon">Coming soon</span></div><div>
+            <p>The same rules on a laptop, so the feed doesn't just move to a bigger screen.</p></div></li>
+        </ol>
+        <div data-rv style="--d:1">
+          <div class="device" role="img" aria-label="An iPhone screen showing Idyll's daily allowance: Instagram with 14 of 20 minutes left, YouTube with all 30 minutes left, and X paused until midnight.">
+            <i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i>
+            <div class="screen" aria-hidden="true"><span class="island"></span>
+              <div class="allow" id="allow">
+                <div class="sb"><span>9:41</span><span class="ri" data-sbi></span></div>
+                <div class="hd"><b>Allowance</b><img src="../../img/icons/H2-white-on-magenta.png" width="28" height="28" alt="" style="width:2em;height:2em;border-radius:22.5%"></div>
+                <p class="lead">Today. Resets at midnight.</p>
+                <div class="card"><div class="t">Instagram <small>14 of 20 min left</small></div><div class="meter"><i style="--f:.7;--c:#d81b7a"></i></div></div>
+                <div class="card"><div class="t">YouTube <small>30 of 30 min left</small></div><div class="meter"><i style="--f:1;--c:#2d5bff"></i></div></div>
+                <div class="card paused-app"><div class="t">X <small>Paused until midnight</small></div><div class="meter"><i style="--f:0;--c:#fff"></i></div></div>
+                <div class="card"><div class="t">Websites <small>Cleaned in Safari</small></div><ul class="sites"><li><svg class="ic"><use href="#i-check"/></svg>youtube.com</li><li><svg class="ic"><use href="#i-check"/></svg>instagram.com</li><li><svg class="ic"><use href="#i-check"/></svg>facebook.com</li><li><svg class="ic"><use href="#i-check"/></svg>x.com</li></ul></div>
+                <div class="card"><div class="t">Idyll Plus <small>Optional</small></div><p class="opt">Skips video ads and turns Shorts into normal videos.</p><span class="tg" aria-hidden="true"></span></div>
+                <p class="note2">The websites stay clean all day, whatever is left here.</p>
+              </div>
+            </div>
+          </div>
+          <p class="alt-icon"><img src="../../img/icons/H4-white-on-electric-blue.png" width="44" height="44" alt="The Idyll icon in electric blue">The cygnet also comes in electric blue.</p>
+        </div>
       </div>
-      <span class="stamp">Coming soon</span>
-    </div>
-    <div class="date b" data-rv>
-      <h3 class="inked">Chrome and Mac</h3>
-      <div class="body">
-        <p>The same rules on a laptop, so the feed doesn't just move to a bigger screen.</p>
-      </div>
-      <span class="stamp">Coming soon</span>
     </div>
   </section>
 
   <!-- Free. -->
-  <section class="s free" id="free" aria-labelledby="ad">
-    <h2 id="ad" data-rv><span class="b inked">Free.</span><span class="p inked">For good.</span></h2>
-    <div class="terms b" data-rv style="--d:1">
-      <p class="big">No subscription. No trial that turns into one. No ads. No data sold.</p>
-      <p>Idyll will never charge. Something built to give you your evenings back shouldn't send you a bill for them, so it won't.</p>
+  <section class="sec free" id="free" aria-labelledby="fh">
+    <div class="wrap">
+      <p class="figlbl" data-rv><b>fig. 5</b><span>The bill</span></p>
+      <h2 id="fh"><span class="k2" data-k="-1">Free.</span><span class="k2" data-k="1" style="padding-left:.6em">For good.</span></h2>
+      <div class="free-row">
+        <div class="terms" data-rv>
+          <p>No subscription. No trial that turns into one. No ads. No data sold.</p>
+          <p>Idyll will never charge. Something built to give you your evenings back shouldn't send you a bill for them, so it won't.</p>
+        </div>
+        <div class="bill0" data-rv style="--d:1" aria-label="An itemised bill totalling nothing">
+          <span class="hz" aria-hidden="true"></span>
+          <dl><div><dt>Subscription</dt><dd>£0</dd></div><div><dt>Trial</dt><dd>none</dd></div><div><dt>Ads</dt><dd>none</dd></div><div><dt>Your data</dt><dd>not for sale</dd></div></dl>
+          <p class="tot">£0 <small>for good</small></p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="s fine b" aria-label="The small print" data-rv>
-    <div>
-      <span class="kicker">Privacy</span>
-      <h3>Your logins stay yours.</h3>
-      <p>You log in to the real sites and apps, never inside Idyll. There's no account to make. Nothing leaves your phone, and there are zero trackers.</p>
-    </div>
-    <div>
-      <span class="kicker">The honest bit</span>
-      <h3>What it can't do on iPhone.</h3>
-      <p>No app can change what's inside the official YouTube or Instagram apps on iPhone: Apple keeps apps sealed off. Anyone claiming otherwise ships a modified copy that can get accounts flagged. Idyll cleans the websites and gives the apps a daily limit instead.</p>
+  <!-- Privacy. -->
+  <section class="sec trust" id="privacy" aria-labelledby="th">
+    <div class="wrap">
+      <div class="head" data-rv>
+        <p class="figlbl"><b>fig. 6</b><span>Privacy, and the honest bit</span></p>
+        <h2 id="th">Nothing leaves<br>your phone.</h2>
+      </div>
+      <div class="trust-grid">
+        <article data-rv>
+          <span class="k">Privacy</span>
+          <h3>Your logins stay yours.</h3>
+          <p>You log in to the real sites and apps, never inside Idyll. There's no account to make, nothing leaves your phone, and there are zero trackers.</p>
+          <div class="facts"><span>No account</span><span>Zero trackers</span><span>Nothing sent anywhere</span></div>
+        </article>
+        <article data-rv style="--d:1">
+          <span class="k">The honest bit</span>
+          <h3>What it can't do on iPhone.</h3>
+          <p>No app can change what's inside the official YouTube or Instagram apps on iPhone: Apple keeps apps sealed off. Anyone claiming otherwise ships a modified copy that can get accounts flagged. So Idyll cleans the websites and gives the apps a daily limit instead.</p>
+        </article>
+      </div>
     </div>
   </section>
+</main>
 
-  <footer class="foot b">
-    <div class="tear" aria-hidden="true">
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
+<footer class="foot">
+  <div class="wrap">
+    <div class="strip" data-rv>
+      <div class="strip-grid">
+        <div><label>Project</label><span class="val">Idyll: social without the scroll</span></div>
+        <div><label>Recorded by</label><span class="val">The Idyll team</span></div>
+        <div><label>Date</label><span class="val">Coming soon</span></div>
+        <div><label>Witnessed and understood by</label><span class="val h"><span class="hand write" id="you" style="--sd:200">you</span></span></div>
+      </div>
     </div>
-    <div class="fcols">
-      <div class="fbrand"><img src="../../img/icon-riso.png" width="56" height="56" alt="The Idyll app icon" loading="lazy" onerror="this.onerror=null;this.src='../../img/icon.png'"><div><b>Idyll</b>Social without the scroll.<br>Coming soon to iPhone, Android, Chrome and Mac.</div></div>
-      <div><h4>The poster</h4><ul><li><a href="#flip">Before and after</a></li><li><a href="#bill">What goes</a></li><li><a href="#kept">What stays</a></li><li><a href="#dates">Devices</a></li></ul></div>
+    <div class="foot-row">
+      <div class="fbrand"><img src="../../img/icons/H2-white-on-magenta.png" width="60" height="60" alt="The Idyll app icon" loading="lazy"><div><b>Idyll</b><p>Social without the scroll.<br>Free, for good.</p></div></div>
+      <div><h4>The page</h4><ul><li><a href="#difference">See the difference</a></li><li><a href="#gone">What goes</a></li><li><a href="#stays">What stays</a></li><li><a href="#platforms">Platforms</a></li></ul></div>
       <div><h4>Promises</h4><ul><li>No account</li><li>No trackers</li><li>No ads</li><li>Never a charge</li></ul></div>
       <div><h4>Status</h4><ul><li>iPhone: coming soon</li><li>Android: coming soon</li><li>Chrome and Mac: coming soon</li></ul></div>
     </div>
-    <div class="fsmall"><span>Free, for good.</span><span>Printed in two inks: Federal Blue and Fluorescent Pink.</span><span>Set in Timeless Sans.</span></div>
-  </footer>
-</main>
+    <div class="fine"><span>Free, for good.</span><span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with them.</span><span>Set in Timeless Sans.</span></div>
+  </div>
+</footer>
 
 <script>
 (() => {
+  const doc = document.documentElement;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fine = matchMedia('(pointer: fine)').matches;
-  const DPR = () => Math.min(window.devicePixelRatio || 1, 2);
-  const BLUE = '61,85,136', PINK = '255,72,176';
   const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  if (!reduce && 'IntersectionObserver' in window) doc.classList.add('js');
 
-  /* Nav condenses once the poster starts to scroll. */
-  const nav = document.getElementById('nav');
-  let navSmall = false;
-
-  /* Reveals: visible by default, hidden only once JS is sure it can show them. */
-  if (!reduce && 'IntersectionObserver' in window) {
-    const els = [...document.querySelectorAll('[data-rv]')];
-    document.documentElement.classList.add('rv');
+  /* Reveals and handwriting, with a fallback so nothing stays hidden. */
+  const rvs = $$('[data-rv]');
+  const inkTargets = [$('#annoEnds'), $('#you')].filter(Boolean);
+  if (doc.classList.contains('js')) {
     const io = new IntersectionObserver(es => es.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }), { rootMargin: '0px 0px -8% 0px', threshold: .08 });
-    els.forEach(el => io.observe(el));
-    setTimeout(() => els.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight && r.bottom > 0) el.classList.add('in'); }), 1500);
+      if (!e.isIntersecting) return;
+      e.target.classList.add(e.target.matches('[data-rv]') ? 'in' : 'inked');
+      if (e.target.id === 'you' || e.target.id === 'annoEnds') e.target.classList.add('inked');
+      io.unobserve(e.target);
+    }), { rootMargin: '0px 0px -10% 0px', threshold: .1 });
+    rvs.forEach(el => io.observe(el));
+    inkTargets.forEach(el => io.observe(el));
+    setTimeout(() => rvs.forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight) el.classList.add('in'); }), 2200);
+  } else {
+    rvs.forEach(el => el.classList.add('in'));
+    inkTargets.forEach(el => el.classList.add('inked'));
   }
+  const allow = $('#allow');
+  if (allow) { if (doc.classList.contains('js')) new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { allow.classList.add('in'); o.disconnect(); } }), { threshold: .4 }).observe(allow); else allow.classList.add('in'); }
 
-  const imgs = {};
-  const load = src => imgs[src] || (imgs[src] = new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }));
+  /* Hero: kinetic type in, handwriting after, then the cygnet. */
+  const hero = $('#hero'), anno = $('#annoMedia');
+  requestAnimationFrame(() => requestAnimationFrame(() => { hero.classList.add('go'); anno.classList.add('inked'); }));
 
-  /* Hero cygnet: dots that assemble, then lean away from the pointer. */
-  const cyg = document.getElementById('cyg');
-  const cB = document.getElementById('cygB'), cP = document.getElementById('cygP');
-  let dotsB = [], dotsP = [], t0 = 0, ptr = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4, s: 0, ts: 0 }, raf = 0;
-
-  function screenDots(a, w, h, cell, ang, tone) {
-    const out = [], ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2;
-    const n = Math.ceil(Math.hypot(w, h) / cell / 2) + 2;
-    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
-      const x = cx + (i * ca - j * sa) * cell, y = cy + (i * sa + j * ca) * cell;
+  /* The cygnet: cream dots on a 45 degree screen, like the icon. They assemble,
+     then lean away from the pointer. */
+  const cyg = $('#cyg'), cv = $('#cygC');
+  let dots = [], t0 = 0, raf = 0, cell = 10;
+  const ptr = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4, s: 0, ts: 0 };
+  const img = new Image(); img.src = '../../img/cygnet-mark.svg';
+  // Desktop: give the bird its own space, right of THE and SCROLL., below WITHOUT.
+  const stageEl = $('.hero .stage'), kEls = $$('.hero .k');
+  function textRect(el) { const r = document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); }
+  function placeCyg() {
+    if (innerWidth <= 960) { cyg.style.left = cyg.style.top = cyg.style.width = ''; return; }
+    const st = stageEl.getBoundingClientRect();
+    // Measure the resting layout: no kinetic offsets, no entrance transforms.
+    const moved = [...kEls, ...$$('.hero h1 .in')], prev = moved.map(k => [k.style.transform, k.style.transition]);
+    moved.forEach(k => { k.style.transition = 'none'; k.style.transform = 'none'; });
+    const [, wo, th, sc] = kEls.map(textRect);
+    moved.forEach((k, i) => { k.style.transform = prev[i][0]; void k.offsetWidth; k.style.transition = prev[i][1]; });
+    const gap = Math.max(18, st.width * .025);
+    const left = Math.max(th.right, sc.right) - st.left + gap;
+    const right = st.width - 30;
+    const top = wo.bottom - st.top + gap * .6;
+    const bottom = sc.bottom - st.top;
+    let w = Math.min(right - left, (bottom - top) * 640 / 380, 640);
+    w = Math.max(0, w);
+    const h = w * 380 / 640;
+    cyg.style.width = w + 'px';
+    cyg.style.left = (left + (right - left - w) / 2) + 'px';
+    cyg.style.top = (bottom - h) + 'px';
+    cyg.style.display = w < 120 ? 'none' : '';
+  }
+  function build() {
+    placeCyg();
+    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.round(cyg.clientWidth * dpr), h = Math.round(cyg.clientHeight * dpr);
+    if (!w || !h || !img.complete) return false;
+    cell = Math.max(5, cyg.clientWidth / 52) * dpr;
+    const m = document.createElement('canvas'); m.width = w; m.height = h;
+    const g = m.getContext('2d', { willReadFrequently: true });
+    g.filter = `blur(${cell * .35}px)`; g.drawImage(img, 0, 0, w, h);
+    const a = g.getImageData(0, 0, w, h).data;
+    cv.width = w; cv.height = h; dots = [];
+    const ang = Math.PI / 4, ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / cell / 2) + 2;
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) for (const half of [0, 1]) {
+      const u = i + half * .5, v = j + half * .5;
+      const x = cx + (u * ca - v * sa) * cell, y = cy + (u * sa + v * ca) * cell;
       if (x < 0 || y < 0 || x >= w || y >= h) continue;
-      const v = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255 * tone(x / w, y / h);
-      if (v < .04) continue;
-      // Each dot arrives on its own beat: left to right, with a little scatter.
-      const delay = (x / w) * 620 + (1 - y / h) * 260 + Math.random() * 260;
-      out.push({ x, y, r: cell * .74 * Math.sqrt(Math.min(v, 1.1)), delay });
+      const c = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255;
+      if (c < .05) continue;
+      const r = half ? cell * .1 * c : cell * .47 * Math.sqrt(c);
+      const delay = (x / w) * 700 + (1 - y / h) * 300 + Math.random() * 300;
+      dots.push({ x, y, r, delay });
     }
-    return out;
+    return true;
   }
-
-  function buildCygnet() {
-    return load('../../img/cygnet-mark.svg').then(img => {
-      const dpr = DPR(), w = Math.round(cyg.clientWidth * dpr), h = Math.round(cyg.clientHeight * dpr);
-      if (!w || !h) return;
-      const cell = Math.max(5, Math.round(cyg.clientWidth / 58)) * dpr;
-      const m = document.createElement('canvas'); m.width = w; m.height = h;
-      const x = m.getContext('2d', { willReadFrequently: true });
-      x.filter = `blur(${cell * .45}px)`; x.drawImage(img, 0, 0, w, h);
-      const a = x.getImageData(0, 0, w, h).data;
-      cB.width = cP.width = w; cB.height = cP.height = h;
-      dotsP = screenDots(a, w, h, cell, 75 * Math.PI / 180, (u, v) => .26 + .7 * v * v);
-      dotsB = screenDots(a, w, h, cell * .82, 15 * Math.PI / 180, (u, v) => .75 * Math.max(0, (v - .62) * 2.6) ** 1.3);
-      cyg._cell = cell;
-    });
-  }
-
-  const easeOut = t => 1 - Math.pow(1 - t, 3);
-  const easeBack = t => { const c = 1.9; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
-  function paintDots(cv, dots, rgb, now) {
-    const g = cv.getContext('2d');
-    g.clearRect(0, 0, cv.width, cv.height);
-    g.fillStyle = `rgb(${rgb})`;
-    g.beginPath();
-    const R = (cyg._cell || 10) * 9, live = ptr.s > .001;
-    let busy = false;
+  const back = t => { const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  function paint(now) {
+    const g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
+    g.fillStyle = '#fff6ee'; g.beginPath();
+    const R = cell * 7, live = ptr.s > .002; let busy = false;
     for (const d of dots) {
       let k = 1;
-      if (!reduce) {
-        const t = clamp((now - t0 - d.delay) / 700);
-        if (t < 1) busy = true;
-        k = t <= 0 ? 0 : easeBack(t);
-      }
-      if (live) {
-        const dx = d.x - ptr.x, dy = d.y - ptr.y, dist = Math.hypot(dx, dy);
-        if (dist < R) {
-          const f = 1 - dist / R, ring = Math.sin(f * Math.PI);
-          k *= 1 - .62 * f * f * ptr.s + .18 * ring * ptr.s;
-        }
-      }
-      const r = d.r * k;
-      if (r < .35) continue;
-      g.moveTo(d.x + r, d.y); g.arc(d.x, d.y, r, 0, Math.PI * 2);
+      if (!reduce) { const t = clamp((now - t0 - d.delay) / 650); if (t < 1) busy = true; k = t <= 0 ? 0 : back(t); }
+      if (live) { const dist = Math.hypot(d.x - ptr.x, d.y - ptr.y); if (dist < R) { const f = 1 - dist / R; k *= 1 - .7 * f * f * ptr.s + .25 * Math.sin(f * Math.PI) * ptr.s; } }
+      const r = d.r * k; if (r < .3) continue;
+      g.moveTo(d.x + r, d.y); g.arc(d.x, d.y, r, 0, 6.2832);
     }
-    g.fill();
-    return busy;
+    g.fill(); return busy;
   }
-
   function frame() {
     const now = performance.now();
-    ptr.x += (ptr.tx - ptr.x) * .18; ptr.y += (ptr.ty - ptr.y) * .18; ptr.s += (ptr.ts - ptr.s) * .1;
-    const b1 = paintDots(cP, dotsP, PINK, now), b2 = paintDots(cB, dotsB, BLUE, now);
-    const moving = Math.abs(ptr.ts - ptr.s) > .002 || Math.abs(ptr.tx - ptr.x) > .5 || Math.abs(ptr.ty - ptr.y) > .5;
-    raf = (b1 || b2 || moving) ? requestAnimationFrame(frame) : 0;
+    ptr.x += (ptr.tx - ptr.x) * .2; ptr.y += (ptr.ty - ptr.y) * .2; ptr.s += (ptr.ts - ptr.s) * .12;
+    const busy = paint(now);
+    const moving = Math.abs(ptr.ts - ptr.s) > .003 || Math.abs(ptr.tx - ptr.x) > .5 || Math.abs(ptr.ty - ptr.y) > .5;
+    raf = busy || moving ? requestAnimationFrame(frame) : 0;
   }
   const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
-
-  buildCygnet().then(() => {
-    t0 = performance.now() + 250; kick();
-    // If frames are throttled (background tab, slow device), never leave the bird half printed.
-    setTimeout(() => { if (performance.now() - t0 < 1600) return; t0 = -1e5; paintDots(cP, dotsP, PINK, performance.now()); paintDots(cB, dotsB, BLUE, performance.now()); }, 2600);
-  });
+  if (document.fonts) document.fonts.ready.then(() => { if (img.complete && build()) { paint(performance.now()); kick(); } });
+  img.onload = () => { if (build()) { t0 = performance.now() + 450; kick(); setTimeout(() => { t0 = -1e5; paint(performance.now()); }, 3200); } };
   if (fine && !reduce) {
-    const hero = document.querySelector('.hero');
     hero.addEventListener('pointermove', e => {
-      const r = cyg.getBoundingClientRect(), dpr = DPR();
-      if (ptr.ts === 0) { ptr.x = (e.clientX - r.left) * dpr; ptr.y = (e.clientY - r.top) * dpr; }
-      ptr.tx = (e.clientX - r.left) * dpr; ptr.ty = (e.clientY - r.top) * dpr; ptr.ts = 1; kick();
+      const r = cyg.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+      const x = (e.clientX - r.left) * d, y = (e.clientY - r.top) * d;
+      if (ptr.ts === 0) { ptr.x = x; ptr.y = y; }
+      ptr.tx = x; ptr.ty = y; ptr.ts = 1; kick();
     });
     hero.addEventListener('pointerleave', () => { ptr.ts = 0; kick(); });
   }
 
-  /* Photos, printed as two-ink halftones: blue carries the shadows, pink the warmth. */
-  function dotsInk(g, d, w, h, cell, ang, rgb, fn, ox, oy) {
-    const ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2;
-    const n = Math.ceil(Math.hypot(w, h) / cell / 2) + 2;
-    g.fillStyle = `rgb(${rgb})`; g.beginPath();
-    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
-      const x = cx + (i * ca - j * sa) * cell, y = cy + (i * sa + j * ca) * cell;
-      if (x < -cell || y < -cell || x >= w + cell || y >= h + cell) continue;
-      const sx = clamp(x | 0, 0, w - 1), sy = clamp(y | 0, 0, h - 1), o = (sy * w + sx) * 4;
-      const v = fn(d[o], d[o + 1], d[o + 2]);
-      if (v < .05) continue;
-      const r = cell * .7 * Math.sqrt(Math.min(v, 1.05));
-      g.moveTo(x + ox + r, y + oy); g.arc(x + ox, y + oy, r, 0, Math.PI * 2);
+  /* Status bar icons, shared by every screen. */
+  const SB = '<svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".7" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx=".7" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx=".7" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx=".7" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a9.9 9.9 0 0 1 14 0l-1.4 1.4a7.9 7.9 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M25 4v4c.8-.3 1.3-1.1 1.3-2S25.8 4.3 25 4z" fill="currentColor" opacity=".5"/></svg>';
+  $$('[data-sbi]').forEach(el => el.innerHTML = SB);
+
+  /* Screens. */
+  const P = id => `../../img/photos/${id}.jpg`;
+  const I = (n, cls = '') => `<svg class="ic ${cls}"><use href="#i-${n}"/></svg>`;
+  const av = (l, c) => `<span class="av c${c}">${l}</span>`;
+  const im = id => `<img src="${P(id)}" alt="" width="480" height="480" loading="lazy" decoding="async">`;
+  const sbar = () => `<div class="sb"><span>9:41</span><span class="ri">${SB}</span></div>`;
+
+  // Instagram-style.
+  const igStories = names => `<div class="stories">${names.map(([n, l, c]) => `<span class="story"><span class="ring">${av(l, c)}</span>${n}</span>`).join('')}</div>`;
+  const igPost = (h, l, c, ph, t, likes, cap, cm) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>${t}</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div><div class="acts">${I('heart')}${I('chat')}${I('send')}<span class="sv">${I('save')}</span></div><div class="likes">${likes}</div><div class="pc"><b>${h}</b>${cap}</div>${cm ? `<div class="cm">${cm}</div>` : ''}</article>`;
+  const igReel = (h, l, c, ph, cap) => `<article class="post reel"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Suggested reel</small></div><span class="more">${I('more')}</span></div><div class="ph tall">${im(ph)}<span class="badge">${I('reels')}Reels</span><span class="audio">♪ Original audio</span><span class="mute">${I('mute')}</span><span class="rbar"><i></i></span></div><div class="acts">${I('heart')}${I('chat')}${I('send')}<span class="sv">${I('save')}</span></div><div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const igAd = (h, l, c, ph, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Sponsored</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div><div class="shop">Shop now<span>›</span></div><div class="acts">${I('heart')}${I('chat')}${I('send')}<span class="sv">${I('save')}</span></div><div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const igSugg = list => `<div class="sugg"><div class="row"><span>Suggested for you</span><a>See all</a></div><div class="cards">${list.map(([n, l, c]) => `<div class="card">${av(l, c)}<b>${n}</b><small>Suggested for you</small><span class="btn-b">Follow</span></div>`).join('')}</div></div>`;
+  const caught = (t, s) => `<div class="caught"><div class="ck"><span>${I('check')}</span></div><b>${t}</b><p>${s}</p></div>`;
+  const friends = {
+    maya: () => igPost('maya.walks', 'M', 1, 128, 'Lake District, 2h', 'Liked by leo.makes and others', 'Swam before breakfast. Freezing. Perfect.', 'View all 6 comments'),
+    priya: () => igPost('priya.reads', 'P', 2, 42, '4h', 'Liked by sam_k and others', 'Long tables, no music, three hours gone.', 'View all 2 comments'),
+    leo: () => igPost('leo.makes', 'L', 3, 76, '7h', 'Liked by maya.walks and others', 'She rides again.', ''),
+    jess: () => igPost('jess.cooks', 'J', 4, 312, 'Yesterday', 'Liked by priya.reads and others', 'Local honey, toast, nothing else.', 'View all 4 comments'),
+    sam: () => igPost('sam_k', 'S', 5, 225, 'Yesterday', 'Liked by jess.cooks and others', 'Sunday pot.', '')
+  };
+  const igHead = () => `<div class="hd"><b>Home${I('chev')}</b><span class="ri">${I('heart')}${I('send')}</span></div>`;
+  const igTabs = () => `<div class="tb">${I('home', 'f')}${I('search')}${I('plus')}${I('reels')}${I('user')}</div>`;
+  const stories = [['Your story', '+', 6], ['maya', 'M', 1], ['leo', 'L', 3], ['priya', 'P', 2], ['jess', 'J', 4], ['sam', 'S', 5]];
+
+  // YouTube-style.
+  const ytVid = (ph, d, title, ch, l, c, meta) => `<article class="vid"><div class="ph th">${im(ph)}<span class="dur">${d}</span></div><div class="meta">${av(l, c)}<div><b>${title}</b><small>${ch} · ${meta}</small></div><span class="more">${I('more')}</span></div></article>`;
+  const ytShelf = items => `<div class="shelf"><div class="tt"><span class="sh"></span>Shorts</div><div class="row">${items.map(([ph, t, v]) => `<div class="ph short">${im(ph)}<span>${t}<br><small>${v} views</small></span></div>`).join('')}</div></div>`;
+  const ytPre = () => `<div class="ph pre">${im(42)}<span class="adl">Ad · 0:15</span><span class="skip">Skip ${I('play', 'f')}</span><span class="ybar"><i></i></span></div><div class="adrow">${av('N', 6)}<div><b>Northwind Coffee</b><small>Sponsored · northwind.example</small></div><span class="lm">Learn more</span></div>`;
+  const ytHead = t => `<div class="hd"><b>${t}</b><span class="ri">${I('cast')}${I('bell')}${I('search')}</span></div>`;
+
+  // X-style.
+  const tw = (n, h, l, c, t, txt, ph, nums, ad) => `<article class="tw">${av(l, c)}<div class="bd"><b>${n}</b> <span class="mut">@${h} · ${t}</span><p>${txt}</p>${ph ? `<div class="ph">${im(ph)}</div>` : ''}<div class="ac"><span>${I('chat')}${nums[0]}</span><span>${I('repost')}${nums[1]}</span><span>${I('heart')}${nums[2]}</span><span>${I('views')}${nums[3]}</span></div>${ad ? '<div class="adt">Ad</div>' : ''}</div></article>`;
+  const wtf = () => `<div class="wtf"><h5>Who to follow</h5>${[['Ava Trent', 'avatrent', 'A', 1], ['Noah Field', 'noahfield', 'N', 2], ['Daily Wins', 'dailywins', 'D', 3]].map(([n, h, l, c]) => `<div class="r">${av(l, c)}<div><b>${n}</b><small>@${h}</small></div><span class="fl">Follow</span></div>`).join('')}</div>`;
+
+  const APPS = {
+    ig: {
+      label: 'Instagram',
+      capB: '<b>Reels between posts</b>, Suggested for you, Sponsored, and no bottom.',
+      capA: '<b>Friends’ posts, newest first.</b> Then: you’re all caught up.',
+      before: { head: igHead(), top: igStories(stories), loop: friends.maya() + igReel('dune.days', 'D', 6, 184, 'Golden hour, again. Wait for the end.') + friends.priya() + igSugg([['ava.trent', 'A', 1], ['noahfield', 'N', 2], ['dailywins', 'D', 3], ['fitwithzoe', 'Z', 5]]) + igAd('Berrybox', 'B', 1, 102, 'Fresh every week, straight to your door.') + friends.leo() + igReel('pupdates', 'P', 3, 237, 'He knows exactly what he did.') + igAd('Filmwerk', 'F', 6, 250, 'Shoot real film again. 20% off this week.') + friends.jess() + igReel('wild.water', 'W', 4, 15, 'Turn the sound on for this one.'), tabs: igTabs() },
+      after: { head: igHead(), body: igStories(stories) + friends.maya() + friends.priya() + friends.leo() + friends.jess() + friends.sam() + caught('You’re all caught up', 'You’ve seen all new posts from the past 3 days.'), tabs: `<div class="tb">${I('home', 'f')}${I('search')}${I('plus')}${I('send')}${I('user')}</div>` }
+    },
+    yt: {
+      label: 'YouTube',
+      capB: '<b>A pre-roll ad</b>, a Shorts shelf, and recommendations forever.',
+      capA: '<b>Subscriptions only.</b> New uploads from channels you chose. No ads, no Shorts.',
+      before: { head: ytHead('Home') + `<div class="chips"><span class="chip on">All</span><span class="chip">Music</span><span class="chip">Gaming</span><span class="chip">Live</span><span class="chip">Podcasts</span></div>`, top: ytPre(), loop: ytShelf([[152, 'Wait for it…', '2.4M'], [106, 'Nobody expected this', '981K']]) + ytVid(57, '18:24', 'I walked every street in the city in one day', 'Urban Miles', 'U', 2, '1.2M views · 3 days ago') + ytVid(122, '11:07', 'The night shots nobody tells you about', 'Lens Club', 'L', 5, '640K views · 1 week ago') + ytShelf([[82, 'This trick is everywhere', '3.1M'], [200, 'POV: you check one more', '1.7M']]) + ytVid(145, '24:51', 'Ranking every guitar I own', 'Fretwork', 'F', 3, '410K views · 2 weeks ago') + ytVid(29, '9:38', 'You won’t believe this view', 'Peak Feed', 'P', 1, '2.2M views · 5 days ago'), tabs: `<div class="tb">${I('home', 'f')}${I('play')}${I('plus')}${I('subs')}${I('user')}</div>` },
+      after: { head: ytHead('Subscriptions') + `<div class="chans">${[['Tom', 'T', 2], ['Jess', 'J', 4], ['Leo', 'L', 3], ['Ava', 'A', 1], ['Noah', 'N', 5]].map(([n, l, c]) => `<span>${av(l, c)}${n}</span>`).join('')}</div>`, body: ytVid(29, '21:16', 'Three days on the high route', 'Tom on Trails', 'T', 2, '2 hours ago') + ytVid(292, '12:40', 'One pan supper for a Tuesday', 'Jess Cooks', 'J', 4, '1 day ago') + ytVid(145, '16:05', 'Restringing a forty year old guitar', 'Leo’s Workshop', 'L', 3, '2 days ago') + ytVid(10, '8:12', 'Morning on the coast, no talking', 'Slow Walks with Ava', 'A', 1, '4 days ago') + caught('You’re up to date', 'That’s everything new from your subscriptions.'), tabs: `<div class="tb">${I('home')}${I('subs', 'on')}${I('user')}</div>` }
+    },
+    x: {
+      label: 'X',
+      capB: '<b>For you</b>, promoted posts and who to follow. It keeps going.',
+      capA: '<b>Following, in order.</b> Nobody suggested, nothing promoted.',
+      before: { head: `<div class="hd">${av('Y', 2)}<b style="font-size:1.1em">Home</b>${I('feather')}</div><div class="xtabs"><span class="on">For you</span><span>Following</span></div>`, top: '', loop: tw('Hot Takes Daily', 'hottakes', 'H', 6, '12m', 'Unpopular opinion: you should never stop scrolling. Thread below.', 0, [1840, 3200, '21K', '2.1M']) + tw('Filmwerk', 'filmwerk', 'F', 3, '', 'Real film, real grain. 20% off starter kits this week only.', 250, [12, 40, 310, '88K'], 1) + tw('Nina Park', 'ninapark', 'N', 1, '1h', 'Spring is doing its thing.', 106, [14, 22, 410, '9K']) + wtf() + tw('Viral Clips', 'viralclips', 'V', 5, '3h', 'You will watch this more than once.', 192, [920, 4100, '33K', '4.4M']) + tw('Trend Desk', 'trenddesk', 'T', 2, '4h', 'Everyone is talking about this. Here is why.', 0, [301, 1200, '8K', '900K']), tabs: `<div class="tb">${I('home', 'f')}${I('search')}${I('bell')}${I('send')}</div>` },
+      after: { head: `<div class="hd">${av('Y', 2)}<b style="font-size:1.1em">Home</b>${I('feather')}</div><div class="xtabs"><span class="on">Following</span></div>`, body: tw('Maya', 'maya_walks', 'M', 1, '20m', 'Back from the lake. Phone stayed in the bag all day.', 128, [3, 1, 24, 410]) + tw('Leo', 'leomakes', 'L', 3, '1h', 'New bench is finished. Took a month, worth it.', 28, [5, 2, 41, 690]) + tw('Priya', 'priyareads', 'P', 2, '2h', 'Halfway through the book everyone recommended. They were right.', 0, [8, 0, 19, 300]) + tw('Tom', 'tomontrails', 'T', 4, '5h', 'Ridge walk tomorrow if anyone fancies it.', 0, [11, 1, 12, 280]) + caught('You’re all caught up', 'That’s every new post from people you follow.'), tabs: `<div class="tb">${I('home', 'f')}${I('search')}${I('bell')}${I('send')}</div>` }
     }
-    g.fill();
-  }
-  async function printPhoto(cv) {
-    const dpr = DPR(), w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr);
-    if (!w || !h || (cv._w === w && cv._h === h)) return;
-    cv._w = w; cv._h = h;
-    const img = await load(`../../img/photos/${cv.dataset.photo}.jpg`);
-    const cell = (+cv.dataset.cell || 3.4) * dpr;
-    const o = document.createElement('canvas'); o.width = w; o.height = h;
-    const g = o.getContext('2d', { willReadFrequently: true });
-    const s = Math.max(w / img.width, h / img.height);
-    g.filter = `blur(${cell * .35}px)`;
-    g.drawImage(img, (w - img.width * s) / 2, (h - img.height * s) / 2, img.width * s, img.height * s);
-    const d = g.getImageData(0, 0, w, h).data;
-    cv.width = w; cv.height = h;
-    const c = cv.getContext('2d');
-    dotsInk(c, d, w, h, cell, 15 * Math.PI / 180, BLUE, (r, gg, b) => {
-      const L = (.299 * r + .587 * gg + .114 * b) / 255;
-      return clamp((1 - L) * 1.2 - .1, 0, 1.05);
-    }, 0, 0);
-    c.globalCompositeOperation = 'multiply';
-    dotsInk(c, d, w, h, cell, 75 * Math.PI / 180, PINK, (r, gg, b) => {
-      const L = (.299 * r + .587 * gg + .114 * b) / 255, warm = (r - (gg + b) / 2) / 255;
-      return clamp(warm * 2.1 + (1 - L) * .22 + .04, 0, 1);
-    }, 1.2 * dpr, -.8 * dpr);
-  }
-  const photos = [...document.querySelectorAll('canvas[data-photo]')];
-  if ('IntersectionObserver' in window) {
-    const pio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { printPhoto(e.target); pio.unobserve(e.target); } }), { rootMargin: '600px 0px' });
-    photos.forEach(c => pio.observe(c));
-  } else photos.forEach(printPhoto);
+  };
 
-  /* Before and after. */
-  const phone = document.getElementById('phone'), stage = document.getElementById('stage');
-  const seg = document.querySelector('.seg'), btns = [...seg.querySelectorAll('button')];
-  const says = [...document.querySelectorAll('.say p')];
-  const st = [phone.querySelector('.st0'), phone.querySelector('.st1')];
-  const track = document.getElementById('track'), prog = document.getElementById('prog');
-  let state = 0, touched = false, inView = false, reelTimer = 0;
+  /* Synced scrolling: a shared flick schedule with momentum and pauses. */
+  const appB = $('#appB'), appA = $('#appA'), capB = $('#capB'), capA = $('#capA');
+  const devB = $('#devB'), devA = $('#devA');
+  const S = { b: null, a: null };
+  function mount(el, spec, endless) {
+    el.innerHTML = sbar() + spec.head + `<div class="vp"><div class="feed">${endless ? spec.top + `<div class="blk">${spec.loop}</div><div class="blk">${spec.loop}</div>` : spec.body}</div></div>` + spec.tabs;
+    const vp = el.querySelector('.vp'), feed = el.querySelector('.feed');
+    return { el, vp, feed, endless, y: 0 };
+  }
+  function measure(s) {
+    const blk = s.feed.querySelector('.blk');
+    s.topH = blk ? blk.offsetTop : 0;
+    s.loopH = blk ? blk.offsetHeight : 0;
+    s.max = Math.max(0, s.feed.offsetHeight - s.vp.clientHeight);
+    s.H = s.vp.clientHeight;
+  }
+  function place(s) { s.feed.style.transform = `translate3d(0,${-s.y.toFixed(2)}px,0)`; }
+  let app = 'ig';
+  function load(name, fade) {
+    app = name;
+    const A = APPS[name];
+    const go = () => {
+      S.b = mount(appB, A.before, true); S.a = mount(appA, A.after, false);
+      capB.innerHTML = A.capB; capA.innerHTML = A.capA;
+      devB.setAttribute('aria-label', `${A.label} without Idyll: ${capB.textContent}`);
+      devA.setAttribute('aria-label', `${A.label} with Idyll: ${capA.textContent}`);
+      requestAnimationFrame(() => { measure(S.b); measure(S.a); restart(); if (reduce) still(); appB.classList.remove('fading'); appA.classList.remove('fading'); });
+    };
+    if (fade && !reduce) { appB.classList.add('fading'); appA.classList.add('fading'); setTimeout(go, 300); } else go();
+  }
+  function still() {
+    const ad = S.b.feed.querySelector('.reel, .pre, .wtf');
+    S.b.y = ad ? Math.max(0, ad.offsetTop - S.b.H * .2) : S.b.H; S.a.y = S.a.max;
+    place(S.b); place(S.a);
+  }
 
-  function setState(s, user) {
-    if (user) touched = true;
-    if (s === state) return;
-    state = s;
-    phone.dataset.s = s;
-    seg.style.setProperty('--k', s);
-    btns.forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.s === s)));
-    says.forEach(p => p.setAttribute('aria-hidden', String(+p.dataset.s !== s)));
-    st.forEach((el, i) => { el.setAttribute('aria-hidden', String(i !== s)); el.inert = i !== s; });
-    if (!reduce) { stage.classList.remove('jolt'); void stage.offsetWidth; stage.classList.add('jolt'); }
-    reels();
+  let v = 0, wait = 1.1, endAt = 0, clock = 0, running = false, last = 0, loopRaf = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function restart() { v = 0; wait = 1.1; endAt = 0; clock = 0; if (S.b) { S.b.y = 0; S.a.y = 0; place(S.b); place(S.a); } }
+  function step(now) {
+    loopRaf = 0;
+    if (!running || !S.b) return;
+    const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; clock += dt;
+    const H = S.b.H || 500;
+    if (v < 4 && wait > 0) { wait -= dt; if (wait <= 0) v = Math.random() < .3 ? H * rnd(.45, .7) : H * rnd(1.3, 2.4); }
+    else if (v >= 4) { v *= Math.exp(-2.9 * dt); if (v < 4) { v = 0; wait = rnd(.6, 1.9); } }
+    const dy = v * dt;
+    // Before: endless. Wrap one loop block up when we pass it.
+    S.b.y += dy; if (S.b.loopH && S.b.y > S.b.topH + S.b.loopH) S.b.y -= S.b.loopH;
+    // After: the same flicks, until it runs out, with a soft stop.
+    if (S.a.y < S.a.max) { S.a.y = Math.min(S.a.max + 14, S.a.y + dy); }
+    if (S.a.y > S.a.max) { S.a.y += (S.a.max - S.a.y) * Math.min(1, dt * 9); if (!endAt) endAt = clock; }
+    place(S.b); place(S.a);
+    if (endAt && clock - endAt > 5.5) {
+      appB.classList.add('fading'); appA.classList.add('fading');
+      setTimeout(() => { restart(); appB.classList.remove('fading'); appA.classList.remove('fading'); }, 360);
+      endAt = Infinity;
+    }
+    loopRaf = requestAnimationFrame(step);
   }
-  btns.forEach(b => b.addEventListener('click', () => setState(+b.dataset.s, true)));
-  st[1].setAttribute('aria-hidden', 'true'); st[1].inert = true;
+  function setRunning(on) {
+    if (reduce) return;
+    running = on;
+    $('#pair').classList.toggle('paused', !on);
+    if (on && !loopRaf) { last = performance.now(); loopRaf = requestAnimationFrame(step); }
+  }
+  load('ig');
+  new IntersectionObserver(es => es.forEach(e => setRunning(e.isIntersecting && !document.hidden)), { threshold: .15 }).observe($('#pair'));
+  document.addEventListener('visibilitychange', () => { if (document.hidden) setRunning(false); else { const r = $('#pair').getBoundingClientRect(); setRunning(r.top < innerHeight && r.bottom > 0); } });
+  if (reduce) $('#pair').classList.add('paused');
 
-  // The endless part: a new Reel every few seconds while nobody is looking away.
-  const DWELL = 2600;
-  function advance() {
-    if (state !== 0 || !inView || reduce) return;
-    track.style.transition = 'transform .7s cubic-bezier(.6,0,.2,1)';
-    track.style.transform = 'translateY(-100%)';
-    setTimeout(() => {
-      track.style.transition = 'none';
-      track.appendChild(track.firstElementChild);
-      track.style.transform = 'none';
-      runProg();
-    }, 720);
-  }
-  function runProg() {
-    prog.classList.remove('run'); void prog.offsetWidth;
-    if (state === 0 && inView && !reduce) prog.classList.add('run');
-  }
-  function reels() {
-    clearInterval(reelTimer);
-    if (state === 0 && inView && !reduce) { runProg(); reelTimer = setInterval(advance, DWELL); }
-    else prog.classList.remove('run');
-  }
-  prog.style.setProperty('--t', DWELL + 'ms');
-  let autoTimer = 0;
-  new IntersectionObserver(es => es.forEach(e => {
-    inView = e.isIntersecting;
-    reels();
-    // Plays once on first view: two Reels of the feed, then Idyll steps in.
-    if (inView && !touched && !reduce && !autoTimer) autoTimer = setTimeout(() => { if (!touched) setState(1); touched = true; }, DWELL * 2 + 600);
-  }), { threshold: .55 }).observe(phone);
+  // App switch, with a sliding knob.
+  const appsEl = $('.apps'), knob = appsEl.querySelector('.knob'), appBtns = [...appsEl.querySelectorAll('button')];
+  function moveKnob() { const b = appBtns.find(x => x.getAttribute('aria-pressed') === 'true'); knob.style.width = b.offsetWidth + 'px'; knob.style.transform = `translateX(${b.offsetLeft}px)`; }
+  appBtns.forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.app === app) return;
+    appBtns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    moveKnob(); load(b.dataset.app, true);
+  }));
+  moveKnob();
+  // Phone view switch.
+  const pair = $('#pair'), viewBtns = $$('.view button');
+  viewBtns.forEach(b => b.addEventListener('click', () => { viewBtns.forEach(x => x.setAttribute('aria-pressed', String(x === b))); pair.dataset.view = b.dataset.view; }));
 
-  /* Strikes print on as you read down the bill; the count follows. */
-  const bill = document.getElementById('bill'), bars = [...bill.querySelectorAll('.x')], count = document.getElementById('count');
-  const acts = bill.querySelectorAll('li').length;
-  function strikes() {
-    const r = bill.getBoundingClientRect(), vh = innerHeight;
-    const p = clamp((vh * .82 - r.top) / (r.height * .55 + vh * .2));
+  /* Scroll-linked scenes. */
+  const ks = $$('.hero .k'), scale = $('#scale'), bars = $$('#bill .x'), count = $('#count'), bill = $('#bill');
+  const snaps = $$('.snap'), collage = $('#collage'), k2 = $$('.free .k2'), freeSec = $('#free');
+  const nav = $('#nav'); let solid = null;
+  function scene() {
+    const vh = innerHeight, y = scrollY;
+    const s = y > hero.offsetHeight - 70; if (s !== solid) { solid = s; nav.classList.toggle('solid', s); }
+    if (reduce) return;
+    const hp = clamp(y / (hero.offsetHeight * .9));
+    ks.forEach(k => { k.style.transform = `translate3d(${(+k.dataset.k * hp * 9).toFixed(2)}%,0,0)`; });
+    cyg.style.transform = `translate3d(${(hp * 40).toFixed(1)}px,0,0)`;
+    scale.style.setProperty('--p', hp.toFixed(3));
+    const br = bill.getBoundingClientRect();
+    const bp = clamp((vh * .85 - br.top) / (br.height * .7 + vh * .15));
     let done = 0;
-    bars.forEach((b, i) => {
-      const k = clamp((p - i / bars.length * .78) / .22);
-      b.style.scale = `${k.toFixed(3)} 1`;
-    });
-    bill.querySelectorAll('li').forEach(li => { const xs = li.querySelectorAll('.x'); if ([...xs].every(x => parseFloat(x.style.scale) >= 1)) done++; });
-    count.textContent = done >= acts ? `All ${acts} cancelled` : `Cancelled: ${done} of ${acts}`;
+    bars.forEach((b, i) => { const t = clamp((bp - i / bars.length * .75) / .25); b.style.setProperty('--s', t.toFixed(3)); if (t >= 1) done++; });
+    count.textContent = done === bars.length ? 'All 14 struck off' : `${done} of 14 struck off`;
+    const cr = collage.getBoundingClientRect(), cp = clamp((cr.top + cr.height / 2 - vh / 2) / vh, -1, 1);
+    snaps.forEach(sn => { sn.style.translate = `0 ${(cp * +sn.dataset.par * 400).toFixed(1)}px`; });
+    const fr = freeSec.getBoundingClientRect(), fp = clamp(1 - fr.top / vh);
+    k2.forEach(k => { k.style.transform = `translate3d(${((1 - fp) * +k.dataset.k * -12).toFixed(2)}%,0,0)`; });
   }
-
-  let ticking = false;
-  function onScroll() {
-    if (ticking) return; ticking = true;
-    requestAnimationFrame(() => {
-      ticking = false;
-      const s = scrollY > 24;
-      if (s !== navSmall) { navSmall = s; nav.classList.toggle('small', s); }
-      if (!reduce) strikes();
-    });
-  }
-  if (reduce) count.textContent = `All ${acts} cancelled`;
-  addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  if (reduce) count.textContent = 'All 14 struck off';
+  let tick = false;
+  addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; scene(); }); } }, { passive: true });
+  scene();
 
   let rt;
-  addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => { buildCygnet().then(() => { t0 = -1e5; kick(); }); photos.forEach(c => c._w && printPhoto(c)); }, 160);
-  });
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (build()) { t0 = -1e5; paint(performance.now()); } if (S.b) { measure(S.b); measure(S.a); if (reduce) still(); } moveKnob(); scene(); }, 150); });
 })();
 </script>
 </body>

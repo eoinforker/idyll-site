@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Idyll flagship, four takes</title>
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+  :root { --mag: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --ink: #0e0f14; --mute: #6b6670; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 17px/1.5 "Timeless Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+  header { background: var(--mag); color: var(--cream); padding: 56px 0 48px; }
+  header img { width: 56px; height: 56px; border-radius: 13px; display: block; margin-bottom: 28px; }
+  h1 { font-weight: 800; font-size: clamp(40px, 8vw, 96px); line-height: .92; letter-spacing: -.02em; margin: 0 0 18px; text-transform: uppercase; }
+  header p { max-width: 640px; margin: 0; font-size: 19px; }
+  .mono { font-family: "Paper Mono", ui-monospace, monospace; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  section { padding: 64px 0; border-bottom: 1px solid #e6dcd2; }
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 24px; margin-bottom: 20px; }
+  h2 { font-weight: 800; font-size: clamp(30px, 5vw, 52px); margin: 0; letter-spacing: -.01em; }
+  h2 span { color: var(--mag); }
+  .open { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--cream); text-decoration: none; padding: 12px 20px; border-radius: 999px; font-weight: 600; }
+  .open:hover { background: var(--mag); }
+  .open:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+  .lede { max-width: 760px; margin: 0 0 28px; color: #2b2830; }
+  .clips { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 18px; align-items: start; }
+  .clips.phone { grid-template-columns: 2fr 2fr 1fr; }
+  @media (max-width: 800px) { .clips.phone { grid-template-columns: 1fr; } }
+  figure { margin: 0; }
+  video { width: 100%; height: auto; display: block; border-radius: 12px; background: #e9e1d8; box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 12px 30px -18px rgba(14,15,20,.45); }
+  video.tall { max-width: 260px; margin: 0 auto; }
+  figcaption { margin-top: 10px; color: var(--mute); }
+  .notes { margin: 24px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; color: #2b2830; }
+  .notes li::before { content: "Note "; font-family: "Paper Mono", monospace; font-size: 11px; text-transform: uppercase; color: var(--mag); margin-right: 6px; }
+  footer { padding: 40px 0 64px; color: var(--mute); }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <img src="../../img/icons/H2-white-on-magenta.png" alt="Idyll app icon" width="56" height="56">
+    <p class="mono" style="margin-bottom:14px">Flagship, four takes</p>
+    <h1>Pick one.</h1>
+    <p>Four versions of the flagship page, same colours, same icon, same real scrolling before and after. Each clip below is a straight recording of the live page in Chrome.</p>
+  </div>
+</header>
+
+<main>
+  <section id="a">
+    <div class="wrap">
+      <div class="head"><h2><span>A.</span> Flagship</h2><a class="open" href="../04-riso/">Open the page</a></div>
+      <p class="lede">The balanced one. Kinetic headline with a handwritten edit, the halftone cygnet assembling, then fig. 1: two phones scrolling in sync across Instagram, YouTube and X.</p>
+      <div class="clips">
+        <figure><video src="video/a-hero.mp4" poster="video/a-hero.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption>Hero on load</figcaption></figure>
+        <figure><video src="video/a-instagram.mp4" poster="video/a-instagram.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption>Instagram: Reels, Suggested and Sponsored, against friends only</figcaption></figure>
+        <figure><video src="video/a-youtube.mp4" poster="video/a-youtube.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>YouTube: pre-roll and Shorts, against Subscriptions</figcaption></figure>
+        <figure><video src="video/a-x.mp4" poster="video/a-x.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>X: For you, against Following</figcaption></figure>
+        <figure><video class="tall" src="video/a-phone.mp4" poster="video/a-phone.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>On a phone</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="b">
+    <div class="wrap">
+      <div class="head"><h2><span>B.</span> Cinema</h2><a class="open" href="../04b-cinema/">Open the page</a></div>
+      <p class="lede">A scroll film. The headline breaks apart as you scroll, the field turns blue, a phone flies in, and when Idyll switches on the ads and Reels peel off the screen into a pile.</p>
+      <div class="clips phone">
+        <figure><video src="video/b-scroll.mp4" poster="video/b-scroll.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption>Scrolling through the opening</figcaption></figure>
+        <figure><video src="video/b-phones.mp4" poster="video/b-phones.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>Side by side, scrolling in sync</figcaption></figure>
+        <figure><video class="tall" src="video/b-phone.mp4" poster="video/b-phone.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>On a phone</figcaption></figure>
+      </div>
+      <ul class="notes"><li>On phones, the moving headline words overlap for a moment during the handover into the film.</li></ul>
+    </div>
+  </section>
+
+  <section id="c">
+    <div class="wrap">
+      <div class="head"><h2><span>C.</span> Kinetic halftone</h2><a class="open" href="../04c-halftone/">Open the page</a></div>
+      <p class="lede">One living field of dots tells the story: the cygnet, then the word IDYLL, then two phone shapes the real phones land in, turning from magenta to blue as the feed becomes your people.</p>
+      <div class="clips phone">
+        <figure><video src="video/c-scroll.mp4" poster="video/c-scroll.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption>Scrolling through the opening</figcaption></figure>
+        <figure><video src="video/c-phones.mp4" poster="video/c-phones.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>The phones, resting</figcaption></figure>
+        <figure><video class="tall" src="video/c-phone.mp4" poster="video/c-phone.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>On a phone</figcaption></figure>
+      </div>
+      <ul class="notes"><li>On narrow phones the two devices sit side by side and are small.</li></ul>
+    </div>
+  </section>
+
+  <section id="d">
+    <div class="wrap">
+      <div class="head"><h2><span>D.</span> Notebook collage</h2><a class="open" href="../04d-collage/">Open the page</a></div>
+      <p class="lede">Initialized pushed furthest. Handwriting that writes itself, a photo pile that sorts itself as you scroll (the noise gets crossed out and falls away), and one phone you wipe between with a drag.</p>
+      <div class="clips">
+        <figure><video src="video/d-scroll.mp4" poster="video/d-scroll.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption>Scrolling through the sort</figcaption></figure>
+        <figure><video src="video/d-phones.mp4" poster="video/d-phones.jpg" muted loop playsinline preload="metadata" controls></video><figcaption>fig. 1, the wipe</figcaption></figure>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="mono">Mock screens are illustrative. Names and handles are invented. Free, for good.</p>
+  </div>
+</footer>
+<script>
+  // Only play clips that are on screen.
+  const vids = document.querySelectorAll("video");
+  if ("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting ? e.target.play().catch(() => {}) : e.target.pause()), { threshold: .35 });
+    vids.forEach((v) => { v.removeAttribute("autoplay"); io.observe(v); });
+  } else {
+    vids.forEach((v) => { v.removeAttribute("autoplay"); v.controls = true; });
+  }
+</script>
+</body>
+</html>

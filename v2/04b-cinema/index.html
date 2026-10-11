@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idyll</title>
+<meta name="description" content="Idyll: social without the scroll. It takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good. Coming soon.">
+<meta name="theme-color" content="#d81b7a">
+<link rel="icon" href="../../img/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../../img/apple-touch-icon.png">
+<link rel="stylesheet" href="../../fonts.css">
+<script>document.documentElement.classList.add('js');</script>
+<style>
+:root {
+  --mag: #d81b7a; --mag-deep: #a5115b; --mag-tint: #f7c6dd;
+  --blue: #2d5bff; --blue-deep: #1b3ccc; --blue-tint: #c9d5ff;
+  --cream: #fff6ee; --cream-2: #f4e7da; --ink: #0e0f14; --ink-2: #191b23; --ink-3: #2a2d38;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Timeless Serif", Georgia, "Times New Roman", serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, Consolas, monospace;
+  --ease: cubic-bezier(.2, .7, .1, 1);
+  --gut: clamp(16px, 4vw, 56px);
+  --field: var(--mag);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overflow-x: clip; }
+body {
+  margin: 0; background: var(--mag); color: var(--cream);
+  font: 400 17px/1.5 var(--serif); overflow-x: clip;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+html.js body { background: var(--ink); }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; font-weight: inherit; }
+.vh { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: 6px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--blue) 35%, transparent); }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 450; }
+
+/* The colour field: one fixed plane behind the film, recoloured by scroll. */
+#field { position: fixed; inset: 0; z-index: -1; background: var(--field); pointer-events: none; }
+html:not(.js) #field { display: none; }
+
+/* ---------- Navigation ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; gap: 28px;
+  padding: 18px var(--gut); color: var(--cream);
+  transition: padding .45s var(--ease), color .3s linear;
+}
+.nav::before { content: ""; position: absolute; inset: 0; background: var(--field); opacity: 0; transition: opacity .35s linear; z-index: -1; }
+.nav.condensed { padding-top: 10px; padding-bottom: 10px; }
+.nav.condensed::before { opacity: .94; }
+.nav.light { color: var(--ink); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 700 21px/1 var(--sans); letter-spacing: -.02em; }
+.brand img { width: 30px; height: 30px; border-radius: 22.5%; transition: transform .45s var(--ease), width .45s var(--ease), height .45s var(--ease); box-shadow: 0 0 0 1px rgba(255,246,238,.25); }
+.nav.condensed .brand img { width: 26px; height: 26px; }
+.brand:hover img { transform: rotate(-6deg) scale(1.06); }
+.nav ul { display: flex; gap: 4px; margin: 0 0 0 auto; padding: 0; list-style: none; }
+.nav ul a { display: block; padding: 8px 12px; border-radius: 999px; text-decoration: none; font: 500 15px/1 var(--sans); transition: background .2s linear; }
+.nav ul a:hover { background: color-mix(in srgb, currentColor 12%, transparent); }
+.soon {
+  display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px; border-radius: 999px;
+  font: 600 14px/1 var(--sans); text-decoration: none; white-space: nowrap;
+  background: var(--cream); color: var(--ink); transition: transform .25s var(--ease), background .2s linear;
+}
+.soon::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--mag); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mag) 25%, transparent); }
+.soon:hover { transform: translateY(-1px); }
+.soon:active { transform: scale(.97); }
+.nav.light .soon { background: var(--ink); color: var(--cream); }
+@media (max-width: 860px) { .nav ul { display: none; } .nav .soon { margin-left: auto; } }
+
+/* ---------- Pinned scenes ---------- */
+.scene { position: relative; }
+.stage {
+  position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; overflow: clip;
+}
+html:not(.js) .scene { background: var(--bg); }
+
+/* ---------- Scene 1: hero ---------- */
+#hero { height: 270vh; --bg: var(--mag); }
+.hero-type { position: absolute; left: var(--gut); right: var(--gut); top: max(92px, 13svh); z-index: 2; }
+.kicker { opacity: .86; margin-bottom: clamp(14px, 2.4svh, 28px); }
+.state {
+  font: 800 clamp(46px, min(10.4vw, 16.5svh), 196px)/.84 var(--sans);
+  letter-spacing: -.045em; text-transform: uppercase; margin: 0;
+}
+.state .ln { display: block; width: max-content; transform-origin: 0 80%; will-change: transform; }
+.state .l2 { padding-left: .62em; }
+.state-2 { margin: clamp(18px, 3svh, 34px) 0 0 clamp(28px, 14vw, 260px); max-width: 30em; font: 400 clamp(17px, 1.45vw, 22px)/1.42 var(--serif); }
+.hero-sub { will-change: transform, opacity; }
+.cyg {
+  position: absolute; z-index: 1; right: calc(var(--gut) + 46px); bottom: 7svh;
+  width: min(44vw, 84svh); aspect-ratio: 640 / 380;
+}
+.cyg canvas { position: absolute; left: -30%; top: -30%; width: 160%; height: 160%; }
+.cyg-css {
+  position: absolute; inset: 0; background: radial-gradient(circle, var(--cream) 46%, transparent 52%) 0 0 / 9px 9px;
+  -webkit-mask: url(../../img/cygnet-mark.svg) center / contain no-repeat; mask: url(../../img/cygnet-mark.svg) center / contain no-repeat;
+}
+.cyg.drawn .cyg-css { display: none; }
+.ticks {
+  position: absolute; right: var(--gut); bottom: 7svh; height: min(54svh, 440px); width: 30px;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+  font: 500 11px/1 var(--mono); color: var(--cream);
+}
+.ticks span { position: relative; padding-right: 14px; opacity: .78; }
+.ticks span::after { content: ""; position: absolute; right: 0; top: 50%; width: 9px; height: 1px; background: currentColor; }
+.ticks i { position: absolute; right: 0; width: 5px; height: 1px; background: currentColor; opacity: .5; }
+.ticks b { position: absolute; right: -4px; top: 0; width: 22px; height: 2px; background: var(--cream); border-radius: 2px; will-change: transform; }
+.cue { position: absolute; left: var(--gut); bottom: 4svh; display: flex; align-items: center; gap: 12px; opacity: .8; }
+.cue::before { content: ""; width: 1px; height: 28px; background: currentColor; animation: cue 2.2s var(--ease) infinite; transform-origin: top; }
+@keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+@media (max-width: 760px) {
+  .hero-type { top: max(84px, 11svh); }
+  .state { font-size: clamp(38px, 11.6vw, 80px); }
+  .state-2 { margin-left: 13vw; font-size: 16.5px; }
+  .cyg { right: auto; left: 50%; width: min(88vw, 52svh * 1.68); bottom: 9svh; transform: translateX(-50%); }
+  .ticks { display: none; }
+  .cue { bottom: 2.6svh; }
+}
+@media (max-width: 760px) and (max-height: 700px) { .kicker { display: none; } .cyg { width: min(78vw, 36svh * 1.68); bottom: 7svh; } }
+@media (min-width: 761px) and (max-width: 1100px) and (min-aspect-ratio: 1/1) { .cyg { width: 40vw; } }
+@media (min-width: 761px) and (max-aspect-ratio: 1/1) { .cyg { width: 66vw; right: 50%; transform: translateX(50%); bottom: 10svh; } .state { font-size: 12vw; } }
+
+/* ---------- Phones (authored at 300 x 650, scaled with --k) ---------- */
+.slot { position: absolute; width: calc(300px * var(--k, 1)); height: calc(650px * var(--k, 1)); }
+.phone {
+  position: absolute; left: 0; top: 0; width: 300px; height: 650px; border-radius: 52px;
+  transform: scale(var(--k, 1)); transform-origin: 0 0;
+  background: linear-gradient(140deg, #5a5c63 0%, #1d1e22 18%, #0d0d10 50%, #26272c 82%, #5b5d64 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.35), inset 0 0 0 2.5px #08080a, inset 0 0 0 4px #3b3d44,
+    0 2px 0 rgba(255,255,255,.08),
+    0 70px 90px -40px rgba(4,6,30,.55), 0 30px 50px -30px rgba(4,6,30,.6), 0 8px 18px -8px rgba(0,0,0,.4);
+}
+.phone::before, .phone::after { content: ""; position: absolute; width: 4px; border-radius: 3px; background: linear-gradient(90deg, #2a2b30, #6d6f76 50%, #26272b); }
+.phone::before { left: -3px; top: 118px; height: 30px; box-shadow: 0 52px 0 0 #3b3c42, 0 52px 0 0 #3b3c42; }
+.phone::after { right: -3px; top: 168px; height: 84px; }
+.phone .vol { position: absolute; left: -3px; width: 4px; border-radius: 3px; background: linear-gradient(90deg, #2a2b30, #6d6f76 50%, #26272b); }
+.phone .vol.a { top: 172px; height: 52px; } .phone .vol.b { top: 236px; height: 52px; }
+.screen {
+  position: absolute; inset: 11px; border-radius: 42px; overflow: hidden; background: #fff; color: #111;
+  display: flex; flex-direction: column; font: 400 12px/1.35 -apple-system, "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  isolation: isolate;
+}
+.island { position: absolute; top: 22px; left: 50%; width: 92px; height: 27px; margin-left: -46px; border-radius: 20px; background: #000; z-index: 9; }
+.island::after { content: ""; position: absolute; right: 12px; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #2c3550, #05060a 70%); }
+.glare {
+  position: absolute; inset: 11px; border-radius: 42px; pointer-events: none; z-index: 8;
+  background: linear-gradient(118deg, rgba(255,255,255,.2) 0%, rgba(255,255,255,.06) 24%, rgba(255,255,255,0) 38%, rgba(255,255,255,0) 72%, rgba(255,255,255,.05) 100%);
+  background-size: 160% 160%; background-position: var(--gx, 0%) 0%;
+}
+.sb { flex: none; height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 6px 26px 0 32px; font: 600 14px/1 -apple-system, "Timeless Sans", sans-serif; letter-spacing: -.01em; }
+.sb .r { display: flex; gap: 5px; align-items: center; }
+.sb svg { display: block; }
+.ah { flex: none; display: flex; align-items: center; justify-content: space-between; height: 42px; padding: 0 14px; }
+.ah .t { font: 700 19px/1 var(--sans); letter-spacing: -.03em; }
+.ah .ic { display: flex; gap: 16px; }
+.fw { position: relative; flex: 1; overflow: hidden; }
+.feed { position: absolute; left: 0; top: 0; width: 100%; will-change: transform; }
+.feed.abs > * { position: absolute; left: 0; top: 0; width: 100%; }
+.tb { flex: none; height: 44px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(0,0,0,.08); background: inherit; }
+.url { flex: none; height: 46px; padding: 6px 12px 0; background: #f2f2f4; }
+.url span { display: flex; align-items: center; justify-content: space-between; height: 30px; padding: 0 12px; border-radius: 10px; background: #fff; font: 500 11.5px/1 -apple-system, "Timeless Sans", sans-serif; color: #222; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.url span b { font-weight: 500; }
+.url span i { font-style: normal; font-size: 10px; color: #555; }
+.home { flex: none; height: 16px; position: relative; background: #f2f2f4; }
+.home::after { content: ""; position: absolute; left: 50%; bottom: 6px; width: 96px; height: 4px; margin-left: -48px; border-radius: 3px; background: #111; }
+svg.i { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; display: block; }
+svg.i.s { width: 16px; height: 16px; }
+.av { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: hsl(var(--h, 330) 70% 86%); color: hsl(var(--h, 330) 55% 28%); font: 700 12px/1 var(--sans); }
+
+/* Instagram-style */
+.ig-stories { overflow: hidden; display: flex; gap: 12px; padding: 6px 12px 12px; border-bottom: 1px solid rgba(0,0,0,.06); }
+.ig-stories div { display: grid; justify-items: center; gap: 4px; font-size: 10px; color: #333; }
+.ig-stories .av { width: 54px; height: 54px; font-size: 16px; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--mag); }
+.ig-post { padding-bottom: 12px; background: #fff; }
+.ig-post header { display: flex; align-items: center; gap: 9px; height: 46px; padding: 0 12px; }
+.ig-post header b { font-weight: 650; font-size: 12.5px; }
+.ig-post header small { display: block; font-size: 10.5px; color: #666; font-weight: 400; }
+.ig-post header .more { margin-left: auto; color: #222; }
+.ig-post .ph { position: relative; width: 100%; aspect-ratio: 1; background: #ddd; overflow: hidden; }
+.ig-post .ph img { width: 100%; height: 100%; object-fit: cover; }
+.ig-post.reel .ph { aspect-ratio: 4 / 5; background: #111; }
+.ig-post .acts { display: flex; gap: 14px; padding: 10px 12px 6px; }
+.ig-post .acts .sv { margin-left: auto; }
+.ig-post p { padding: 0 12px; font-size: 12px; }
+.ig-post p + p { margin-top: 3px; }
+.ig-post .tm { color: #888; font-size: 10px; margin-top: 5px; }
+.pill { position: absolute; left: 10px; top: 10px; padding: 4px 8px; border-radius: 6px; background: rgba(0,0,0,.55); color: #fff; font: 600 10px/1 var(--sans); display: flex; gap: 4px; align-items: center; }
+.play { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px; border-radius: 50%; background: rgba(0,0,0,.35); display: grid; place-items: center; }
+.play::after { content: ""; border-left: 15px solid #fff; border-top: 9px solid transparent; border-bottom: 9px solid transparent; margin-left: 4px; }
+.prog { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(255,255,255,.35); }
+.prog i { position: absolute; inset: 0; background: #fff; transform-origin: 0 0; transform: scaleX(.3); }
+.shop { display: flex; justify-content: space-between; align-items: center; height: 38px; padding: 0 12px; background: #3d5afe; color: #fff; font: 600 12px/1 var(--sans); }
+.ig-sugg { padding: 12px 0 16px; background: #fafafa; border-top: 1px solid rgba(0,0,0,.05); border-bottom: 1px solid rgba(0,0,0,.05); }
+.ig-sugg h4 { margin: 0 12px 10px; display: flex; justify-content: space-between; font: 650 12.5px/1 var(--sans); }
+.ig-sugg h4 span { color: #3d5afe; font-weight: 600; }
+.ig-sugg .row { display: flex; gap: 8px; padding: 0 12px; }
+.ig-sugg .c { flex: none; width: 118px; padding: 14px 8px 10px; border: 1px solid rgba(0,0,0,.08); border-radius: 10px; background: #fff; display: grid; justify-items: center; gap: 5px; text-align: center; font-size: 11px; }
+.ig-sugg .c .av { width: 58px; height: 58px; font-size: 18px; }
+.ig-sugg .c small { color: #777; font-size: 10px; }
+.ig-sugg .c em { font-style: normal; display: block; width: 100%; padding: 6px 0; border-radius: 7px; background: #3d5afe; color: #fff; font-weight: 600; margin-top: 3px; }
+.done { display: grid; justify-items: center; gap: 6px; padding: 26px 20px 30px; text-align: center; }
+.done .ck { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--mag); color: var(--mag); }
+.done b { font: 650 14px/1.2 var(--sans); }
+.done small { color: #777; font-size: 11px; max-width: 18em; }
+.done.dk small { color: #aaa; }
+
+/* YouTube-style (dark) */
+.screen.yt { background: #0f0f0f; color: #f1f1f1; }
+.screen.yt .tb { border-top-color: rgba(255,255,255,.1); }
+.screen.yt .url, .screen.yt .home { background: #1c1c1e; }
+.screen.yt .url span { background: #2c2c2e; color: #eee; }
+.screen.yt .url span i { color: #aaa; }
+.screen.yt .home::after { background: #f1f1f1; }
+.chips { display: flex; gap: 6px; padding: 4px 12px 10px; overflow: hidden; }
+.chips span { flex: none; padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,.1); font: 600 11px/1 var(--sans); }
+.chips span.on { background: #f1f1f1; color: #0f0f0f; }
+.yt-v { padding-bottom: 14px; }
+.yt-v .th { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #222; }
+.yt-v .th img { width: 100%; height: 100%; object-fit: cover; }
+.dur { position: absolute; right: 7px; bottom: 7px; padding: 2px 4px; border-radius: 4px; background: rgba(0,0,0,.8); color: #fff; font: 600 10px/1.2 var(--sans); }
+.yt-v .m { display: flex; gap: 10px; padding: 10px 12px 0; }
+.yt-v .m b { display: block; font: 600 12.5px/1.3 var(--sans); }
+.yt-v .m small { display: block; color: #aaa; font-size: 10.5px; margin-top: 3px; }
+.yt-ad .th::before { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 34%; background: #ffd23f; z-index: 2; }
+.adb { position: absolute; left: 8px; bottom: 10px; padding: 3px 6px; border-radius: 4px; background: #ffd23f; color: #111; font: 700 10px/1.2 var(--sans); }
+.skip { position: absolute; right: 0; bottom: 14px; padding: 7px 10px; background: rgba(0,0,0,.72); color: #fff; font: 600 11px/1 var(--sans); border: 1px solid rgba(255,255,255,.25); border-right: 0; }
+.visit { margin-left: auto; align-self: center; padding: 7px 11px; border-radius: 999px; background: #3ea6ff; color: #0f0f0f; font: 700 11px/1 var(--sans); }
+.shorts { padding: 4px 0 18px; border-top: 4px solid #1f1f1f; border-bottom: 4px solid #1f1f1f; margin-bottom: 14px; }
+.shorts h4 { margin: 10px 12px; font: 700 15px/1 var(--sans); display: flex; gap: 8px; align-items: center; }
+.shorts h4 i { width: 14px; height: 18px; border-radius: 4px; background: #ff3d3d; display: inline-block; }
+.shorts .row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 12px; }
+.shorts .s { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; background: #222; }
+.shorts .s img { width: 100%; height: 100%; object-fit: cover; }
+.shorts .s p { position: absolute; left: 8px; right: 8px; bottom: 8px; color: #fff; font: 600 11px/1.25 var(--sans); text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+.shorts .s p small { display: block; font-weight: 500; opacity: .9; margin-top: 3px; }
+.subs { display: flex; gap: 12px; padding: 2px 12px 12px; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 12px; }
+.subs div { display: grid; justify-items: center; gap: 4px; font-size: 9.5px; color: #ccc; }
+.subs .av { width: 44px; height: 44px; font-size: 14px; }
+
+/* X-style */
+.screen.xx { background: #fff; }
+.xtabs { flex: none; display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid rgba(0,0,0,.1); }
+.xtabs span { position: relative; text-align: center; padding: 10px 0 12px; font: 500 13px/1 var(--sans); color: #666; }
+.xtabs span.on { color: #111; font-weight: 700; }
+.xtabs span.on::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 52px; margin-left: -26px; height: 4px; border-radius: 3px; background: var(--blue); }
+.xp { display: flex; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,.08); }
+.xp .av { width: 36px; height: 36px; }
+.xp .b { flex: 1; min-width: 0; }
+.xp .n { font-size: 12px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xp .n b { color: #111; font-weight: 700; }
+.xp .tx { font-size: 12.5px; margin-top: 2px; color: #111; }
+.xp .im { margin-top: 8px; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 10; border: 1px solid rgba(0,0,0,.08); }
+.xp .im img { width: 100%; height: 100%; object-fit: cover; }
+.xp .ac { display: flex; justify-content: space-between; margin-top: 9px; color: #666; font-size: 10.5px; padding-right: 10px; }
+.xp .ac span { display: flex; align-items: center; gap: 4px; }
+.xp .ad { margin-top: 6px; font-size: 10.5px; color: #666; }
+.xbox { padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,.08); background: #f7f8fa; }
+.xbox h4 { margin: 0 0 8px; font: 750 15px/1.1 var(--sans); }
+.xbox .r { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 12px; }
+.xbox .r small { display: block; color: #666; font-size: 10.5px; }
+.xbox .r em { margin-left: auto; font-style: normal; padding: 6px 12px; border-radius: 999px; background: #111; color: #fff; font-weight: 700; font-size: 11px; }
+.xbox .t { padding: 6px 0; font-size: 12px; }
+.xbox .t small { display: block; color: #666; font-size: 10.5px; }
+.xbox .t b { font-weight: 700; }
+
+/* ---------- Scene 2: the film ---------- */
+#film { --bg: var(--blue); z-index: 2; }
+#hero { z-index: 1; }
+html:not(.js) #film { height: 200vh; }
+.film-copy { position: absolute; z-index: 3; left: var(--gut); top: max(108px, 16svh); width: min(29vw, 420px); }
+.film-copy .st { position: relative; display: grid; }
+.film-copy .st > div { grid-area: 1 / 1; transition: opacity .5s var(--ease), transform .6s var(--ease); }
+.film-copy .on-state { opacity: 0; transform: translateY(14px); pointer-events: none; }
+#film.on .film-copy .off-state { opacity: 0; transform: translateY(-14px); }
+#film.on .film-copy .on-state { opacity: 1; transform: none; }
+.film-copy h2 { font: 700 clamp(28px, 2.7vw, 46px)/1.02 var(--sans); letter-spacing: -.035em; margin: 12px 0 14px; text-wrap: balance; }
+.film-copy p.s { font: 400 clamp(16px, 1.2vw, 19px)/1.45 var(--serif); opacity: .92; text-wrap: pretty; }
+.switch { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; font: 600 15px/1 var(--sans); }
+.switch .tr { position: relative; width: 52px; height: 30px; border-radius: 999px; background: rgba(255,246,238,.28); box-shadow: inset 0 0 0 1px rgba(255,246,238,.35); transition: background .35s var(--ease); }
+.switch .tr::after { content: ""; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--cream); box-shadow: 0 2px 6px rgba(0,0,0,.25); transition: transform .45s cubic-bezier(.3, 1.5, .5, 1); }
+#film.on .switch .tr { background: var(--mag); }
+#film.on .switch .tr::after { transform: translateX(22px); }
+.switch .lb { opacity: .7; min-width: 2.2em; }
+.film-slot { left: 50%; top: 50%; margin-left: calc(-150px * var(--k, 1)); margin-top: calc(-325px * var(--k, 1) + 22px); perspective: 1400px; }
+.flyer { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.peel { position: absolute; left: 11px; top: 11px; width: 278px; height: 628px; z-index: 12; pointer-events: none; perspective: 900px; }
+.peel > *:not(.note) { color: #111; background: #fff; font: 400 12px/1.35 -apple-system, "Timeless Sans", "Helvetica Neue", Arial, sans-serif; }
+.peel > * { position: absolute; left: 0; top: 0; width: 278px; visibility: hidden; border-radius: 6px; overflow: hidden; box-shadow: 0 30px 40px -18px rgba(5,10,40,.55), 0 4px 10px rgba(5,10,40,.18); will-change: transform; backface-visibility: hidden; }
+.peel > .note { visibility: visible; box-shadow: none; overflow: visible; width: auto; border-radius: 0; opacity: var(--o, 0); }
+.note { position: absolute; z-index: 13; font: italic 400 22px/1.1 var(--serif); color: var(--cream); white-space: nowrap; pointer-events: none; }
+.note svg { position: absolute; overflow: visible; fill: none; stroke: var(--cream); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.note path { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--d, 0)); }
+.note .w2 { opacity: var(--d2, 0); }
+.splash { position: absolute; inset: 0; display: grid; place-items: center; background: var(--mag); z-index: 1; }
+.splash img { width: 92px; height: 92px; border-radius: 22.5%; }
+html.js .ready .splash { display: none; }
+@media (max-width: 999px), (max-aspect-ratio: 1/1) {
+  .film-copy { left: var(--gut); right: var(--gut); width: auto; top: max(84px, 10svh); text-align: left; max-width: 640px; }
+  .film-copy h2 { font-size: clamp(24px, 6.4vw, 36px); margin: 8px 0 8px; }
+  .film-copy p.s { font-size: 15.5px; }
+  .switch { margin-top: 14px; position: absolute; right: 0; top: -6px; }
+  .film-slot { top: auto; bottom: 3svh; margin-top: 0; }
+}
+@media (max-width: 520px) { .film-copy p.s { display: none; } .film-copy h2 { padding-right: 0; } .switch { position: static; margin-top: 4px; } }
+
+/* ---------- Scene 3: compare ---------- */
+.sec { position: relative; padding: clamp(96px, 14vh, 160px) var(--gut); }
+#compare { --bg: var(--ink); color: var(--cream); padding-bottom: clamp(80px, 12vh, 140px); }
+html:not(.js) .sec { background: var(--bg); }
+.big {
+  font: 800 clamp(40px, 8.4vw, 150px)/.86 var(--sans); letter-spacing: -.045em; text-transform: uppercase; margin: 0;
+}
+.big span { display: block; }
+.big .in { padding-left: .62em; }
+.big-2 { margin: clamp(18px, 2.5vw, 34px) 0 0 clamp(28px, 14vw, 260px); max-width: 31em; font: 400 clamp(17px, 1.45vw, 22px)/1.45 var(--serif); }
+.cmp { margin-top: clamp(48px, 7vw, 96px); display: grid; justify-items: center; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; margin-bottom: 34px; }
+.seg { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--ink-3); box-shadow: inset 0 0 0 1px rgba(255,246,238,.08); position: relative; }
+.seg button { position: relative; z-index: 1; appearance: none; border: 0; background: none; color: var(--cream); padding: 12px 18px; min-height: 44px; border-radius: 999px; font: 600 15px/1 var(--sans); cursor: pointer; transition: color .3s linear, transform .2s var(--ease); }
+.seg button:hover { color: #fff; }
+.seg button:active { transform: scale(.96); }
+.seg button[aria-pressed="true"] { color: var(--ink); }
+.seg .knob { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; border-radius: 999px; background: var(--cream); transition: transform .5s var(--ease), width .5s var(--ease); }
+.pp { appearance: none; border: 0; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--ink-3); color: var(--cream); cursor: pointer; box-shadow: inset 0 0 0 1px rgba(255,246,238,.08); transition: background .2s linear, transform .2s var(--ease); }
+.pp:hover { background: #363a48; } .pp:active { transform: scale(.94); }
+.pair { display: grid; grid-template-columns: auto auto; gap: clamp(14px, 6vw, 110px); align-items: start; }
+.pair figure { margin: 0; display: grid; justify-items: center; }
+.pair .slot { position: relative; }
+.pair figcaption { margin-top: 26px; display: grid; justify-items: center; gap: 8px; text-align: center; }
+.pair .tag { display: inline-flex; align-items: center; gap: 8px; }
+.pair .tag::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--cream); opacity: .35; }
+.pair .with .tag::before { background: var(--mag); opacity: 1; }
+.hand { font: italic 400 clamp(17px, 1.7vw, 24px)/1.1 var(--serif); position: relative; display: inline-block; }
+.hand svg { position: absolute; left: -6%; bottom: -10px; width: 112%; height: 14px; overflow: visible; fill: none; stroke: var(--mag); stroke-width: 2; stroke-linecap: round; }
+.fade-scr .fw { transition: opacity .35s linear; }
+.fade-scr.out .fw { opacity: 0; }
+
+/* ---------- Platforms ---------- */
+#platforms { --bg: var(--ink); color: var(--cream); padding-top: clamp(60px, 9vh, 120px); }
+.vword { position: absolute; right: calc(var(--gut) * .5); top: clamp(80px, 12vh, 140px); writing-mode: vertical-rl; font: 800 clamp(48px, 7vw, 120px)/.8 var(--sans); letter-spacing: -.04em; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px rgba(255,246,238,.28); user-select: none; }
+.plats { margin-top: clamp(48px, 7vw, 100px); border-top: 1px solid rgba(255,246,238,.18); max-width: 1180px; }
+.plat { display: grid; grid-template-columns: minmax(0, 4.2fr) minmax(0, 6fr); gap: 16px clamp(20px, 4vw, 64px); padding: clamp(28px, 4vw, 48px) 0; border-bottom: 1px solid rgba(255,246,238,.18); }
+.plat h3 { font: 700 clamp(34px, 4.6vw, 72px)/.95 var(--sans); letter-spacing: -.04em; }
+.plat h3 small { display: block; margin-top: 14px; }
+.plat .d { font: 400 clamp(16px, 1.3vw, 19px)/1.5 var(--serif); max-width: 34em; }
+.plat .d p + p { margin-top: 12px; opacity: .78; font-size: .92em; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px; box-shadow: inset 0 0 0 1px currentColor; font: 500 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mag); }
+.sites { margin-top: clamp(80px, 10vw, 140px); max-width: 1180px; }
+.sites h3 { font: 700 clamp(26px, 2.6vw, 40px)/1 var(--sans); letter-spacing: -.03em; margin-bottom: 26px; }
+.site { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 10px 32px; padding: 22px 0; border-top: 1px solid rgba(255,246,238,.14); align-items: start; }
+.site .nm { display: flex; align-items: center; gap: 12px; font: 650 18px/1 var(--sans); }
+.site .nm i { width: 22px; height: 22px; background: var(--cream); -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; flex: none; }
+.site ul { margin: 0; padding: 0; list-style: none; font: 400 16px/1.45 var(--serif); }
+.site ul li { display: inline; }
+.site ul li + li::before { content: ", "; }
+.site .lbl { display: block; margin-bottom: 6px; opacity: .6; }
+.site .gone li { text-decoration: line-through; text-decoration-color: var(--mag); text-decoration-thickness: 2px; color: rgba(255,246,238,.7); }
+.honest { position: relative; margin-top: clamp(70px, 9vw, 130px); max-width: 1180px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 24px 48px; align-items: stretch; }
+.hatch { min-height: 180px; border: 1px solid rgba(255,246,238,.4); background: repeating-linear-gradient(-45deg, rgba(255,246,238,.5) 0 1px, transparent 1px 9px); position: relative; }
+.hatch span { position: absolute; left: 14px; bottom: 12px; background: var(--ink); padding: 4px 6px; }
+.honest h3 { font: 700 clamp(26px, 2.6vw, 40px)/1.05 var(--sans); letter-spacing: -.03em; margin-bottom: 14px; }
+.honest p { font: 400 clamp(16px, 1.3vw, 19px)/1.5 var(--serif); max-width: 36em; }
+@media (max-width: 860px) {
+  .plat { grid-template-columns: 1fr; }
+  .site { grid-template-columns: 1fr; gap: 12px; }
+  .honest { grid-template-columns: 1fr; }
+  .hatch { min-height: 90px; }
+  .vword { display: none; }
+}
+
+/* ---------- Privacy ---------- */
+#privacy { --bg: var(--cream); color: var(--ink); }
+.ledger { margin-top: clamp(56px, 8vw, 110px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 clamp(24px, 5vw, 80px); max-width: 1180px; }
+.ledger ol { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+.ledger li { display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: baseline; padding: 20px 0; border-bottom: 1px solid rgba(14,15,20,.2); }
+.ledger li b { font: 700 clamp(24px, 2.6vw, 40px)/1.05 var(--sans); letter-spacing: -.03em; }
+.ledger li span { font: 400 16px/1.45 var(--serif); grid-column: 1 / -1; max-width: 30em; color: #3a3b45; }
+.ledger li em { font-style: normal; }
+.ledger .hb { border: 2px solid var(--ink); background: repeating-linear-gradient(45deg, var(--ink) 0 1.5px, transparent 1.5px 10px); position: relative; min-height: 260px; }
+.ledger .hb p { position: absolute; left: 18px; right: 18px; bottom: 18px; background: var(--cream); padding: 16px 18px; font: 400 16px/1.45 var(--serif); border: 2px solid var(--ink); }
+.ledger .hb p b { display: block; font: 700 18px/1.2 var(--sans); margin-bottom: 6px; }
+@media (max-width: 860px) { .ledger { grid-template-columns: 1fr; gap: 36px; } }
+
+/* ---------- Free ---------- */
+#free { --bg: var(--mag); color: var(--cream); overflow: hidden; overflow: clip; }
+.free-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.collage { position: relative; height: clamp(360px, 40vw, 560px); }
+.collage figure { position: absolute; margin: 0; padding: 10px 10px 30px; background: var(--cream); color: var(--ink); box-shadow: 0 30px 50px -24px rgba(40,0,20,.55); width: 46%; }
+.collage figure .g { position: relative; overflow: hidden; }
+.collage img { width: 100%; aspect-ratio: 1; object-fit: cover; filter: contrast(1.08) saturate(.85); }
+.collage .g::after { content: ""; position: absolute; inset: 0; mix-blend-mode: overlay; opacity: .55; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.collage figcaption { position: absolute; left: 12px; bottom: 8px; font: 500 10.5px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+.collage .c1 { left: 2%; top: 4%; transform: rotate(-5deg); }
+.collage .c2 { left: 40%; top: 0; transform: rotate(4deg); width: 40%; }
+.collage .c3 { left: 18%; top: 38%; transform: rotate(2deg); width: 42%; }
+.collage .c4 { left: 54%; top: 40%; transform: rotate(-3deg); width: 40%; }
+.collage .stk { position: absolute; right: 2%; bottom: 2%; width: 86px; height: 86px; border-radius: 22.5%; transform: rotate(8deg); box-shadow: 0 16px 30px -12px rgba(0,0,30,.5); }
+.free-soon { margin: 34px 0 0 clamp(28px, 14vw, 260px); display: flex; flex-wrap: wrap; gap: 10px; }
+.free-soon .chip { color: var(--cream); }
+.free-soon .chip::before { background: var(--cream); }
+@media (max-width: 860px) { .free-grid { grid-template-columns: 1fr; } .collage { height: 92vw; max-height: 520px; } }
+
+/* ---------- Footer: notebook strip ---------- */
+footer { --bg: var(--cream); background: var(--cream); color: var(--ink); padding: clamp(60px, 9vw, 110px) var(--gut) 40px; }
+.nb {
+  max-width: 1180px; border: 1.5px solid var(--ink);
+  background-color: #fffaf4;
+  background-image: linear-gradient(rgba(45,91,255,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(45,91,255,.14) 1px, transparent 1px);
+  background-size: 14px 14px; background-position: -1px -1px;
+  display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.5fr;
+}
+.nb > div { padding: 16px 18px 20px; border-right: 1px solid var(--ink); min-height: 120px; display: grid; align-content: space-between; gap: 18px; }
+.nb > div:last-child { border-right: 0; }
+.nb .k { font: 500 10.5px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.nb .v { font: 400 19px/1.25 var(--serif); border-bottom: 1px solid var(--ink); padding-bottom: 6px; }
+.nb .v.sig { font: italic 400 24px/1 var(--serif); color: var(--blue); min-height: 36px; position: relative; }
+.nb .v.sig svg { position: absolute; left: 0; bottom: 4px; width: 150px; height: 34px; overflow: visible; fill: none; stroke: var(--blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fbot { max-width: 1180px; margin-top: 36px; display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.5fr; gap: 24px; font: 400 15px/1.6 var(--serif); }
+.fbot .mono { display: block; margin-bottom: 10px; opacity: .6; }
+.fbot ul { list-style: none; margin: 0; padding: 0; }
+.fbot .brand img { box-shadow: none; }
+.small { margin-top: 44px; max-width: 1180px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font: 500 11px/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+@media (max-width: 860px) { .nb, .fbot { grid-template-columns: 1fr 1fr; } .nb > div:nth-child(2) { border-right: 0; } .nb > div:nth-child(-n+2) { border-bottom: 1px solid var(--ink); } }
+@media (max-width: 480px) { .nb, .fbot { grid-template-columns: 1fr; } .nb > div { border-right: 0; border-bottom: 1px solid var(--ink); } .nb > div:last-child { border-bottom: 0; } }
+
+/* Reveals: visible by default, only hidden once JS is confirmed running. */
+html.js .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform 1.1s var(--ease); transition-delay: calc(var(--i, 0) * 90ms); }
+html.js .rv.in { opacity: 1; transform: none; }
+
+/* CSS scroll-driven fallback, for when the script never runs. */
+@supports (animation-timeline: view()) {
+  html:not(.js) #hero { view-timeline: --hero block; }
+  html:not(.js) #hero .l1 { animation: slideL linear both; animation-timeline: --hero; animation-range: contain 40% contain 100%; }
+  html:not(.js) #hero .l2 { animation: slideR linear both; animation-timeline: --hero; animation-range: contain 40% contain 100%; }
+  html:not(.js) #hero .l3 { animation: grow linear both; animation-timeline: --hero; animation-range: contain 40% contain 100%; }
+  html:not(.js) #film { view-timeline: --film block; }
+  html:not(.js) #film .flyer { animation: flyin linear both; animation-timeline: --film; animation-range: entry 30% contain 30%; }
+  @keyframes slideL { to { transform: translateX(-40vw) scale(1.4); } }
+  @keyframes slideR { to { transform: translateX(30vw); } }
+  @keyframes grow { to { transform: translateX(-6vw) scale(2.4); opacity: 0; } }
+  @keyframes flyin { from { transform: translateY(60vh) rotateX(30deg) rotateZ(-9deg) scale(.82); } to { transform: none; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #hero { height: auto; }
+  html.js .rv { opacity: 1; transform: none; transition: none; }
+  .cue::before { animation: none; }
+  .seg .knob, .switch .tr::after, .film-copy .st > div { transition: none; }
+}
+</style>
+</head>
+<body>
+<div id="field" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#hero" aria-label="Idyll, back to the top"><img src="../../img/icons/H2-white-on-magenta.png" width="30" height="30" alt="">Idyll</a>
+  <ul>
+    <li><a href="#film">The feed</a></li>
+    <li><a href="#compare">Side by side</a></li>
+    <li><a href="#platforms">Platforms</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#free">Free</a></li>
+  </ul>
+  <a class="soon" href="#platforms">Coming soon</a>
+</header>
+
+<main>
+<!-- Scene 1: the statement and the cygnet -->
+<section id="hero" class="scene" aria-labelledby="h1">
+  <div class="stage">
+    <div class="hero-type">
+      <p class="kicker mono" id="kick">Coming soon to iPhone, Android, Chrome and Mac</p>
+      <h1 class="state" id="h1"><span class="ln l1">Social</span><span class="ln l2">without the</span><span class="ln l3">scroll.</span></h1>
+      <p class="state-2 hero-sub" id="hsub">Idyll takes the ads, Shorts, Reels and bottomless feeds out of YouTube, Instagram, Facebook and X, and leaves you the people you went there for.</p>
+    </div>
+    <div class="cyg" id="cyg" role="img" aria-label="The Idyll cygnet, drawn in cream halftone dots">
+      <div class="cyg-css"></div>
+      <canvas id="cygC" aria-hidden="true"></canvas>
+    </div>
+    <div class="ticks" id="ticks" aria-hidden="true"></div>
+    <p class="cue mono" id="cue" aria-hidden="true">Scroll slowly</p>
+  </div>
+</section>
+
+<!-- Scene 2: one phone, the feed, then Idyll -->
+<section id="film" class="scene" aria-labelledby="film-h">
+  <div class="stage">
+    <div class="film-copy">
+      <div class="st">
+        <div class="off-state">
+          <p class="mono">Without Idyll</p>
+          <h2 id="film-h">You opened it to see Maya&rsquo;s photo.</h2>
+          <p class="s">Then a Reel, then an advert, then a stranger the app is sure you&rsquo;ll like. The feed is built so there&rsquo;s always one more.</p>
+        </div>
+        <div class="on-state" aria-hidden="true">
+          <p class="mono">With Idyll</p>
+          <h2>Now it&rsquo;s Maya, Leo, Priya, and then it ends.</h2>
+          <p class="s">Sponsored posts, Reels and suggestions come off the page. Your friends stay, in order, until you&rsquo;ve seen them all.</p>
+        </div>
+      </div>
+      <div class="switch" aria-hidden="true"><span>Idyll</span><span class="tr"></span><span class="lb" id="swl">Off</span></div>
+    </div>
+    <div class="slot film-slot" id="fslot" role="img" aria-label="A phone scrolling an Instagram-style feed. Without Idyll it mixes friends' posts with Reels, sponsored posts and suggestions. With Idyll those peel away, leaving friends' posts and a 'You're all caught up' message.">
+      <div class="flyer" id="flyer">
+        <div class="phone" id="fphone" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Scene 3: before and after, in sync -->
+<section id="compare" class="sec" aria-labelledby="cmp-h">
+  <h2 class="big rv" id="cmp-h"><span>Same app.</span><span class="in">Less of it.</span></h2>
+  <p class="big-2 rv" style="--i:1">Both phones are scrolling the same feed at the same speed. One keeps finding more. The other runs out of things your friends posted, and stops.</p>
+  <div class="cmp">
+    <div class="ctrl rv" style="--i:2">
+      <div class="seg" role="group" aria-label="Choose an app to compare">
+        <span class="knob" id="knob"></span>
+        <button type="button" data-app="ig" aria-pressed="true">Instagram</button>
+        <button type="button" data-app="yt" aria-pressed="false">YouTube</button>
+        <button type="button" data-app="x" aria-pressed="false">X</button>
+      </div>
+      <button type="button" class="pp" id="pp" aria-label="Pause the phones"><svg class="i" viewBox="0 0 24 24" id="ppi"><path d="M9 6v12M15 6v12"/></svg></button>
+    </div>
+    <div class="pair" id="pair">
+      <figure class="before">
+        <div class="slot fade-scr" id="sb"><div class="phone" aria-hidden="true"></div></div>
+        <figcaption><span class="mono tag">Without Idyll</span><span class="hand">still going</span></figcaption>
+      </figure>
+      <figure class="with">
+        <div class="slot fade-scr" id="sa"><div class="phone" aria-hidden="true"></div></div>
+        <figcaption><span class="mono tag">With Idyll</span><span class="hand">done, back to your day<svg viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9c30-5 62-6 96-3s66 4 100-2"/></svg></span></figcaption>
+      </figure>
+    </div>
+    <p class="vh" id="cmp-desc" aria-live="polite">Showing an Instagram-style feed.</p>
+  </div>
+</section>
+
+<!-- Platforms -->
+<section id="platforms" class="sec" aria-labelledby="pl-h">
+  <div class="vword" aria-hidden="true">Idyll</div>
+  <h2 class="big rv" id="pl-h"><span>Everywhere</span><span class="in">you scroll.</span></h2>
+  <p class="big-2 rv" style="--i:1">Every version is coming soon. There&rsquo;s nothing to download yet and nothing to sign up for, so this page has no button. It will, when there&rsquo;s something real behind it.</p>
+  <div class="plats">
+    <article class="plat rv">
+      <h3>iPhone<small><span class="chip">Coming soon</span></small></h3>
+      <div class="d">
+        <p>A Safari content blocker cleans the websites. Safari applies the rules itself, and iOS shows that Idyll can&rsquo;t read or send anything from the pages you visit. The real apps get a daily allowance through Screen Time: they work, notifications and all, until your minutes run out, then pause until midnight.</p>
+        <p>Idyll Plus, an optional extension, also skips video ads and turns Shorts into normal videos.</p>
+      </div>
+    </article>
+    <article class="plat rv">
+      <h3>Android<small><span class="chip">Coming soon</span></small></h3>
+      <div class="d"><p>A clean built-in browser for each site, plus a feed guard inside the real apps. It presses Skip ad for you and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p></div>
+    </article>
+    <article class="plat rv">
+      <h3>Chrome and Mac<small><span class="chip">Coming soon</span></small></h3>
+      <div class="d"><p>The same rules on your laptop, so the feed doesn&rsquo;t simply move to a bigger screen.</p></div>
+    </article>
+  </div>
+
+  <div class="sites">
+    <h3 class="rv">Works with</h3>
+    <div class="site rv"><span class="nm"><i style="--m:url(../../img/brands/youtube.svg)"></i>YouTube</span><div><span class="mono lbl">Goes</span><ul class="gone"><li>video ads</li><li>Shorts</li><li>the recommended home feed</li><li>Up next</li></ul></div><div><span class="mono lbl">Stays</span><ul><li>your subscriptions</li><li>search</li><li>the one video a friend sends you</li></ul></div></div>
+    <div class="site rv"><span class="nm"><i style="--m:url(../../img/brands/instagram.svg)"></i>Instagram</span><div><span class="mono lbl">Goes</span><ul class="gone"><li>sponsored posts</li><li>the Reels feed</li><li>the Explore grid</li></ul></div><div><span class="mono lbl">Stays</span><ul><li>messages</li><li>search</li><li>whatever a friend sends you</li></ul></div></div>
+    <div class="site rv"><span class="nm"><i style="--m:url(../../img/brands/facebook.svg)"></i>Facebook</span><div><span class="mono lbl">Goes</span><ul class="gone"><li>Reels</li><li>Watch</li><li>the algorithmic feed</li></ul></div><div><span class="mono lbl">Stays</span><ul><li>friends, in order</li><li>groups</li><li>messages</li></ul></div></div>
+    <div class="site rv"><span class="nm"><i style="--m:url(../../img/brands/x.svg)"></i>X</span><div><span class="mono lbl">Goes</span><ul class="gone"><li>For you</li><li>promoted posts</li><li>trends</li><li>who to follow</li></ul></div><div><span class="mono lbl">Stays</span><ul><li>Following</li><li>search</li><li>messages</li></ul></div></div>
+  </div>
+
+  <div class="honest rv">
+    <div class="hatch" aria-hidden="true"><span class="mono">Sealed</span></div>
+    <div>
+      <h3>The honest bit.</h3>
+      <p>No app can change what&rsquo;s inside the official YouTube or Instagram apps on iPhone. Apple keeps apps sealed off from each other, and anyone who says otherwise is shipping a modified copy that can get your account flagged. So Idyll cleans the websites, and gives the apps a daily limit instead.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Privacy -->
+<section id="privacy" class="sec" aria-labelledby="pr-h">
+  <h2 class="big rv" id="pr-h"><span>You log in to</span><span class="in">the real sites.</span></h2>
+  <p class="big-2 rv" style="--i:1">Never inside Idyll. Your passwords go where they always went, and Idyll sits quietly in between, taking things away.</p>
+  <div class="ledger">
+    <ol>
+      <li class="rv"><b>No account.</b><span>There&rsquo;s nothing to sign up for, so there&rsquo;s no Idyll profile of you anywhere.</span></li>
+      <li class="rv" style="--i:1"><b>Nothing leaves your phone.</b><span>The rules run on the device. What you look at stays between you and the site you&rsquo;re on.</span></li>
+      <li class="rv" style="--i:2"><b>Zero trackers.</b><span>Not one. Not even the polite kind that counts visits.</span></li>
+    </ol>
+    <div class="hb rv" style="--i:1" aria-hidden="false"><p><b>What Idyll knows about you</b>This box. It&rsquo;s empty on purpose.</p></div>
+  </div>
+</section>
+
+<!-- Free -->
+<section id="free" class="sec" aria-labelledby="fr-h">
+  <div class="free-grid">
+    <div>
+      <h2 class="big rv" id="fr-h"><span>Free.</span><span class="in">For good.</span></h2>
+      <p class="big-2 rv" style="--i:1">No subscription. No trial that quietly turns into one. No ads, and no data sold. Idyll will never charge you, and we&rsquo;re writing it down here so you can hold us to it.</p>
+      <div class="free-soon rv" style="--i:2"><span class="chip">iPhone</span><span class="chip">Android</span><span class="chip">Chrome</span><span class="chip">Mac</span><span class="chip">All coming soon</span></div>
+    </div>
+    <div class="collage rv" style="--i:1" aria-label="A few photos from friends: a café, the river at night, a lake at dawn, an allotment harvest" role="img">
+      <figure class="c1"><div class="g"><img src="../../img/photos/42.jpg" width="480" height="480" alt="" loading="lazy" decoding="async"></div><figcaption>Maya, Saturday</figcaption></figure>
+      <figure class="c2"><div class="g"><img src="../../img/photos/122.jpg" width="480" height="480" alt="" loading="lazy" decoding="async"></div><figcaption>Leo, the bridge</figcaption></figure>
+      <figure class="c3"><div class="g"><img src="../../img/photos/128.jpg" width="480" height="480" alt="" loading="lazy" decoding="async"></div><figcaption>Ava, 6am</figcaption></figure>
+      <figure class="c4"><div class="g"><img src="../../img/photos/292.jpg" width="480" height="480" alt="" loading="lazy" decoding="async"></div><figcaption>Noah, allotment</figcaption></figure>
+      <img class="stk" src="../../img/icons/H4-white-on-electric-blue.png" width="86" height="86" alt="" loading="lazy">
+    </div>
+  </div>
+</section>
+</main>
+
+<footer aria-label="Notebook">
+  <div class="nb rv">
+    <div><span class="k">Project</span><span class="v">Idyll: social without the scroll</span></div>
+    <div><span class="k">Recorded by</span><span class="v">The Idyll team</span></div>
+    <div><span class="k">Date</span><span class="v"><time datetime="2026-10-11">11 October 2026</time></span></div>
+    <div><span class="k">Witnessed and understood by</span><span class="v sig">you<svg viewBox="0 0 150 34" aria-hidden="true"><path d="M44 22c8-10 14-14 16-10s-6 14-2 14 14-16 18-14-4 12 0 12 10-8 16-10c8-3 20-2 50-6"/></svg></span></div>
+  </div>
+  <div class="fbot">
+    <div><a class="brand" href="#hero"><img src="../../img/icons/H2-white-on-magenta.png" width="30" height="30" alt="">Idyll</a><p style="margin-top:14px">Social without the scroll.</p></div>
+    <div><span class="mono">Product</span><ul><li>iPhone</li><li>Android</li><li>Chrome and Mac</li><li>Idyll Plus</li></ul></div>
+    <div><span class="mono">Idyll</span><ul><li>About</li><li>Privacy</li><li>Contact</li></ul></div>
+    <div><span class="mono">Status</span><p>Everything is coming soon. No download link, no mailing list, no tricks.</p></div>
+  </div>
+  <div class="small"><span>Free, for good</span><span>Works with YouTube, Instagram, Facebook and X. Not affiliated with any of them.</span></div>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
+const lerp = (a, b, t) => a + (b - a) * t;
+const eOut = t => 1 - Math.pow(1 - t, 3);
+const eIO = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const mq = matchMedia('(prefers-reduced-motion: reduce)');
+let reduce = mq.matches;
+const P = n => `../../img/photos/${n}.jpg`;
+
+/* ---------- Icons ---------- */
+const PATHS = {
+  heart: 'M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z',
+  bubble: 'M20.5 12a8.5 8.5 0 1 1-3.6-6.9A8.5 8.5 0 0 1 20.5 12zM20.5 20.5l-2.2-4',
+  send: 'M21 3 3.5 10l7 2.6L13 20zM10.5 12.6 21 3',
+  save: 'M6.5 3.5h11v17l-5.5-4.6-5.5 4.6z',
+  more: 'M6 12h.01M12 12h.01M18 12h.01',
+  home: 'M3.5 10.5 12 3.5l8.5 7V20h-5.5v-6h-6v6H3.5z',
+  search: 'M10.5 17a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13zM15.5 15.5 20 20',
+  plus: 'M4 4h16v16H4zM12 8v8M8 12h8',
+  clip: 'M4 4h16v16H4zM10 9l5 3-5 3z',
+  user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5c1-4 4-5.5 7.5-5.5s6.5 1.5 7.5 5.5',
+  bell: 'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4',
+  mail: 'M3.5 6h17v12h-17zM3.5 6.5 12 13l8.5-6.5',
+  subs: 'M4 8h16v12H4zM7 5h10M9.5 11.5v5l4-2.5z',
+  cast: 'M4 6.5V5h16v14h-6M4 19h.01M4 15.5a3.5 3.5 0 0 1 3.5 3.5M4 12a7 7 0 0 1 7 7',
+  repost: 'M7 7h10l-2.5-2.5M17 17H7l2.5 2.5M17 7v6M7 17v-6',
+  bars: 'M6 20v-6M12 20V8M18 20v-12',
+  check: 'M6 12.5 10.5 17 18.5 8',
+  chev: 'M9 6l6 6-6 6',
+  shorts: 'M8 3.5h8a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2zM10.5 9.5l4 2.5-4 2.5z',
+  mute: 'M4 9.5h3.5L12 6v12l-4.5-3.5H4zM16 9.5l4 5M20 9.5l-4 5'
+};
+const ic = (n, c = '') => `<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="true"><path d="${PATHS[n]}"/></svg>`;
+const statusBar = dark => `<div class="sb"><span>9:41</span><span class="r">
+  <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+  <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 2.2c2.2 0 4.2.9 5.7 2.3l1.1-1.1A9.6 9.6 0 0 0 7.5.6 9.6 9.6 0 0 0 .7 3.4l1.1 1.1a8 8 0 0 1 5.7-2.3zm0 3.1c1.4 0 2.6.5 3.5 1.4l1.1-1.1a6.5 6.5 0 0 0-9.2 0L4 6.7c.9-.9 2.1-1.4 3.5-1.4zm0 3.1c-.6 0-1.1.2-1.4.6L7.5 10.4 8.9 9a2 2 0 0 0-1.4-.6z"/></svg>
+  <svg width="25" height="12" viewBox="0 0 25 12"><rect x=".5" y=".5" width="21" height="11" rx="3.4" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="2" fill="currentColor"/><path d="M23 4v4c.8-.3 1.3-1 1.3-2S23.8 4.3 23 4z" fill="currentColor" opacity=".45"/></svg>
+</span></div>`;
+const urlBar = d => `<div class="url"><span><i>aA</i><b>${d}</b>${ic('repost', 's')}</span></div><div class="home"></div>`;
+const img = (n, w = 480) => `<img src="${P(n)}" width="${w}" height="${w}" alt="" decoding="async">`;
+const hue = s => [...s].reduce((a, c) => a + c.charCodeAt(0) * 37, 0) % 360;
+const av = (name, cls = '') => `<span class="av ${cls}" style="--h:${hue(name)}">${name[0].toUpperCase()}</span>`;
+
+/* ---------- Instagram-style blocks ---------- */
+const IG = {
+  stories: () => `<div class="ig-stories" data-k="friend">${['Your story', 'maya', 'leo', 'priya', 'sam', 'ava'].map(n => `<div>${av(n === 'Your story' ? 'you' : n)}<span>${n}</span></div>`).join('')}</div>`,
+  post: (n, h, ph, cap, t, likedBy) => `<article class="ig-post" data-k="friend"><header>${av(n)}<b>${h}</b><span class="more">${ic('more')}</span></header><div class="ph">${img(ph)}</div><div class="acts">${ic('heart')}${ic('bubble')}${ic('send')}<span class="sv">${ic('save')}</span></div><p>Liked by <b>${likedBy}</b> and others</p><p><b>${h}</b> ${cap}</p><p class="tm">${t}</p></article>`,
+  reel: (h, ph, cap) => `<article class="ig-post reel" data-k="reel"><header>${av(h)}<div><b>${h}</b><small>Suggested Reel</small></div><span class="more">${ic('more')}</span></header><div class="ph">${img(ph)}<span class="pill">${ic('clip', 's')}Reels</span><span class="play"></span><span class="prog"><i></i></span></div><div class="acts">${ic('heart')}${ic('bubble')}${ic('send')}<span class="sv">${ic('save')}</span></div><p><b>${h}</b> ${cap}</p></article>`,
+  ad: (h, ph, cap) => `<article class="ig-post" data-k="ad"><header>${av(h)}<div><b>${h}</b><small>Sponsored</small></div><span class="more">${ic('more')}</span></header><div class="ph">${img(ph)}</div><div class="shop"><span>Shop now</span>${ic('chev', 's')}</div><div class="acts">${ic('heart')}${ic('bubble')}${ic('send')}<span class="sv">${ic('save')}</span></div><p><b>${h}</b> ${cap}</p></article>`,
+  sugg: () => `<div class="ig-sugg" data-k="sugg"><h4>Suggested for you <span>See all</span></h4><div class="row">${[['wanderlens', 'Popular near you'], ['daily.dunk', 'Followed by 3 others'], ['plantparent', 'New to the app']].map(([n, s]) => `<div class="c">${av(n)}<b>${n}</b><small>${s}</small><em>Follow</em></div>`).join('')}</div></div>`,
+  done: (msg = 'You&rsquo;ve seen all new posts from the past 3 days.') => `<div class="done" data-k="end"><span class="ck">${ic('check')}</span><b>You&rsquo;re all caught up</b><small>${msg}</small></div>`,
+  shell: body => `${statusBar()}<div class="ah"><span class="t">Home</span><span class="ic">${ic('heart')}${ic('send')}</span></div><div class="fw"><div class="feed">${body}</div></div><div class="tb">${ic('home')}${ic('search')}${ic('plus')}${ic('clip')}${ic('user')}</div>${urlBar('instagram.com')}`
+};
+const F = {
+  maya: () => IG.post('maya', 'maya.k', 42, 'Found a café with long tables and no music. Stayed three hours.', '2 hours ago', 'leo'),
+  leo: () => IG.post('leo', 'leo.rivers', 122, 'The river from the bridge tonight. Cold hands, worth it.', '4 hours ago', 'priya'),
+  priya: () => IG.post('priya', 'priya.walks', 200, 'The highland cattle were out on the cliff path again.', '6 hours ago', 'sam'),
+  sam: () => IG.post('sam', 'sam.shed', 76, 'Bringing an old bike back. Week two, still no brakes.', 'Yesterday', 'maya'),
+  ava: () => IG.post('ava', 'ava.outdoors', 128, 'Lake at six. Nobody else there.', 'Yesterday', 'noah'),
+  noah: () => IG.post('noah', 'noah.grows', 292, 'Allotment haul. Red onions for anyone who wants them.', '2 days ago', 'ava'),
+  tom: () => IG.post('tom', 'tom.high', 29, 'Three days on the high route. Knees: gone.', '2 days ago', 'jess'),
+  reelA: () => IG.reel('dune.days', 184, 'Golden hour, again. Wait for the end.'),
+  reelB: () => IG.reel('pupdates', 237, 'He knows exactly what he did.'),
+  reelC: () => IG.reel('cafe.crawl', 192, 'Ranking every café in town. Part 41.'),
+  reelD: () => IG.reel('bloomloop', 106, 'Spring in nine seconds.'),
+  adA: () => IG.ad('berrybox', 102, 'Fresh berries every week, straight to your door.'),
+  adB: () => IG.ad('lumen.cams', 250, 'Five cameras under fifty quid. Number four will surprise you.'),
+  adC: () => IG.ad('steep.co', 225, 'Loose leaf tea, delivered monthly.'),
+  adD: () => IG.ad('honeypot', 312, 'Raw honey, small batches. 20% off today.')
+};
+
+/* ---------- YouTube-style ---------- */
+const YT = {
+  vid: (ch, ph, title, meta, dur, k = 'friend') => `<article class="yt-v" data-k="${k}"><div class="th">${img(ph)}<span class="dur">${dur}</span></div><div class="m">${av(ch)}<div><b>${title}</b><small>${ch} · ${meta}</small></div></div></article>`,
+  ad: (ph, brand, line) => `<article class="yt-v yt-ad" data-k="ad"><div class="th">${img(ph)}<span class="adb">Ad · 0:05</span><span class="skip">Skip in 4</span></div><div class="m">${av(brand)}<div><b>${line}</b><small>Sponsored · ${brand}</small></div><span class="visit">Visit site</span></div></article>`,
+  shorts: (a, b) => `<div class="shorts" data-k="reel"><h4><i></i>Shorts</h4><div class="row">${[a, b].map(([ph, t, v]) => `<div class="s">${img(ph)}<p>${t}<small>${v} views</small></p></div>`).join('')}</div></div>`,
+  shell: (title, chips, body) => `${statusBar()}<div class="ah"><span class="t">${title}</span><span class="ic">${ic('cast')}${ic('bell')}${ic('search')}</span></div>${chips}<div class="fw"><div class="feed">${body}</div></div><div class="tb">${ic('home')}${ic('shorts')}${ic('plus')}${ic('subs')}${ic('user')}</div>${urlBar('m.youtube.com')}`
+};
+/* ---------- X-style ---------- */
+const X = {
+  post: (n, h, t, tx, ph, k = 'friend', ad) => `<article class="xp" data-k="${k}">${av(n)}<div class="b"><div class="n"><b>${n}</b> @${h} · ${t}</div><div class="tx">${tx}</div>${ph ? `<div class="im">${img(ph)}</div>` : ''}<div class="ac"><span>${ic('bubble', 's')}${ad ? 12 : 3}</span><span>${ic('repost', 's')}${ad ? 40 : 1}</span><span>${ic('heart', 's')}${ad ? '1.2K' : 18}</span><span>${ic('bars', 's')}${ad ? '88K' : 240}</span></div>${ad ? '<div class="ad">Ad</div>' : ''}</div></article>`,
+  follow: () => `<div class="xbox" data-k="sugg"><h4>Who to follow</h4>${[['Quick Takes', 'hottakes_daily'], ['Gadget Drop', 'gadgetdrop'], ['Daily Thread', 'threadguy']].map(([n, h]) => `<div class="r">${av(n)}<div><b>${n}</b><small>@${h}</small></div><em>Follow</em></div>`).join('')}</div>`,
+  trends: () => `<div class="xbox" data-k="sugg"><h4>Trends for you</h4>${[['Trending in UK', '#MondayMood', '24K posts'], ['Entertainment · Trending', 'Season finale', '61K posts'], ['Trending', 'Hot take', '9,104 posts']].map(([a, b, c]) => `<div class="t"><small>${a}</small><b>${b}</b><small>${c}</small></div>`).join('')}</div>`,
+  shell: (on, body) => `${statusBar()}<div class="ah"><span class="t">Home</span><span class="ic">${ic('search')}</span></div><div class="xtabs"><span class="${on === 'f' ? '' : 'on'}">For you</span><span class="${on === 'f' ? 'on' : ''}">Following</span></div><div class="fw"><div class="feed">${body}</div></div><div class="tb">${ic('home')}${ic('search')}${ic('bell')}${ic('mail')}</div>${urlBar('x.com')}`
+};
+
+const APPS = {
+  ig: {
+    name: 'an Instagram-style feed', cls: 'ig',
+    before: () => IG.shell(IG.stories() + F.maya() + F.reelA() + F.adA() + F.leo() + IG.sugg() + F.reelB() + F.priya() + F.adB() + F.reelC() + F.sam() + F.adC() + IG.sugg() + F.reelD() + F.ava() + F.adD() + F.reelA() + F.adA() + F.noah() + F.reelB() + IG.sugg() + F.adB() + F.reelC() + F.adC()),
+    after: () => IG.shell(IG.stories() + F.maya() + F.leo() + F.priya() + F.sam() + F.ava() + F.noah() + IG.done())
+  },
+  yt: {
+    name: 'a YouTube-style home and subscriptions feed', cls: 'yt',
+    before: () => {
+      const chips = '<div class="chips"><span class="on">All</span><span>Music</span><span>Gaming</span><span>Live</span><span>Mixes</span><span>News</span></div>';
+      const sh1 = YT.shorts([184, 'POV: the last sunset of summer', '2.1M'], [237, 'Dog reacts to his own bark', '4.8M']);
+      const sh2 = YT.shorts([106, 'Blossom timelapse in 9 seconds', '880K'], [137, 'Wait for it', '12M']);
+      return YT.shell('Home', chips, YT.ad(312, 'goldpot', 'Raw honey, small batches') + YT.vid('Island Life', 10, 'I spent 72 hours alone on an island', '3.4M views · 2 weeks ago', '24:18', 'rec') + sh1 + YT.vid('Gear Lab', 145, 'Every guitar pedal you need this year', '920K views · 5 days ago', '18:02', 'rec') + YT.ad(250, 'lumen.cams', 'Five cameras under fifty quid') + YT.vid('Tom walks', 29, 'Three days on the high route', '2 days ago', '14:02') + YT.vid('Fast Facts', 57, 'Cities that will vanish by 2050', '6.1M views · 1 month ago', '11:47', 'rec') + sh2 + YT.vid('Viral Kitchen', 292, 'I tried every onion hack on the internet', '1.2M views · 3 weeks ago', '16:30', 'rec') + YT.ad(225, 'steep.co', 'Loose leaf tea, monthly') + YT.vid('Mega Builds', 76, 'Restoring a bike found in a barn', '4.4M views · 2 months ago', '31:09', 'rec') + sh1 + YT.vid('Island Life', 15, 'Hiking to the hidden waterfall', '2.2M views · 1 month ago', '19:55', 'rec') + YT.ad(102, 'berrybox', 'Fresh every week') + YT.vid('Fast Facts', 112, 'Why fields look like this', '3M views · 6 days ago', '9:12', 'rec'));
+    },
+    after: () => {
+      const chips = '<div class="subs"><div>' + av('Tom walks') + 'Tom</div><div>' + av('Sam’s shed') + 'Sam</div><div>' + av('Jess cooks') + 'Jess</div><div>' + av('Priya draws') + 'Priya</div><div>' + av('Noah outdoors') + 'Noah</div></div>';
+      return YT.shell('Subscriptions', chips, YT.vid('Tom walks', 29, 'Three days on the high route', '2 days ago', '14:02') + YT.vid('Sam’s shed', 76, 'Bringing an old bike back, part two', '3 days ago', '8:45') + YT.vid('Jess cooks', 292, 'One pan, four onions, twenty minutes', '4 days ago', '11:20') + YT.vid('Priya draws', 82, 'Painting blossom in one sitting', '5 days ago', '22:15') + YT.vid('Noah outdoors', 128, 'The lake before anyone wakes up', '6 days ago', '9:31') + IG.done('That&rsquo;s every new upload from the channels you follow.').replace('class="done"', 'class="done dk"'));
+    }
+  },
+  x: {
+    name: 'an X-style timeline', cls: 'xx',
+    before: () => X.shell('y', X.post('Quick Takes', 'hottakes_daily', '1h', 'Unpopular opinion: breakfast is overrated. Fight me.', 0, 'rec') + X.post('lumen.cams', 'lumencams', '', 'Five cameras under fifty quid. Number four will surprise you.', 250, 'ad', 1) + X.post('Priya', 'priya_walks', '3h', 'Found a café with long tables and no music. Stayed three hours.', 42) + X.trends() + X.post('Gadget Drop', 'gadgetdrop', '20m', 'This changes everything. Thread below.', 145, 'rec') + X.follow() + X.post('Daily Thread', 'threadguy', '2h', '23 things nobody tells you about mornings. A thread.', 0, 'rec') + X.post('steep.co', 'steepco', '', 'Loose leaf tea, delivered monthly. First box free.', 225, 'ad', 1) + X.post('Leo', 'leo_rivers', '5h', 'The river from the bridge tonight. Cold hands, worth it.', 122) + X.post('Quick Takes', 'hottakes_daily', '6h', 'Hot take: the window seat is a scam.', 0, 'rec') + X.trends() + X.post('Fast Facts', 'fastfacts', '1h', 'You will not believe what this field is used for.', 112, 'rec') + X.post('berrybox', 'berrybox', '', 'Fresh berries, every week, straight to your door.', 102, 'ad', 1) + X.follow() + X.post('Gadget Drop', 'gadgetdrop', '4h', 'Ranking every phone case I own.', 0, 'rec')),
+    after: () => X.shell('f', X.post('Priya', 'priya_walks', '3h', 'Found a café with long tables and no music. Stayed three hours.', 42) + X.post('Leo', 'leo_rivers', '5h', 'The river from the bridge tonight. Cold hands, worth it.', 122) + X.post('Jess', 'jess_cooks', '7h', 'One pan, four onions, twenty minutes. Recipe in the replies.', 292) + X.post('Tom', 'tom_high', '9h', 'Back from the high route. Legs have resigned.') + X.post('Maya', 'maya_k', '11h', 'The blossom on our street is out.', 106) + IG.done('You&rsquo;ve seen every post from the people you follow.'))
+  }
+};
+const shellFrame = cls => `<div class="vol a"></div><div class="vol b"></div><div class="screen ${cls}"></div><div class="island"></div><div class="glare"></div>`;
+
+/* ---------- Scroll engine ---------- */
+let vw = innerWidth, vh = innerHeight, Y = scrollY, ticking = false;
+const scenes = [];
+function frame() { ticking = false; for (const s of scenes) if (s.on) s.update(); paintField(); navState(); }
+const kick = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+addEventListener('scroll', () => { Y = scrollY; kick(); }, { passive: true });
+const io = new IntersectionObserver(es => { for (const e of es) { const s = e.target._scene; if (s) { s.on = e.isIntersecting; if (s.on) kick(); } } }, { rootMargin: '200px 0px' });
+function addScene(el, update, layout) { const s = { el, update, layout, on: false, top: 0, len: 1 }; el._scene = s; scenes.push(s); io.observe(el); return s; }
+const docTop = el => { let t = 0; while (el) { t += el.offsetTop; el = el.offsetParent; } return t; };
+
+/* ---------- Colour field ---------- */
+const field = $('#field');
+const C = { mag: [216, 27, 122], blue: [45, 91, 255], ink: [14, 15, 20], cream: [255, 246, 238] };
+let stops = [];
+let fieldRGB = C.mag;
+function paintField() {
+  if (!stops.length) return;
+  let c = stops[0][1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [y0, c0] = stops[i], [y1, c1] = stops[i + 1];
+    if (Y >= y0 && Y <= y1) { const t = eIO(clamp((Y - y0) / Math.max(1, y1 - y0))); c = c0.map((v, j) => Math.round(lerp(v, c1[j], t))); break; }
+    if (Y > y1) c = c1;
+  }
+  if (c.join() !== fieldRGB.join()) { fieldRGB = c; document.documentElement.style.setProperty('--field', `rgb(${c})`); }
+}
+const nav = $('#nav');
+let lastLight = null, lastCond = null;
+function navState() {
+  const [r, g, b] = fieldRGB, light = (r * .299 + g * .587 + b * .114) > 170;
+  if (light !== lastLight) { nav.classList.toggle('light', light); lastLight = light; }
+  const cond = Y > 40;
+  if (cond !== lastCond) { nav.classList.toggle('condensed', cond); lastCond = cond; }
+}
+
+/* ---------- Scene 1: hero ---------- */
+const hero = $('#hero'), cyg = $('#cyg'), cv = $('#cygC'), ctx = cv.getContext('2d');
+const lines = $$('#h1 .ln'), hsub = $('#hsub'), kick1 = $('#kick'), cue = $('#cue');
+const ticks = $('#ticks');
+ticks.innerHTML = [9, 8, 7, 6, 5, 4, 3, 2, 1].map(n => `<span>${n}</span>`).join('') + Array.from({ length: 8 }, (_, i) => `<i style="top:${(i + .5) / 8 * 100}%"></i>`).join('') + '<b></b>';
+const tickMark = $('b', ticks);
+let dots = [], cygReady = false, intro = reduce ? 1 : 0, introT0 = 0, lastA = -1;
+const cygImg = new Image();
+cygImg.src = '../../img/cygnet-mark.svg';
+function buildCyg() {
+  if (!cygImg.complete || !cygImg.naturalWidth) return;
+  const dpr = Math.min(2, devicePixelRatio || 1), bw = cyg.clientWidth, bh = cyg.clientHeight;
+  if (!bw) return;
+  const W = Math.round(bw * 1.6 * dpr), H = Math.round(bh * 1.6 * dpr), ox = bw * .3 * dpr, oy = bh * .3 * dpr;
+  cv.width = W; cv.height = H;
+  const iw = Math.round(bw * dpr), ih = Math.round(bh * dpr);
+  const m = document.createElement('canvas'); m.width = iw; m.height = ih;
+  const x = m.getContext('2d', { willReadFrequently: true });
+  const cell = Math.max(4.2, bw / 74) * dpr;
+  x.filter = `blur(${cell * .35}px)`; x.drawImage(cygImg, 0, 0, iw, ih);
+  const a = x.getImageData(0, 0, iw, ih).data;
+  const out = [];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let gy = cell / 2; gy < ih; gy += cell) for (let gx = cell / 2; gx < iw; gx += cell) {
+    const v = a[((gy | 0) * iw + (gx | 0)) * 4 + 3] / 255;
+    if (v < .06) continue;
+    const ang = rnd() * Math.PI * 2, rad = (.25 + rnd() * .75) * iw * .55;
+    out.push({ x: gx + ox, y: gy + oy, r: cell * .44 * Math.sqrt(Math.min(1, v * 1.15)), dx: Math.cos(ang) * rad, dy: Math.sin(ang) * rad * .7, d: (gx / iw) * .34 + rnd() * .16 });
+  }
+  dots = out; cygReady = true; cyg.classList.add('drawn'); lastA = -1; drawCyg(heroA());
+}
+function heroA() { const p = hero._scene ? hero._scene.p || 0 : 0; return reduce ? 1 : clamp(.85 * eOut(intro) + .15 * eOut(clamp(p / .3))); }
+function drawCyg(A) {
+  if (!cygReady || Math.abs(A - lastA) < .0005) return;
+  lastA = A;
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = '#fff6ee';
+  ctx.beginPath();
+  for (const d of dots) {
+    const k = eOut(clamp((A - d.d) / .5)), j = 1 - k;
+    const x = d.x + d.dx * j, y = d.y + d.dy * j, r = d.r * (.5 + .5 * k);
+    ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, 6.2832);
+  }
+  ctx.fill();
+}
+cygImg.onload = buildCyg; if (cygImg.complete) buildCyg();
+function introLoop(t) { if (!introT0) introT0 = t; intro = clamp((t - introT0 - 250) / 1700); drawCyg(heroA()); if (intro < 1) requestAnimationFrame(introLoop); }
+if (!reduce) requestAnimationFrame(introLoop);
+setTimeout(() => { if (intro < 1) { intro = 1; drawCyg(heroA()); } }, 3200);
+const heroS = addScene(hero, function () {
+  const p = this.p = reduce ? 0 : clamp((Y - this.top) / this.len);
+  drawCyg(heroA());
+  const q = eIO(clamp((p - .4) / .6));
+  const w = vw;
+  lines[0].style.transform = `translate3d(${-q * w * .95}px,0,0) scale(${1 + q * .4})`;
+  lines[1].style.transform = `translate3d(${q * w * .95}px,0,0)`;
+  lines[2].style.transform = `translate3d(${-q * w * .03}px,0,0) scale(${1 + q * 1.7})`;
+  lines[2].style.opacity = 1 - clamp((q - .72) / .28);
+  const f = clamp(q * 2.6);
+  hsub.style.transform = `translate3d(0,${-f * 30}px,0)`; hsub.style.opacity = 1 - f;
+  kick1.style.opacity = 1 - f; cue.style.opacity = .8 * (1 - clamp(p * 6));
+  cyg.style.translate = `${-q * w * .14}px ${-q * vh * .1}px`;
+  cyg.style.scale = `${1 - q * .22}`; cyg.style.opacity = 1 - clamp((q - .4) / .4);
+  tickMark.style.transform = `translate3d(0,${p * (ticks.clientHeight - 2)}px,0)`;
+  ticks.style.opacity = 1 - clamp((q - .8) / .2);
+}, function () { this.top = docTop(this.el); this.len = Math.max(1, this.el.offsetHeight - vh); });
+
+/* ---------- Scene 2: the film ---------- */
+const film = $('#film'), fslot = $('#fslot'), flyer = $('#flyer'), fphone = $('#fphone'), swl = $('#swl');
+fphone.innerHTML = shellFrame('ig') + '<div class="peel" id="peel"></div>';
+const fscreen = $('.screen', fphone), peel = $('#peel');
+fscreen.innerHTML = IG.shell(IG.stories() + F.maya() + F.reelA() + F.leo() + F.adA() + IG.sugg() + F.priya() + F.reelB() + F.adB() + F.sam() + F.ava() + F.noah() + IG.done() + F.reelC() + F.adC());
+fscreen.insertAdjacentHTML('beforeend', '<div class="splash"><img src="../../img/icons/H2-white-on-magenta.png" width="92" height="92" alt=""></div>');
+const ffeed = $('.feed', fscreen), ffw = $('.fw', fscreen), fglare = $('.glare', fphone);
+ffeed.classList.add('abs');
+const items = [...ffeed.children].map((el, i) => ({ el, i, kind: el.dataset.k, h: 0, y: -1, keep: 1 }));
+const junk = items.filter(it => it.kind !== 'friend' && it.kind !== 'end');
+const endItem = items.find(it => it.kind === 'end');
+const reelB = items[7], anchor = items[6];
+/* Clone every piece of junk into the peel layer, where it can leave the glass. */
+for (const it of junk) { it.clone = it.el.cloneNode(true); it.clone.removeAttribute('data-k'); peel.appendChild(it.clone); it.prog = $('.prog i', it.el); it.cprog = $('.prog i', it.clone); }
+/* Peel order: the two on screen first, then the ones above, then below. Slots are [side, fx, fy, rot]. */
+const order = [7, 8, 5, 4, 2, 13, 14];
+const SLOTS = [[1, .42, .16, 7], [-1, .48, .66, -8], [1, .22, .5, -4], [-1, .2, .8, 5], [1, .64, .78, 10], [1, .82, .36, -9], [-1, .74, .86, -3]];
+order.forEach((idx, n) => { const it = items[idx]; it.slot = SLOTS[n]; it.start = n * .085; });
+const notes = [];
+let F2 = {};
+const LEAD = .9; /* the film rises over the last stretch of the hero, so the screen is never empty */
+function layoutFilm() {
+  const wide = vw >= 1000 && vw / vh > 1;
+  const copy = $('.film-copy');
+  let k;
+  if (wide) k = Math.min(1.12, (vh * .8 - 22) / 650);
+  else { const ch = copy.offsetTop + copy.offsetHeight + 22; k = Math.max(.5, Math.min(1.05, (vh - ch - vh * .03) / 650, (vw - 40) / 300)); }
+  fslot.style.setProperty('--k', k.toFixed(4));
+  ffeed.style.transform = 'none';
+  for (const it of items) it.h = it.el.offsetHeight;
+  let y = 0; const yb = items.map(it => { const v = y; if (it.kind !== 'end') y += it.h; return v; });
+  const V = ffw.clientHeight;
+  const Ot = yb[7] - 34;
+  const anchorScreen = yb[6] - Ot;
+  let ya = 0; for (const it of items) { if (it === anchor) break; if (it.kind === 'friend') ya += it.h; }
+  const anchorEnd = ya - anchorScreen;
+  let total = 0; for (const it of items) { if (it.kind === 'friend' || it.kind === 'end') total += it.h; if (it.kind === 'end') break; }
+  const aMax = Math.max(0, total - V);
+  const M = ((vw - 300 * k) / 2) / k - 14;
+  const ph = {
+    fly: vh * .55, before: Ot * k, hold: vh * .35, peel: vh * 1.5, settle: Math.max(vh * .3, (aMax - anchorEnd) * k), exit: vh * .75
+  };
+  const sum = ph.fly + ph.before + ph.hold + ph.peel + ph.settle + ph.exit;
+  film.style.height = reduce ? '' : Math.round(sum + vh) + 'px';
+  film.style.marginTop = reduce ? '' : Math.round(-vh * LEAD) + 'px';
+  F2 = { k, Ot, V, anchorScreen, anchorEnd, aMax, M, ph, wide, fwTop: ffw.offsetTop + 0, margins: M > 150 };
+  const s = film._scene; s.top = docTop(film); s.len = Math.max(1, film.offsetHeight - vh);
+  fphone.closest('.flyer').parentElement.classList.add('ready');
+  fscreen.classList.add('ready');
+  buildNotes();
+  for (const it of items) it.y = -1;
+}
+function buildNotes() {
+  notes.forEach(n => n.el.remove()); notes.length = 0;
+  if (!F2.margins || !F2.wide) return;
+  const mk = (html, slotIdx, dx, dy) => { const el = document.createElement('div'); el.className = 'note'; el.innerHTML = html; peel.appendChild(el); notes.push({ el, slotIdx, dx, dy }); };
+  mk(`<span style="position:relative">adverts<svg viewBox="0 0 80 20" style="left:-4px;top:4px;width:84px;height:20px"><path pathLength="1" d="M2 12c18-4 40-6 76-3"/></svg></span> <span class="w2">gone</span><svg viewBox="0 0 60 60" style="left:150px;top:-58px;width:60px;height:56px"><path pathLength="1" d="M4 52c18-6 32-20 44-44M48 8l-12 6M48 8l2 13"/></svg>`, 0, 0, 0);
+}
+function flightFor(it, k, sy) {
+  const [side, fx, fy, rot] = it.slot, SW = 278, SH = 628, M = F2.M;
+  const lift = clamp(k / .22), fly = eIO(clamp((k - .1) / .9));
+  let sc, cx, cy, op = 1;
+  if (F2.margins) {
+    sc = clamp((M * .78) / SW, .4, .6);
+    cx = SW / 2 + side * (SW / 2 + 26 + (M - 26 - SW * sc * .5) * fx + SW * sc * .25);
+    cy = SH * fy;
+  } else {
+    sc = .7; cx = SW / 2 + side * (SW / 2 + M + 40 + SW * .55); cy = sy + it.h / 2 + 60; op = 1 - clamp((fly - .55) / .45);
+  }
+  const x = (cx - SW / 2) * fly, y = sy + (cy - it.h / 2 - sy) * fly - 10 * lift * (1 - fly);
+  const s = lerp(1 + .045 * lift, sc, fly);
+  const rz = rot * fly + side * -2.5 * lift * (1 - fly), ry = side * -24 * lift * (1 - fly);
+  return { x, y, s, rz, ry, op };
+}
+const filmS = addScene(film, function () {
+  const d = reduce ? 1e9 : Y - this.top, ph = F2.ph; if (!ph) return;
+  const fly = reduce ? 1 : eOut(clamp((d + vh * LEAD) / (ph.fly + vh * LEAD)));
+  const t1 = ph.fly, t2 = t1 + ph.before, t3 = t2 + ph.hold, t4 = t3 + ph.peel, t5 = t4 + ph.settle;
+  flyer.style.transform = fly >= 1 ? 'none' : `translate3d(0,${(1 - fly) * vh * .7}px,0) rotateX(${(1 - fly) * 34}deg) rotateZ(${(1 - fly) * -9}deg) scale(${.84 + .16 * fly})`;
+  fglare.style.setProperty('--gx', `${(1 - fly) * 60 + clamp((d - t1) / (t5 - t1)) * 40}%`);
+  const peelP = reduce ? 1 : clamp((d - t3) / ph.peel);
+  const on = reduce || d > t2 + ph.hold * .4;
+  if (on !== this.onState) { this.onState = on; film.classList.toggle('on', on); swl.textContent = on ? 'On' : 'Off'; $('.on-state').setAttribute('aria-hidden', !on); $('.off-state').setAttribute('aria-hidden', on); }
+  for (const it of junk) {
+    it.k = clamp((peelP - it.start) / .42);
+    it.keep = 1 - eIO(clamp((it.k - .12) / .6));
+  }
+  endItem.keep = eIO(clamp(peelP * 1.4));
+  let y = 0;
+  for (const it of items) { it.ny = y; y += it.h * it.keep; }
+  const before = clamp(d - t1, 0, ph.before) / F2.k;
+  const anchorOff = anchor.ny - F2.anchorScreen;
+  const off = peelP <= 0 ? before : (reduce ? F2.aMax : (d > t4 ? Math.min(F2.aMax, anchorOff + (d - t4) / F2.k) : anchorOff));
+  for (const it of items) {
+    const ty = Math.round((it.ny - off) * 2) / 2;
+    const hidden = (it.kind !== 'friend' && it.kind !== 'end' && it.k > 0) || (it.kind === 'end' && it.keep <= 0) || ty > F2.V + 40 || ty + it.h * it.keep < -40;
+    if (hidden !== it.hid) { it.el.style.visibility = hidden ? 'hidden' : ''; it.hid = hidden; }
+    if (!hidden && ty !== it.y) { it.el.style.transform = `translate3d(0,${ty}px,0)`; it.y = ty; }
+    if (it.kind === 'end') it.el.style.opacity = it.keep;
+  }
+  /* Reel progress bars move with your thumb. */
+  const pr = clamp(.15 + (before / 900) % 1);
+  for (const it of junk) if (it.prog) { const v = `scaleX(${pr.toFixed(3)})`; it.prog.style.transform = v; it.cprog.style.transform = v; }
+  for (const it of junk) {
+    const c = it.clone;
+    if (it.k <= 0) { if (c.style.visibility !== 'hidden') c.style.visibility = 'hidden'; continue; }
+    const top = F2.fwTop, raw = it.ny - off;
+    const sy = top + clamp(raw, -it.h * .62, F2.V - it.h * .38);
+    const f = flightFor(it, it.k, sy);
+    const rel = 1 - clamp(it.k / .3);
+    const ct = Math.max(0, top - sy) * rel, cb = Math.max(0, sy + it.h - (top + F2.V)) * rel;
+    c.style.visibility = 'visible';
+    c.style.clipPath = (ct || cb) ? `inset(${ct.toFixed(1)}px 0 ${cb.toFixed(1)}px 0)` : 'none';
+    c.style.transform = `translate3d(${f.x.toFixed(1)}px,${f.y.toFixed(1)}px,0) rotateY(${f.ry.toFixed(2)}deg) rotate(${f.rz.toFixed(2)}deg) scale(${f.s.toFixed(4)})`;
+    c.style.opacity = f.op;
+  }
+  /* Handwritten notes beside the pile. */
+  const nd = reduce ? 1 : clamp((d - t4 + ph.peel * .15) / (ph.settle * .6 + ph.peel * .15));
+  for (const n of notes) {
+    n.el.style.transform = `translate3d(${(278 + 26).toFixed(1)}px,${(628 * .9).toFixed(1)}px,0) scale(${(1 / F2.k).toFixed(3)})`;
+    n.el.style.transformOrigin = '0 0';
+    n.el.style.setProperty('--d', clamp(nd * 1.6).toFixed(3)); n.el.style.setProperty('--o', clamp(nd * 4).toFixed(3)); n.el.style.setProperty('--d2', clamp(nd * 2 - .9).toFixed(3));
+  }
+  /* The colour field drifts to ink at the very end. */
+}, function () { layoutFilm(); });
+
+/* ---------- Scene 3: before and after, in sync ---------- */
+const cmp = $('#compare'), sb = $('#sb'), sa = $('#sa'), pair = $('#pair');
+const pb = $('.phone', sb), pa = $('.phone', sa);
+let app = 'ig', run = !reduce, visible = false, last = 0, raf2 = 0;
+const S = { s: 0, v: 0, wait: 900, flick: 0, bMax: 0, aMax: 0, aDisp: 0, done: 0, fading: 0 };
+const script = [420, 300, 560, 380, 470, 260, 620, 340, 510, 400];
+const pauses = [900, 1500, 700, 1300, 2000, 800, 1100, 1700, 950, 1250];
+function setApp(a, focus) {
+  app = a;
+  const A = APPS[a];
+  pb.innerHTML = shellFrame(A.cls); pa.innerHTML = shellFrame(A.cls);
+  $('.screen', pb).innerHTML = A.before(); $('.screen', pa).innerHTML = A.after();
+  $$('.seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.app === a));
+  moveKnob();
+  $('#cmp-desc').textContent = `Showing ${A.name}: without Idyll on the left, with Idyll on the right.`;
+  measureCmp(); S.s = 0; S.v = 0; S.wait = 700; S.flick = 0; S.aDisp = 0; S.done = 0;
+  if (reduce) { S.s = Math.min(S.bMax, 760); S.aDisp = S.aMax; }
+  paintCmp();
+}
+function measureCmp() {
+  const fb = $('.feed', pb), fa = $('.feed', pa);
+  S.bMax = fb.offsetHeight - $('.fw', pb).clientHeight; S.aMax = Math.max(0, fa.offsetHeight - $('.fw', pa).clientHeight);
+  S.fb = fb; S.fa = fa;
+}
+function paintCmp() {
+  S.fb.style.transform = `translate3d(0,${-Math.round(Math.min(S.s, S.bMax) * 2) / 2}px,0)`;
+  S.fa.style.transform = `translate3d(0,${-Math.round(S.aDisp * 2) / 2}px,0)`;
+}
+function stepCmp(t) {
+  raf2 = 0;
+  const dt = Math.min(48, t - (last || t)); last = t;
+  if (S.fading > 0) { S.fading -= dt; if (S.fading <= 0) { S.s = 0; S.v = 0; S.aDisp = 0; S.done = 0; S.wait = 800; paintCmp(); sb.classList.remove('out'); sa.classList.remove('out'); } }
+  else if (S.v > .015) { S.s += S.v * dt; S.v *= Math.exp(-dt / 325); }
+  else { S.v = 0; S.wait -= dt; if (S.wait <= 0) { const n = S.flick++ % script.length; S.v = script[n] / 325; S.wait = pauses[n]; } }
+  const tgt = S.s <= S.aMax ? S.s : S.aMax + Math.min(30, S.v * 46);
+  S.aDisp += (tgt - S.aDisp) * (1 - Math.exp(-dt / 55));
+  if (S.s > S.aMax) S.done += dt;
+  if (!S.fading && (S.done > 9000 || S.s > S.bMax - 20)) { S.fading = 420; sb.classList.add('out'); sa.classList.add('out'); }
+  paintCmp();
+  if (run && visible) raf2 = requestAnimationFrame(stepCmp);
+}
+function playCmp() { if (!raf2 && run && visible) { last = 0; raf2 = requestAnimationFrame(stepCmp); } }
+new IntersectionObserver(es => { visible = es[0].isIntersecting; cmp.classList.toggle('paused', !visible || !run); playCmp(); }, { rootMargin: '100px 0px' }).observe(pair);
+$$('.seg button').forEach(b => b.addEventListener('click', () => { if (b.dataset.app !== app) setApp(b.dataset.app); }));
+const pp = $('#pp');
+function setRun(r) { run = r; pp.setAttribute('aria-label', r ? 'Pause the phones' : 'Play the phones'); $('#ppi').innerHTML = r ? '<path d="M9 6v12M15 6v12"/>' : '<path d="M8 5.5v13l10.5-6.5z"/>'; playCmp(); }
+pp.addEventListener('click', () => setRun(!run));
+function moveKnob() { const b = $('.seg button[aria-pressed="true"]'), knob = $('#knob'); if (!b) return; knob.style.width = b.offsetWidth + 'px'; knob.style.transform = `translateX(${b.offsetLeft}px)`; }
+function layoutCmp() {
+  const k = Math.min(1, (Math.min(vw, 1100) - 2 * Math.max(16, Math.min(56, vw * .04)) - Math.max(14, Math.min(110, vw * .06))) / 600);
+  sb.style.setProperty('--k', k.toFixed(4)); sa.style.setProperty('--k', k.toFixed(4));
+  moveKnob();
+}
+if (reduce) setRun(false);
+
+/* ---------- Reveals ---------- */
+const rio = new IntersectionObserver(es => { for (const e of es) if (e.isIntersecting) { e.target.classList.add('in'); rio.unobserve(e.target); } }, { rootMargin: '0px 0px -8% 0px' });
+$$('.rv').forEach(el => rio.observe(el));
+
+/* ---------- Layout ---------- */
+function layoutAll() {
+  vw = innerWidth; vh = innerHeight; Y = scrollY;
+  layoutCmp();
+  for (const s of scenes) s.layout.call(s);
+  if (S.fb) measureCmp();
+  const hs = heroS, fs = filmS;
+  const heroEnd = hs.top + hs.len, filmEnd = fs.top + fs.len;
+  const at = id => docTop(document.getElementById(id));
+  stops = [
+    [0, C.mag], [heroEnd - hs.len * .2, C.mag], [heroEnd + vh * .05, C.blue],
+    [filmEnd - F2.ph.exit * .9, C.blue], [filmEnd - F2.ph.exit * .1, C.ink],
+    [at('privacy') - vh * .7, C.ink], [at('privacy') - vh * .15, C.cream],
+    [at('free') - vh * .7, C.cream], [at('free') - vh * .15, C.mag],
+    [at('free') + document.getElementById('free').offsetHeight - vh * .6, C.mag], [at('free') + document.getElementById('free').offsetHeight - vh * .1, C.cream]
+  ];
+  if (reduce) stops = [[0, C.mag], [at('film') - vh * .5, C.mag], [at('film'), C.blue], [at('compare') - vh * .5, C.blue], [at('compare'), C.ink], ...stops.slice(5)];
+  buildCyg();
+  kick(); frame();
+}
+let rz = 0, lastW = vw;
+addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { if (innerWidth === lastW && Math.abs(innerHeight - vh) < 140) { vh = innerHeight; return; } lastW = innerWidth; layoutAll(); }, 140); });
+mq.addEventListener('change', () => location.reload());
+
+setApp('ig');
+if (reduce) document.documentElement.classList.add('reduce');
+const go = () => { layoutAll(); playCmp(); };
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
+addEventListener('load', () => { layoutAll(); });
+})();
+</script>
+</body>
+</html>
