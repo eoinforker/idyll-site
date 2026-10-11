@@ -24,8 +24,8 @@
   ];
   /* Small marks: flat tone, per-size pitch (pt). */
   const small = [[26, 1.6], [30, 1.7], [34, 1.8], [56, 2.2]];
-  const SMALLINK = { cream: CREAM, magenta: '#d81b7a', blue: BLUE };
-  const ACC = { magenta: { water: BLUE }, blue: { water: '#d81b7a' } };
+  const SMALLINK = { cream: CREAM, magenta: '#d81b7a', blue: BLUE, black: INK };
+  const ACC = { magenta: { water: BLUE }, blue: { water: '#d81b7a' }, black: { water: '#d81b7a' } };
   const out = {}, stage = document.getElementById('stage');
   async function render(name, w, h, data) {
     const el = document.createElement('div'); el.className = 'print';

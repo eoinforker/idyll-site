@@ -3,10 +3,10 @@
 For the iOS (SwiftUI) and Android (Jetpack Compose) builds. Updated 11 October 2026.
 
 **Reference files**
-* `final.html` shows the twelve screens in two rows (dark, then light), then the four riffs on the first-run sheet (dark, then light), then Home in the electric blue accent.
-  * `?mode=dark` or `?mode=light` keeps one mode. Add `?only=N`: 1 to 12 are the screens, 13 to 16 the riffs, 17 blue Home.
+* `final.html` shows the twelve screens in two rows (dark, then light), then the four riffs on the first-run sheet (dark, then light), then the accents: Home in electric blue, and Home and the first-run sheet in black.
+  * `?mode=dark` or `?mode=light` keeps one mode. Add `?only=N`: 1 to 12 are the screens, 13 to 16 the riffs, 17 blue Home, 18 black Home, 19 the black first-run sheet.
   * Preview over a local server from the `idyll-site` root, because the halftone needs same-origin images. For example: `python3 -m http.server`, then open `/v2/app/final/final.html`.
-* PNGs: `png/dark/` and `png/light/`, 17 each at 1170 x 2532 (3x of 390 x 844 pt). The whole board is `png/00-board.png`.
+* PNGs: `png/dark/` and `png/light/`, 19 each at 1170 x 2532 (3x of 390 x 844 pt). The whole board is `png/00-board.png`.
 * Assets: `assets/`. `export-assets.html` regenerates them (see section 8).
 
 **Design rules**
@@ -16,9 +16,7 @@ For the iOS (SwiftUI) and Android (Jetpack Compose) builds. Updated 11 October 2
   * The first-run sheet is the plate.
   * Sleep and Support use D's headlines.
 * In light mode, Hello is a full-bleed plate.
-* The app follows the phone's appearance setting, with no in-app light or dark override:
-  * iOS: do not set `preferredColorScheme`.
-  * Android: use `isSystemInDarkTheme()`.
+* The app follows the phone's appearance setting by default. Settings, Appearance, Mode can fix it to Light or Dark (section 4.17).
 
 All sizes are in points (iOS pt = Android dp; text in sp). The canvas is 390 x 844, with a top safe area of 54 and a bottom safe area of 34.
 
@@ -28,17 +26,22 @@ All sizes are in points (iOS pt = Android dp; text in sp). The canvas is 390 x 8
 
 ### 1.1 Accent tokens (chosen in Settings, Appearance)
 
-The accent is a user choice, independent of light and dark. These three tokens are the same in both modes.
+The accent is a user choice, independent of light and dark. There are three accents. Magenta and electric blue use the same values in both modes; black changes with the mode, because ink is the dark background.
 
-| Token | Magenta accent (default) | Electric blue accent | Used for |
-|---|---|---|---|
-| `accent` | `#d81b7a` | `#2d5bff` | Full stops, checks, switch on, today bar, Sleep span, tag, primary button in dark, small halftone cygnets in light |
-| `accentInk` (the second ink) | `#2d5bff` | `#d81b7a` | The strike through removed things, the water dots under large cygnets, the strike on struck marks |
-| `plate` | `#d81b7a` | `#2d5bff` | Plate backgrounds: Hello in light, Focus, the first-run sheet and riffs |
+| Token | Magenta (default) | Electric blue | Black, light mode | Black, dark mode | Used for |
+|---|---|---|---|---|---|
+| `accent` | `#d81b7a` | `#2d5bff` | `#161514` ink | `#fff6ee` cream | Full stops, checks, switch on, Sleep span, tag, primary button in dark, small halftone cygnets in light |
+| `onAccent` | `#fff6ee` | `#fff6ee` | `#fff6ee` | `#161514` | The check inside a picked box, the label on an accent button |
+| `accentInk` (the second ink) | `#2d5bff` | `#d81b7a` | `#d81b7a` | `#d81b7a` | The strike, the water dots under large cygnets, the strike on struck marks |
+| `plate` | `#d81b7a` | `#2d5bff` | `#161514` ink | `#29292d` raised near-black | Hello in light, Focus, the first-run sheet and riffs |
+| `plateStop` | `#161514` ink | `#161514` ink | `#d81b7a` | `#d81b7a` | The full stop on the plate |
+| `plateButton` | ink, cream label | ink, cream label | cream, ink label | cream, ink label | The primary button on a plate |
+| `today` | `accent` | `accent` | `#d81b7a` | `#d81b7a` | Today's bar and value in the week chart |
 
-The two inks swap places: with the blue accent, blue takes magenta's place and magenta becomes the strike and the water.
-
-Cream on the plate is about 4.5:1 on magenta and 4.9:1 on blue. Keep plate text at 14 pt or larger.
+* **Magenta and blue** swap places: with the blue accent, blue takes magenta's place and magenta becomes the strike and the water.
+* **Black** is ink on paper with an ink plate. On night the accent turns cream and the plate is a raised near-black, `#29292d`. With its crop marks, cream type and grain it still reads as a plate against `#141416`. Magenta is the second ink for strikes and water, and it also carries the full stop on the plate and today's bar, where ink or cream would disappear.
+* **Contrast on the plate:** cream is about 4.5:1 on magenta, 4.9:1 on blue, about 17:1 on the ink plate and 13.7:1 on the near-black plate. Keep plate text at 14 pt or larger.
+* **Small halftone cygnets** follow the accent: magenta, blue or ink in light mode, and always cream in dark mode.
 
 ### 1.2 Mode tokens
 
@@ -54,7 +57,7 @@ Use the flattened hex values natively. The rgba column shows how each one was de
 | `track` | `#2c2b2c` (10%) | `#e4e3df` (8%) | Per-app bar track, Sleep timeline track |
 | `trackStrong` | `#353434` (14%) | `#dbdad6` (12%) | Allowance bar track |
 | `primaryBg` | `accent` | `#161514` ink | Primary button |
-| `primaryFg` | `#fff6ee` | `#fff6ee` | Primary button label |
+| `primaryFg` | `onAccent` | `#fff6ee` | Primary button label |
 | `line` | `#dcd4ce` (cream 85%) | `#161514` | Secondary button border |
 | `tileEdge` | `#302f30` | `#d2d1ce` | 1 pt inner edge of brand tiles |
 | `fieldBg` | `#222223` | transparent | Paste a link field |
@@ -76,12 +79,11 @@ These apply to any screen printed whole on the plate: Hello in light mode, and F
 | `bg` | `plate` |
 | `fg` | `#fff6ee` |
 | `soft` | cream at 82% |
-| `primaryBg` | `#161514` ink |
-| `primaryFg` | `#fff6ee` |
+| `primaryBg`, `primaryFg` | `plateButton` |
 | `line` | `#fff6ee` |
 | `crop` | `#fff6ee` |
-| Full stop | `ink` |
-| Tag | Cream block with `accent` text and cream dots |
+| Full stop | `plateStop` |
+| Tag | Cream block with `plate` coloured text and cream dots |
 
 On these screens the status bar and home indicator are light (cream). They are also light on screens where the sheet covers the bottom edge.
 
@@ -251,8 +253,8 @@ On these screens the status bar and home indicator are light (cream). They are a
 * **Geometry**
   * Seven columns across 342. The chart is 140 tall, including 24 of headroom.
   * Each bar is 40% of its column, centred, with a 4 radius on the top corners only, on a 1 pt `soft` baseline.
-* **Colour:** bars in `fg`, today in `accent`.
-* **Labels:** only the peak and today carry a value (`label`, 6 above the bar, today's in `accent`). Weekday initials in `label` `soft`, with "Today" last.
+* **Colour:** bars in `fg`, today in `today`.
+* **Labels:** only the peak and today carry a value (`label`, 6 above the bar, today's in `today`). Weekday initials in `label` `soft`, with "Today" last.
 * Each bar is one accessibility element, for example "Tuesday, 41 minutes".
 * **Per-app rows:** tile 30, name (92 wide), a 4 pt bar in `track` with an `fg` fill scaled to the largest app, then the time in `small`, right aligned and 54 wide.
 
@@ -325,15 +327,23 @@ On these screens the status bar and home indicator are light (cream). They are a
 
 ### 4.17 Appearance (screen 12)
 * Settings, Appearance.
-* `titleL` "Appearance." and the line "Light and dark follow your phone's setting."
+* `titleL` "Appearance." and the line "Automatic follows your phone's setting."
+* **Mode**
+  * `label` "Mode", then a three-part control 342 x 44: Automatic (the default), Light, Dark.
+  * Square segments in the swatches' language: a 1.5 pt `line` border around the whole control and 1.5 pt dividers between segments.
+  * The selected segment is filled `fg` with `bg` text in Sans 500 16; the others are `fg` text in Sans 400 16. No pill, no dots.
+  * Accessibility: a radio group, with each segment announced as "Light, 2 of 3".
+  * iOS: store the choice in `@AppStorage("appearance")` and apply `.preferredColorScheme(nil / .light / .dark)` at the root. Also set `overrideUserInterfaceStyle` on the window, so UIKit sheets and the web views follow.
+  * Android: hold it in a `DataStore` preference and feed a `darkTheme` state to the Compose theme (`Automatic` uses `isSystemInDarkTheme()`). Call `AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM / NO / YES)` too, so system dialogs and the WebView's `prefers-color-scheme` match.
+  * The change applies at once, with a 200 ms cross-fade.
 * **Accent**
-  * Two swatches side by side, each 163 x 112, square, filled `#d81b7a` and `#2d5bff`, with the name in Sans 500 17 cream at the bottom left.
+  * Three swatches side by side, each 105 x 112, square, filled `#d81b7a`, `#2d5bff` and `#161514`, with the name in Sans 500 15 cream at the bottom left. The black swatch has a 1 pt cream inner edge at 22% so it reads on night.
   * Selected: a 2 pt `fg` outline 4 outside, and a 26 cream disc with an ink check at the top right.
   * Changing the accent recolours the app at once, with a 200 ms cross-fade.
 * **App icon**
-  * Two 84 icon previews (H2 magenta, H4 electric blue) with a `small` name under each, and the same selected treatment.
+  * Three 84 icon previews (H2 magenta, H4 electric blue, H7 black) with a `small` name under each, and the same selected treatment. The black icon has a 1 pt cream edge at 22% on night.
   * Note: "The app icon changes on your home screen too. iPhone shows a short note to confirm it."
-* Accent and icon are separate choices, stored on the phone (`UserDefaults`, `DataStore`).
+* Mode, accent and icon are separate choices, stored on the phone (`UserDefaults`, `DataStore`).
 
 ### 4.18 Support (screen 11)
 * **Top:** D's `hero` "Free. For good." with accent full stops, the body, then "Tips unlock nothing."
@@ -343,19 +353,20 @@ On these screens the status bar and home indicator are light (cream). They are a
 
 ## 5. Alternate app icons
 
-* **Icon sources**
-  * `assets/icon/app-icon-H2.png` (magenta, the default) and `app-icon-H4.png` (electric blue).
-  * Both are 512 px. **We need 1024 px masters** for the App Store and the iOS asset catalog: re-export them from the icon source files.
+* **Icon sources,** in `assets/icon/`, each with a 1024 px master for the App Store and the iOS asset catalog, plus a 512 px copy:
+  * H2 magenta, the default: `app-icon-H2-magenta-1024.png` and `-512.png` (from `img/icons/H2-white-on-magenta-1024.png`).
+  * H4 electric blue: `app-icon-H4-blue-1024.png` and `-512.png` (from `img/icons/H4-white-on-electric-blue-1024.png`).
+  * H7 black: `app-icon-H7-black-1024.png` and `-512.png` (from `img/icons/H7-white-on-ink-1024.png`).
 * **iOS**
-  * Add both sets to the asset catalog as `AppIcon` and `AppIcon-Blue`.
-  * In build settings, set `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = AppIcon-Blue` and `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES`.
-  * Switch with `UIApplication.shared.setAlternateIconName("AppIcon-Blue")`, or `nil` for the default, after checking `supportsAlternateIcons`.
+  * Add all three sets to the asset catalog as `AppIcon`, `AppIcon-Blue` and `AppIcon-Black`.
+  * In build settings, set `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = AppIcon-Blue AppIcon-Black` and `ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES`.
+  * Switch with `UIApplication.shared.setAlternateIconName("AppIcon-Blue")` (or `"AppIcon-Black"`), or `nil` for the default, after checking `supportsAlternateIcons`.
   * iOS shows its own confirmation alert, which is why the note on screen says so.
 * **Android**
-  * Declare two `<activity-alias>` entries pointing at the main activity. Each has the launcher intent filter and its own `android:icon` and `android:roundIcon`: `.IconMagenta` is enabled by default, `.IconBlue` disabled.
+  * Declare three `<activity-alias>` entries pointing at the main activity. Each has the launcher intent filter and its own `android:icon` and `android:roundIcon`: `.IconMagenta` is enabled by default; `.IconBlue` and `.IconBlack` are disabled.
   * Swap them with `packageManager.setComponentEnabledSetting(…, COMPONENT_ENABLED_STATE_ENABLED / DISABLED, DONT_KILL_APP)`: enable the new one first, then disable the old.
   * Some launchers close the app or move the home screen shortcut. Do the swap when the person leaves Settings, and say nothing more.
-  * Adaptive icons: background layer the plate colour, foreground the cream halftone cygnet inside the 66 dp safe zone.
+  * Adaptive icons: background layer the icon's colour (magenta, blue or ink `#161514`), foreground the cream halftone cygnet inside the 66 dp safe zone.
 
 ## 6. States, motion, accessibility
 
@@ -403,7 +414,7 @@ The layout, sizes and copy for each screen are in `final.html`.
 12. **Appearance:** see section 4.17.
 
 * 13 to 16: the riffs (section 4.14).
-* 17: Home with the electric blue accent, to show the token swap. Only `accent`, `accentInk` and `plate` change.
+* 17: Home with the electric blue accent. 18 and 19: Home and the first-run sheet with the black accent. Only the accent tokens (1.1) change.
 
 ## 8. Halftone assets and native rendering
 
@@ -414,15 +425,17 @@ The layout, sizes and copy for each screen are in `final.html`.
 
 | File pattern | pt size | Variants |
 |---|---|---|
-| `cygnet/cygnet-hello-{magenta,blue}` | 300 x 178 | Cream dots, water in that accent's second ink. Also Riff 3. |
-| `cygnet/cygnet-focus-{magenta,blue}` | 330 x 196 | The same |
-| `cygnet/cygnet-sheet-{magenta,blue}` | 132 x 78 | The same |
-| `cygnet/cygnet-small-{26,30,34,56}-{cream,magenta,blue}` | See 4.6 | Flat tone, no water. Cream for dark mode, the accent colour for light. |
-| `halftone-marks/mark-struck-{brand}-{magenta,blue}-{34,40}` | 34, 40 | Cream dots with the second-ink strike: Focus (34), Riff 2 (40) |
+| `cygnet/cygnet-hello-{magenta,blue,black}` | 300 x 178 | Cream dots, water in that accent's second ink. Also Riff 3. |
+| `cygnet/cygnet-focus-{magenta,blue,black}` | 330 x 196 | The same |
+| `cygnet/cygnet-sheet-{magenta,blue,black}` | 132 x 78 | The same |
+| `cygnet/cygnet-small-{26,30,34,56}-{cream,magenta,blue,black}` | See 4.6 | Flat tone, no water. Cream for dark mode, the accent colour for light (black is ink `#161514`). |
+| `halftone-marks/mark-struck-{brand}-{magenta,blue,black}-{34,40}` | 34, 40 | Cream dots with the second-ink strike: Focus (34), Riff 2 (40) |
+
+Black's large cygnets and struck marks are the same pixels as blue's (cream with magenta). They ship under their own names so the code can stay one lookup per accent.
 
 Other files in `assets/`:
 * `assets/brands/`: the nine official SVGs.
-* `assets/icon/`: `app-icon-H2.png`, `app-icon-H4.png` and `tag-edge.svg`.
+* `assets/icon/`: the three app icons at 1024 and 512 px, and `tag-edge.svg`.
 * `assets/source/cygnet-silhouette-source.svg`: the silhouette that the halftone is sampled from. It is a source file, never drawn directly.
 
 **To regenerate**

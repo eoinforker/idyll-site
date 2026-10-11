@@ -10,6 +10,9 @@
 /* Idyll app, final. C (Night) is the master; light mode mirrors it in the site's paper and ink.
    Tokens live on each phone so the accent can be swapped per screen: --pink is the accent, --blue the second ink. See SPEC.md. */
 .acc-blue { --pink: #2d5bff; --blue: #d81b7a; }
+/* Black: ink accent on paper with an ink plate; on night the accent turns cream and the plate is a raised near-black.
+   Magenta is the second ink, and it carries the stop on the plate and today's bar, where ink or cream would vanish. */
+.acc-black { --blue: #d81b7a; --today: #d81b7a; --plate-stop: #d81b7a; }
 .m-dark .phone {
   --bg: #141416; --surface: #1f1f22; --fg: #fff6ee; --soft: rgba(255,246,238,.62); --hair: rgba(255,246,238,.13);
   --track: rgba(255,246,238,.10); --track-strong: rgba(255,246,238,.14);
@@ -29,9 +32,14 @@
   --sw-off: rgba(22,21,20,.16); --chev: rgba(22,21,20,.4);
 }
 /* A whole screen printed on the plate (Hello in light, Focus in both). */
-.m-light .phone.onplate, .m-dark .phone.onplate { background: var(--pink); --bg: var(--pink); --fg: #fff6ee; --soft: rgba(255,246,238,.82); --primary-bg: #161514; --primary-fg: #fff6ee; --line: #fff6ee; --crop: #fff6ee; }
-.onplate .stop { color: var(--ink); }
-.onplate .tag b { background: var(--cream); color: var(--pink); }
+.m-light .phone.onplate, .m-dark .phone.onplate { background: var(--plate, var(--pink)); --bg: var(--plate, var(--pink)); --fg: #fff6ee; --soft: rgba(255,246,238,.82); --primary-bg: #161514; --primary-fg: #fff6ee; --line: #fff6ee; --crop: #fff6ee; }
+.acc-black.m-light .phone { --pink: #161514; --plate: #161514; }
+.acc-black.m-dark .phone { --pink: #fff6ee; --plate: #29292d; --primary-fg: #161514; --on-accent: #161514; }
+.acc-black.m-light .phone.onplate, .acc-black.m-dark .phone.onplate { --primary-bg: #fff6ee; --primary-fg: #161514; }
+.acc-black.m-dark .tag b { color: #161514; }
+.plate { background: var(--plate, var(--pink)); }
+.onplate .stop { color: var(--plate-stop, var(--ink)); }
+.onplate .tag b { background: var(--cream); color: var(--plate, var(--pink)); }
 .onplate .tag svg { fill: var(--cream); }
 .pcrop { display: none; position: absolute; inset: 52px 12px 46px; }
 .onplate .pcrop { display: block; }
@@ -68,7 +76,7 @@ body.only .rowname + .row { margin: 0; }
 .t-wordmark { font: 600 20px/1 var(--sans); letter-spacing: -.02em; }
 .soft { color: var(--soft); }
 .n { font-variant-numeric: tabular-nums; }
-.ik { color: var(--ink); font-weight: inherit; }
+.ik { color: var(--plate-stop, var(--ink)); font-weight: inherit; }
 
 .foot { margin-top: auto; padding: 0 24px 8px; display: grid; gap: 6px; }
 .btn { font: 500 18px/1 var(--sans); letter-spacing: -.01em; }
@@ -81,7 +89,7 @@ body.only .rowname + .row { margin: 0; }
 .tile { background: var(--tile-bg); box-shadow: inset 0 0 0 1px var(--tile-edge); color: var(--fg); }
 .m-dark .tile.snapchat { background: var(--tile-bg); box-shadow: inset 0 0 0 1px var(--tile-edge); }
 .box { width: 24px; height: 24px; margin-left: auto; box-shadow: inset 0 0 0 1.5px var(--box-edge); flex: none; }
-.box.on { background: var(--pink); box-shadow: none; display: grid; place-items: center; color: var(--cream); }
+.box.on { background: var(--pink); box-shadow: none; display: grid; place-items: center; color: var(--on-accent, var(--cream)); }
 .box.on .ic { width: 18px; height: 18px; stroke-width: 2.4; }
 .tick { color: var(--pink); margin-left: auto; }
 .tick .ic { stroke-width: 2.2; }
@@ -106,7 +114,7 @@ body.only .rowname + .row { margin: 0; }
 .sheet > .crop { position: absolute; inset: 14px 14px 40px; --c: var(--cream); }
 .sheet .t-label { color: var(--cream); }
 .sheet a { color: var(--cream); }
-.sheet .stop { color: var(--ink); }
+.sheet .stop { color: var(--plate-stop, var(--ink)); }
 .sheet .struck::after, .onplate .struck::after { background: var(--blue); }
 
 /* Instagram and YouTube watch pages, drawn in their own type for the riffs. */
@@ -136,11 +144,16 @@ body.only .rowname + .row { margin: 0; }
 .yw .chn i { width: 36px; height: 36px; border-radius: 50%; background: #ffe8d4; color: #9a4a12; display: grid; place-items: center; font: 600 14px/1 Arial; font-style: normal; }
 
 /* Appearance. */
-.swatch { position: relative; height: 112px; padding: 14px; display: flex; align-items: flex-end; color: var(--cream); font: 500 17px/1 var(--sans); }
+.swatch { position: relative; height: 112px; padding: 14px; display: flex; align-items: flex-end; color: var(--cream); font: 500 15px/1 var(--sans); white-space: nowrap; }
 .choice { position: relative; }
 .choice.sel { outline: 2px solid var(--fg); outline-offset: 4px; }
 .choice .ok { position: absolute; top: 10px; right: 10px; width: 26px; height: 26px; border-radius: 50%; background: var(--cream); color: #161514; display: grid; place-items: center; }
 .choice .ok .ic { width: 16px; height: 16px; stroke-width: 2.6; }
+/* Mode: three square segments, the swatches' language. */
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: inset 0 0 0 1.5px var(--line); }
+.seg span { height: 44px; display: grid; place-items: center; font: 400 16px/1 var(--sans); }
+.seg span + span { box-shadow: inset 1.5px 0 0 var(--line); }
+.seg span.on { background: var(--fg); color: var(--bg); font-weight: 500; }
 .icn { display: grid; justify-items: center; gap: 10px; }
 .icn img { width: 84px; height: 84px; border-radius: 22.5%; display: block; }
 </style>
@@ -187,7 +200,7 @@ body.only .rowname + .row { margin: 0; }
   </div></div></div>
 
   <!-- 3 First clean app: D's plate sheet -->
-  <div class="cell"><p class="cap">First clean app, live</p>
+  <div class="cell sheet3"><p class="cap">First clean app, live</p>
   <div class="phone sheeted"><div class="scr" style="padding:54px 0 0">
     <div data-chrome="YouTube"></div>
     <div data-site="yt-mode"></div>
@@ -308,7 +321,7 @@ body.only .rowname + .row { margin: 0; }
       <p class="t-small soft" style="margin-top:6px">In the real apps, by Screen Time's count.</p>
       <p class="t-label" style="margin-top:6px">Sample numbers</p>
     </div>
-    <div class="pad" style="margin-top:22px"><div class="week" data-week data-ink="var(--fg)" data-rule="var(--soft)" data-hi="var(--pink)" data-lab="var(--soft)" style="color:var(--fg)"></div></div>
+    <div class="pad" style="margin-top:22px"><div class="week" data-week data-ink="var(--fg)" data-rule="var(--soft)" data-hi="var(--today, var(--pink))" data-lab="var(--soft)" style="color:var(--fg)"></div></div>
     <ul class="rows pad" style="margin-top:22px">
       <li style="height:50px"><span data-t="instagram" class="sm"></span><span class="t-body" style="width:92px">Instagram</span><span class="bar-track" style="flex:1;background:var(--track)"><i style="width:100%"></i></span><span class="t-small n" style="width:54px;text-align:right">1 h 36</span></li>
       <li style="height:50px"><span data-t="youtube" class="sm"></span><span class="t-body" style="width:92px">YouTube</span><span class="bar-track" style="flex:1;background:var(--track)"><i style="width:60%"></i></span><span class="t-small n" style="width:54px;text-align:right">58 min</span></li>
@@ -360,18 +373,23 @@ body.only .rowname + .row { margin: 0; }
     <div class="navb"><svg class="ic"><use href="#i-chevl"/></svg>Settings</div>
     <div class="pad" style="margin-top:12px">
       <h1 class="t-title-l">Appearance<b class="stop">.</b></h1>
-      <p class="t-body soft" style="margin-top:12px">Light and dark follow your phone's setting.</p>
+      <p class="t-body soft" style="margin-top:12px">Automatic follows your phone's setting.</p>
     </div>
-    <div class="pad" style="margin-top:30px"><p class="t-label">Accent</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+    <div class="pad" style="margin-top:26px"><p class="t-label">Mode</p>
+      <div class="seg" style="margin-top:12px" role="radiogroup"><span class="on" role="radio" aria-checked="true">Automatic</span><span role="radio">Light</span><span role="radio">Dark</span></div>
+    </div>
+    <div class="pad" style="margin-top:26px"><p class="t-label">Accent</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px">
         <div class="choice sel swatch" style="background:#d81b7a">Magenta<span class="ok"><svg class="ic"><use href="#i-check"/></svg></span></div>
         <div class="choice swatch" style="background:#2d5bff">Electric blue</div>
+        <div class="choice swatch" style="background:#161514;box-shadow:inset 0 0 0 1px rgba(255,246,238,.22)">Black</div>
       </div>
     </div>
-    <div class="pad" style="margin-top:34px"><p class="t-label">App icon</p>
-      <div style="display:flex;gap:44px;margin-top:16px;padding-left:4px">
+    <div class="pad" style="margin-top:28px"><p class="t-label">App icon</p>
+      <div style="display:flex;justify-content:space-between;margin-top:16px;padding:0 14px 0 4px">
         <div class="icn"><span class="choice sel" style="border-radius:22.5%"><img src="../../../img/icons/H2-white-on-magenta.png" alt="Magenta icon"><span class="ok" style="top:-8px;right:-8px"><svg class="ic"><use href="#i-check"/></svg></span></span><span class="t-small">Magenta</span></div>
         <div class="icn"><span class="choice" style="border-radius:22.5%"><img src="../../../img/icons/H4-white-on-electric-blue.png" alt="Electric blue icon"></span><span class="t-small">Electric blue</span></div>
+        <div class="icn"><span class="choice" style="border-radius:22.5%"><img src="../../../img/icons/H7-white-on-ink.png" alt="Black icon" style="box-shadow:0 0 0 1px rgba(255,246,238,.22)"></span><span class="t-small">Black</span></div>
       </div>
     </div>
     <p class="t-small soft pad" style="margin-top:28px">The app icon changes on your home screen too. iPhone shows a short note to confirm it.</p>
@@ -448,9 +466,10 @@ window.IDYLL_ROOT = '../../../';
     <div style="position:absolute;left:28px;right:28px;top:148px"><p class="t-sheet">${d.title}<b class="stop">.</b></p><p class="t-small" style="margin-top:8px;font-size:15px">${d.body}</p>
     <div style="display:flex;justify-content:space-between;margin-top:14px;font-size:15px"><a>${d.l}</a><a>${d.r}</a></div></div>`;
 
-  function prep(root, mode, blue) {
+  const ACCENTS = { magenta: ['#d81b7a', '#2d5bff'], blue: ['#2d5bff', '#d81b7a'], black: ['#161514', '#d81b7a'] };
+  function prep(root, mode, accent = 'magenta') {
     const dark = mode === 'dark';
-    const acc = blue ? '#2d5bff' : '#d81b7a', ink2 = blue ? '#d81b7a' : '#2d5bff';
+    const [acc, ink2] = ACCENTS[accent];
     root.querySelectorAll('.cap').forEach(c => { const n = c.closest('.cell').dataset.idx; c.insertAdjacentHTML('afterbegin', `<b>${n}</b>`); });
     root.querySelectorAll('[data-chrome]').forEach(e => e.outerHTML = chrome(e.dataset.chrome));
     root.querySelectorAll('[data-tbar]').forEach(e => e.outerHTML = tbar);
@@ -469,9 +488,9 @@ window.IDYLL_ROOT = '../../../';
   function addRow(title, groups) {
     board.insertAdjacentHTML('beforeend', `<p class="rowname">${title}<b class="stop">.</b></p>`);
     const row = document.createElement('section'); row.className = 'row';
-    groups.forEach(({ mode, cells, blue }) => cells.forEach(c => {
-      c.classList.add(`m-${mode}`); if (mode === 'dark') c.classList.add('mono'); if (blue) c.classList.add('acc-blue');
-      row.appendChild(c); prep(c, mode, blue);
+    groups.forEach(({ mode, cells, accent }) => cells.forEach(c => {
+      c.classList.add(`m-${mode}`); if (mode === 'dark') c.classList.add('mono'); if (accent && accent !== 'magenta') c.classList.add(`acc-${accent}`);
+      row.appendChild(c); prep(c, mode, accent);
     }));
     board.appendChild(row);
   }
@@ -481,8 +500,10 @@ window.IDYLL_ROOT = '../../../';
   modes.forEach(m => { const c = clone('screens'); number(c, 1); addRow(name(m), [{ mode: m, cells: c }]); });
   board.insertAdjacentHTML('beforeend', `<h2 class="section">Riffs on the first-run sheet<b class="stop">.</b></h2><p>The plate sheet from screen 3, four ways, dark then light. The plate is always the accent with cream type, so it reads the same in both modes.</p>`);
   addRow(modes.map(name).join(', then '), modes.map(m => { const c = clone('riffs'); number(c, 13); c.forEach(x => x.querySelector('.cap').append(`, ${m}`)); return { mode: m, cells: c }; }));
-  board.insertAdjacentHTML('beforeend', `<h2 class="section">Electric blue accent<b class="stop">.</b></h2><p>Home with the accent set to electric blue. Only the accent and the second ink swap: blue takes magenta's place, and magenta becomes the strike and the water.</p>`);
-  addRow('Home, electric blue', modes.map(m => { const c = clone('screens').filter(e => e.classList.contains('home')); number(c, 17); c[0].querySelector('.cap').textContent = `Home, electric blue, ${m}`; return { mode: m, cells: c, blue: true }; }));
+  board.insertAdjacentHTML('beforeend', `<h2 class="section">Accents<b class="stop">.</b></h2><p>Chosen in Settings, Appearance. Only the accent, the second ink and the plate change. Electric blue swaps places with magenta. Black is ink on paper with an ink plate; on night it turns cream, with a raised near-black plate. Magenta is its second ink.</p>`);
+  const pick = (cls, start, label, accent) => modes.map(m => { const c = clone('screens').filter(e => cls.some(k => e.classList.contains(k))); number(c, start); c.forEach(x => { const cap = x.querySelector('.cap'); cap.textContent = `${cap.textContent}, ${label}, ${m}`; }); return { mode: m, cells: c, accent }; });
+  addRow('Electric blue', pick(['home'], 17, 'electric blue', 'blue'));
+  addRow('Black', pick(['home', 'sheet3'], 18, 'black', 'black'));
 })();
 </script>
 <script src="../kit.js"></script>
