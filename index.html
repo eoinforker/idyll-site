@@ -191,8 +191,8 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
 .mk { width: 60px; height: 60px; }
 .stop { color: var(--pink); font-weight: inherit; }
 
-/* Nine apps: a three by three grid of printed marks. */
-.marks ul { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 14px; }
+/* Ten apps: a grid of printed marks, four across. */
+.marks ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px 10px; }
 .marks li { grid-template-columns: none; justify-items: start; gap: 8px; font-size: 13.5px; line-height: 1.25; }
 .mk { width: 52px; height: 52px; }
 @media (max-width: 420px) { .mk { width: 46px; height: 46px; } .marks li { font-size: 12.5px; } }
@@ -240,6 +240,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
             <li><span class="mk" data-mark="reddit"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Reddit, Idyll removes: </span>Home, Popular</span></li>
             <li><span class="mk" data-mark="linkedin"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From LinkedIn, Idyll removes: </span>The feed</span></li>
             <li><span class="mk" data-mark="threads"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Threads, Idyll removes: </span>For you</span></li>
+            <li><span class="mk" data-mark="substack"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Substack, Idyll removes: </span>Notes, For you</span></li>
           </ul>
         </div>
         <div class="win">
@@ -293,7 +294,7 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
     <p class="fine night-fine">Screens from the Android app, with sample data.</p>
     <footer>
       <span>Idyll. Social without the scroll. Coming soon. <a href="./privacy.html">Privacy</a> &nbsp; <a href="./support.html">Support</a> &nbsp; <a href="https://ko-fi.com/idyllsocial">Ko-fi</a></span>
-      <span>YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn and Threads are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
+      <span>YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn, Threads and Substack are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
     </footer>
   </div>
 </div>
