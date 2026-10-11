@@ -10,16 +10,17 @@
 <link rel="apple-touch-icon" href="../../img/icons/H2-white-on-magenta.png">
 <link rel="stylesheet" href="../../fonts.css">
 <style>
-/* Quiet paper, near-black ink, then one magenta plate. */
+/* Quiet paper, near-black ink, one magenta plate, then night. */
 :root {
   --paper: #f6f5f1;
   --ink: #161514;
   --soft: #5b5853;
-  --rule: #c9c6bf;
   --pink: #d81b7a;
   --blue: #2d5bff;
   --cream: #fff6ee;
+  --night: #141416;
   --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Timeless Serif", Georgia, serif;
   --mono: "Paper Mono", ui-monospace, Menlo, monospace;
   --pad: clamp(16px, 4vw, 48px);
 }
@@ -55,50 +56,115 @@ a:hover { color: var(--pink); }
 .wm img { width: 24px; height: 24px; border-radius: 22.5%; display: block; }
 .top nav { display: flex; gap: clamp(14px, 2.4vw, 28px); font: 500 15px/1 var(--sans); }
 
-.lede { display: flex; flex-direction: column; align-items: center; gap: clamp(26px, 4.5vh, 48px); padding-top: clamp(28px, 6vh, 64px); }
-.note { border: 3px double var(--ink); font: 400 12.5px/1.55 var(--mono); text-align: center; width: min(100%, 400px); }
-.note b { display: block; font-weight: 400; background: var(--ink); color: var(--paper); text-align: left; padding: 2px 8px; letter-spacing: .02em; }
-.note p { padding: 10px 14px 11px; text-wrap: balance; }
+.lede { display: flex; flex-direction: column; align-items: center; gap: clamp(22px, 4vh, 40px); padding-top: clamp(28px, 6vh, 64px); }
+/* Coming soon: a magenta tag whose edge breaks into halftone, then the platforms in blue. */
+.soon { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 12px; font: 400 12.5px/1 var(--mono); letter-spacing: .02em; }
+.soon .tag { display: inline-flex; align-items: stretch; color: var(--cream); }
+.soon .tag b { font-weight: 400; background: var(--pink); padding: 5px 4px 5px 9px; }
+.soon .tag svg { display: block; width: 26px; height: 22px; fill: var(--pink); }
+.soon .on { color: var(--blue); }
 .leader { display: flex; align-items: baseline; gap: 8px; width: min(100%, 420px); font: 400 13px/1.2 var(--mono); }
 .leader i { flex: 1; min-width: 24px; border-bottom: 1.5px dotted var(--ink); transform: translateY(-3px); }
 
 /* Hero */
-.hero { text-align: center; padding: clamp(22px, 5vh, 56px) 0 clamp(56px, 11vh, 128px); }
-.hero h1 { font: 500 clamp(40px, min(14.5vw, 25vh), 210px)/.88 var(--sans); letter-spacing: -.055em; margin: 0 -.04em; }
+.hero { text-align: center; padding: clamp(18px, 4.5vh, 52px) 0 clamp(56px, 11vh, 128px); }
+.hero h1 { font: 400 clamp(40px, min(13.6vw, 25vh), 210px)/.9 var(--serif); letter-spacing: -.035em; margin: 0 -.04em; }
 .hero h1 span { display: block; }
 .go { display: flex; justify-content: center; gap: clamp(22px, 4vw, 52px); margin-top: clamp(26px, 4.5vh, 48px); font: 500 clamp(18px, 1.9vw, 24px)/1.2 var(--sans); letter-spacing: -.015em; }
 .go a { text-decoration-thickness: 1.5px; text-underline-offset: .22em; }
 
 /* The plate */
-.plate { background: var(--pink); color: var(--cream); padding: clamp(14px, 2vw, 28px); }
+.plate { position: relative; isolation: isolate; background: var(--pink); color: var(--cream); padding: clamp(14px, 2vw, 28px); }
+/* Paper grain, barely there. */
+.plate::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .plate .crop { --c: var(--cream); min-height: min(88vh, 860px); display: grid; place-items: center; padding: clamp(36px, 6vw, 80px) clamp(10px, 3vw, 40px); }
-.tag { position: absolute; top: 14px; left: 18px; font: 400 11.5px/1 var(--mono); letter-spacing: .02em; }
-.tag.r { left: auto; right: 18px; }
-.stage { position: relative; width: min(100%, 1120px); }
+.stage { width: min(100%, 1180px); display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
 @media (min-width: 1600px) { .stage { width: min(100%, 1400px); } }
-.cyg { position: relative; width: 76%; margin-left: 2%; aspect-ratio: 640 / 380; }
-.cyg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cyg { position: relative; width: 100%; aspect-ratio: 640 / 380; }
+.cyg canvas, .mk canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 30px; }
+.lbl { font: 400 11.5px/1 var(--mono); letter-spacing: .03em; }
+.marks .lbl { margin-bottom: 12px; }
+.marks ul { display: grid; gap: 6px; }
+.marks li { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 18px; align-items: center; font: 400 15px/1.3 var(--sans); }
+.mk { position: relative; width: 60px; height: 60px; }
 
-/* A small window, one bit deep. */
-.win { position: absolute; right: 2%; bottom: -3%; width: min(44%, 410px); background: var(--cream); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); font: 400 15px/1.3 var(--sans); }
-.bar { position: relative; height: 22px; border-bottom: 1.5px solid var(--ink); display: flex; align-items: center; justify-content: center;
-  background: repeating-linear-gradient(to bottom, transparent 0 3px, var(--ink) 3px 4px) 0 4px / 100% 13px no-repeat; }
-.bar::before { content: ""; position: absolute; left: 9px; top: 4px; width: 12px; height: 12px; border: 1.5px solid var(--ink); background: var(--cream); }
-.bar span { background: var(--cream); padding: 0 8px; font: 400 11.5px/1 var(--mono); }
-.cols { display: grid; grid-template-columns: 1fr 1fr; }
-.cols > div { padding: 12px 14px 14px; }
-.cols > div + div { border-left: 1.5px solid var(--ink); }
-.cols h3 { font: 400 11px/1 var(--mono); letter-spacing: .03em; margin-bottom: 10px; color: var(--ink); }
-.cols li { padding: 3px 0; }
-.gone li s { text-decoration-thickness: 1.5px; color: var(--soft); }
-.kept li { display: grid; grid-template-columns: 7px 1fr; gap: 9px; align-items: baseline; }
-.kept li::before { content: ""; width: 7px; height: 7px; background: var(--ink); transform: translateY(-.1em); }
-.status { border-top: 1.5px solid var(--ink); padding: 5px 10px; font: 400 11px/1.3 var(--mono); }
-.caret { display: inline-block; width: .55em; height: 1em; background: var(--ink); vertical-align: -.15em; margin-left: 2px; }
-@media (prefers-reduced-motion: no-preference) { .caret { animation: blink 1.1s steps(1) infinite; } @keyframes blink { 50% { opacity: 0; } } }
+/* A small window in our inks. */
+.win { width: 100%; max-width: 380px; background: var(--cream); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); font: 400 15px/1.3 var(--sans); }
+.bar { background: var(--blue); color: var(--cream); border-bottom: 1.5px solid var(--ink); padding: 5px 12px; }
+.win ul { padding: 12px 14px 14px; }
+.win li { display: grid; grid-template-columns: 7px 1fr; gap: 10px; align-items: baseline; padding: 3px 0; }
+.win li::before { content: ""; width: 7px; height: 7px; background: var(--pink); transform: translateY(-.1em); }
+
+/* The same feed, twice. */
+.twice { padding: clamp(72px, 11vw, 140px) 0 0; --gap: clamp(16px, 5vw, 88px); }
+.pair { display: flex; justify-content: center; gap: var(--gap); }
+.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.pair figcaption { font: 400 12px/1.3 var(--mono); letter-spacing: .02em; }
+.fine { margin: 26px auto 0; max-width: 34em; text-align: center; font: 400 13px/1.5 var(--sans); color: var(--soft); }
+.device { --w: min(300px, calc((100vw - 2 * var(--pad) - var(--gap)) / 2), max(200px, calc((100svh - 150px) / 2.17))); position: relative; width: var(--w); aspect-ratio: 9 / 19.5; background: var(--ink); border-radius: calc(var(--w) * .16); padding: calc(var(--w) * .03); }
+.screen { position: relative; height: 100%; overflow: hidden; border-radius: calc(var(--w) * .13); background: #fff; isolation: isolate; font: 400 calc(var(--w) * .039)/1.3 var(--sans); color: #0e0f14; transform: translateZ(0); }
+.island { position: absolute; z-index: 5; top: calc(var(--w) * .025); left: 50%; width: 30%; height: calc(var(--w) * .085); transform: translateX(-50%); border-radius: 99px; background: var(--ink); }
+.app { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; transition: opacity .3s ease; }
+.app.fading { opacity: 0; }
+.sb { flex: none; height: 3.55em; display: flex; justify-content: space-between; align-items: center; padding: .55em 2.05em 0 2.35em; font-weight: 700; font-size: 1.02em; }
+.sb .ri { display: flex; align-items: center; gap: .32em; }
+.sb svg { height: .82em; width: auto; }
+.hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: .35em 1.05em .5em; }
+.hd b { font: 800 1.42em/1 var(--sans); letter-spacing: -.025em; display: flex; align-items: center; gap: .2em; }
+.hd .ri { display: flex; gap: .95em; }
+.ic { width: 1.6em; height: 1.6em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.f { fill: currentColor; }
+.vp { position: relative; flex: 1; overflow: hidden; }
+.feed { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.tb { flex: none; height: 4.4em; padding: .55em 1.5em 1.55em; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #ececef; position: relative; }
+.tb::after { content: ""; position: absolute; left: 50%; bottom: .45em; width: 36%; height: .3em; transform: translateX(-50%); border-radius: 9px; background: #0e0f14; }
+.av { display: inline-grid; place-items: center; flex: none; width: 2.4em; height: 2.4em; border-radius: 50%; font: 800 .92em/1 var(--sans); }
+.c1 { background: #ffe1ef; color: #a8105c; } .c2 { background: #e3e9ff; color: #1a3fd6; } .c3 { background: #ffe8d4; color: #9a4a12; } .c4 { background: #ddf3e6; color: #1f6b45; } .c6 { background: #fff1c9; color: #7a5a00; }
+.ph { position: relative; overflow: hidden; background: #e9e6e2; }
+.ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.stories { display: flex; gap: .75em; padding: .2em 1em .75em; border-bottom: 1px solid #efeff2; overflow: hidden; }
+.story { display: flex; flex-direction: column; align-items: center; gap: .3em; font-size: .82em; width: 4.7em; flex: none; }
+.story .ring { padding: .17em; border-radius: 50%; background: var(--pink); }
+.story .ring .av { width: 3.7em; height: 3.7em; box-shadow: 0 0 0 .17em #fff; font-size: 1em; }
+.post { padding-bottom: .9em; }
+.post .ph-h { display: flex; align-items: center; gap: .6em; padding: .7em 1em; }
+.post .ph-h .av { width: 2.25em; height: 2.25em; font-size: .85em; }
+.post .ph-h b { font-weight: 700; }
+.post .ph-h small { display: block; font-size: .85em; color: #6b6e78; }
+.post .ph-h .more { margin-left: auto; }
+.post .sq { aspect-ratio: 1; }
+.post .acts { display: flex; gap: .95em; padding: .7em 1em .35em; }
+.post .acts .sv { margin-left: auto; }
+.post .likes { padding: 0 1em; font-weight: 700; }
+.post .pc { padding: .2em 1em 0; }
+.post .pc b { font-weight: 700; margin-right: .3em; }
+.reel .tall { aspect-ratio: 4 / 5; }
+.reel .badge { position: absolute; left: .7em; top: .7em; display: flex; align-items: center; gap: .3em; padding: .25em .55em; border-radius: 99px; background: rgba(0,0,0,.45); color: #fff; font-weight: 700; font-size: .85em; }
+.reel .badge .ic { width: 1.1em; height: 1.1em; }
+.reel .audio { position: absolute; left: .7em; bottom: 1em; color: #fff; font-size: .85em; font-weight: 600; }
+.rbar { position: absolute; left: 0; right: 0; bottom: 0; height: .22em; background: rgba(255,255,255,.35); }
+.rbar i { display: block; height: 100%; background: #fff; transform-origin: left; animation: rbar 7s linear infinite; }
+@keyframes rbar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.paused .rbar i { animation-play-state: paused; }
+.shop { display: flex; justify-content: space-between; align-items: center; padding: .7em 1em; background: var(--blue); color: #fff; font-weight: 700; }
+.sugg { padding: .8em 0 1em; border-top: 1px solid #efeff2; border-bottom: 1px solid #efeff2; background: #fafafa; margin-bottom: .6em; overflow: hidden; }
+.sugg .row { display: flex; justify-content: space-between; padding: 0 1em .7em; font-weight: 700; }
+.sugg .row span + span { color: var(--blue); }
+.sugg .cards { display: flex; gap: .6em; padding-left: 1em; }
+.sugg .card { flex: none; width: 8.4em; padding: 1em .6em .7em; border-radius: .8em; background: #fff; border: 1px solid #ececef; text-align: center; }
+.sugg .card .av { width: 4.4em; height: 4.4em; font-size: 1.1em; margin: 0 auto .5em; }
+.sugg .card b { display: block; font-weight: 700; }
+.sugg .card small { display: block; color: #6b6e78; font-size: .82em; margin: .1em 0 .6em; }
+.btn-b { display: block; padding: .5em; border-radius: .55em; background: var(--blue); color: #fff; font-weight: 700; font-size: .9em; }
+.caught { padding: 2.2em 1.4em 4em; text-align: center; border-top: 1px solid #efeff2; }
+.caught .ck { width: 4.2em; height: 4.2em; margin: 0 auto 1em; border-radius: 50%; display: grid; place-items: center; color: var(--pink); border: .2em solid var(--pink); }
+.caught b { display: block; font: 800 1.25em/1.2 var(--sans); }
+.caught p { margin-top: .4em; color: #6b6e78; }
 
 /* How it works */
-.how { padding: clamp(64px, 10vw, 128px) 0 0; }
+.how { padding: clamp(72px, 11vw, 140px) 0 clamp(80px, 12vw, 150px); }
 .how .crop { padding: 26px 22px; }
 .how .tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .tri > div { padding: 0 clamp(16px, 2.2vw, 32px); }
@@ -110,19 +176,17 @@ a:hover { color: var(--pink); }
 .tri p + p { margin-top: 10px; }
 .tri .honest { color: var(--soft); }
 
-/* Free */
-.free { text-align: center; padding: clamp(96px, 16vw, 220px) 0 clamp(80px, 13vw, 180px); }
-.free h2 { font: 500 clamp(64px, 17vw, 300px)/.84 var(--sans); letter-spacing: -.06em; margin: 0 -.04em; }
+/* Night: free, and the footer. */
+.night { background: var(--night); color: var(--cream); }
+.free { text-align: center; padding: clamp(96px, 15vw, 210px) 0 clamp(80px, 12vw, 170px); }
+.free h2 { font: 400 clamp(62px, 16vw, 290px)/.88 var(--serif); letter-spacing: -.04em; margin: 0 -.04em; }
 .free h2 span { display: inline-block; }
-.free p { margin: clamp(34px, 4.5vw, 64px) auto 0; max-width: 30em; font: 400 clamp(16px, 1.5vw, 19px)/1.45 var(--sans); }
+.free p { margin: clamp(30px, 4vw, 56px) auto 0; max-width: 30em; font: 400 clamp(16px, 1.5vw, 19px)/1.45 var(--sans); }
+footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; font: 400 13px/1.5 var(--sans); color: rgba(255,246,238,.62); }
 
-footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; font: 400 13px/1.5 var(--sans); color: var(--soft); }
-
-@media (max-width: 820px) {
-  .stage { display: flex; flex-direction: column; align-items: center; }
-  .cyg { width: 100%; }
-  .win { position: relative; right: auto; bottom: auto; width: min(100%, 380px); margin-top: 8px; left: -2px; }
-  .win { width: min(100%, 420px); }
+@media (max-width: 860px) {
+  .stage { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .side { width: min(100%, 380px); }
 }
 @media (max-width: 1024px) { .tri p { font-size: 14.5px; } }
 @media (max-width: 700px) {
@@ -135,13 +199,29 @@ footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; 
 @media (max-width: 520px) {
   .top nav a + a { display: none; }
   .plate .crop { min-height: 0; }
-  .tag.r { display: none; }
   .how .crop { padding: 22px 16px; }
+  .pair figure { gap: 12px; }
   footer { flex-direction: column; }
 }
+@media (prefers-reduced-motion: reduce) { .rbar i { animation: none; transform: scaleX(.4); } .app { transition: none; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.8l8.5 6.7V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.8 15.8 4.6 4.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-reels" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M3.5 8.5h17M8.5 3.5l2.5 5M14 3.5l2.5 5"/><path d="m10.5 12 4 2.3-4 2.3z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.6-4.6-7.6-10.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.6 2.5C19.6 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.4l7.3 2.5L13 21z"/><path d="m10.3 12.9 5-5"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-6-4.5-6 4.5z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5"/></symbol>
+</svg>
+
 <div class="wrap">
   <header class="top">
     <a class="wm" href="#top" aria-label="Idyll, top of page"><img src="../../img/icons/H2-white-on-magenta.png" width="24" height="24" alt="">Idyll</a>
@@ -150,7 +230,7 @@ footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; 
 
   <main id="top">
     <div class="lede">
-      <div class="note"><b>Coming soon</b><p>iPhone, Android, Chrome and Mac</p></div>
+      <p class="soon"><span class="tag"><b>Coming soon</b><svg viewBox="0 0 26 22" aria-hidden="true"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></svg></span><span class="on">iPhone, Android, Chrome and Mac</span></p>
       <p class="leader"><span>Idyll</span><i aria-hidden="true"></i><span>social without the scroll</span></p>
     </div>
 
@@ -162,29 +242,31 @@ footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; 
 </div>
 
 <section class="plate" aria-labelledby="w">
+  <h2 class="sr" id="w">What goes, and what stays</h2>
   <div class="crop">
     <div class="stage">
       <div class="cyg" id="cyg" role="img" aria-label="A cygnet on the water, printed as cream halftone dots">
-        <canvas id="cygB" aria-hidden="true"></canvas>
         <canvas id="cygC" aria-hidden="true"></canvas>
       </div>
-      <div class="win">
-        <div class="bar"><span id="w">Your feed</span></div>
-        <div class="cols">
-          <div class="gone"><h3>Goes</h3><ul>
-            <li><s><span class="sr">Removed: </span>Reels</s></li>
-            <li><s><span class="sr">Removed: </span>Shorts</s></li>
-            <li><s><span class="sr">Removed: </span>Sponsored posts</s></li>
-            <li><s><span class="sr">Removed: </span>Suggested for you</s></li>
-            <li><s><span class="sr">Removed: </span>For you</s></li>
-          </ul></div>
-          <div class="kept"><h3>Stays</h3><ul>
+      <div class="side">
+        <div class="marks">
+          <p class="lbl">Gone</p>
+          <ul>
+            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads, Up next</span></li>
+            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Suggested, Sponsored</span></li>
+            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch, the algorithmic feed</span></li>
+            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted, Trends</span></li>
+          </ul>
+        </div>
+        <div class="win">
+          <p class="bar lbl">Stays</p>
+          <ul>
             <li>Messages</li>
             <li>Search</li>
             <li>Subscriptions</li>
             <li>Following</li>
             <li>The video a friend sent</li>
-          </ul></div>
+          </ul>
         </div>
       </div>
     </div>
@@ -192,6 +274,21 @@ footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; 
 </section>
 
 <div class="wrap">
+  <section class="twice" aria-labelledby="tw">
+    <h2 class="sr" id="tw">The same feed, without and with Idyll</h2>
+    <div class="pair" id="pair">
+      <figure>
+        <div class="device" role="img" aria-label="Without Idyll: friends' posts with a Reel, Suggested for you and a Sponsored post between them, and no end."><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div>
+        <figcaption>Without Idyll</figcaption>
+      </figure>
+      <figure>
+        <div class="device" role="img" aria-label="With Idyll: the same friends' posts only, ending in You're all caught up."><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div>
+        <figcaption>With Idyll</figcaption>
+      </figure>
+    </div>
+    <p class="fine">Illustrative screens. On iPhone, Idyll cleans Instagram in Safari, and the app itself gets a daily allowance.</p>
+  </section>
+
   <section class="how" id="how" aria-labelledby="hw">
     <h2 class="sr" id="hw">How it works</h2>
     <div class="crop"><div class="tri">
@@ -213,84 +310,182 @@ footer { border-top: 1px solid var(--ink); padding: 16px 0 22px; display: flex; 
       </div>
     </div></div>
   </section>
+</div>
 
-  <section class="free" id="free" aria-labelledby="fr">
-    <h2 id="fr"><span>Free.</span> <span>For good.</span></h2>
-    <p>No subscription, no ads, no data sold. Idyll will never charge.</p>
-  </section>
-
-  <footer>
-    <span>Idyll. Social without the scroll. Coming soon.</span>
-    <span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
-  </footer>
+<div class="night">
+  <div class="wrap">
+    <section class="free" id="free" aria-labelledby="fr">
+      <h2 id="fr"><span>Free.</span> <span>For good.</span></h2>
+      <p>No subscription, no ads, no data sold. Idyll will never charge.</p>
+    </section>
+    <footer>
+      <span>Idyll. Social without the scroll. Coming soon.</span>
+      <span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
+    </footer>
+  </div>
 </div>
 
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cyg = document.getElementById('cyg'), cC = document.getElementById('cygC'), cB = document.getElementById('cygB');
-  const CREAM = '#fff6ee', BLUE = '#2d5bff';
-  const img = new Image(); img.src = '../../img/cygnet-mark.svg';
-  let dotsC = [], dotsB = [], t0 = -1e6, raf = 0, shown = false, offB = 0;
+  const $ = s => document.querySelector(s);
   const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const CREAM = '#fff6ee', BLUE = '#2d5bff';
 
-  /* Sample the silhouette through a rotated screen. */
-  function screen(a, w, h, c, ang, tone, spread) {
+  /* Prints: each silhouette is sampled through a rotated screen and printed as dots. */
+  function screen(a, w, h, c, ang, tone, rk, delay) {
     const out = [], ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / c / 2) + 2;
     for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
       const x = cx + (i * ca - j * sa) * c, y = cy + (i * sa + j * ca) * c;
       if (x < 0 || y < 0 || x >= w || y >= h) continue;
       const v = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255 * tone(x / w, y / h);
       if (v < .05) continue;
-      out.push({ x, y, r: c * .56 * Math.sqrt(Math.min(v, 1)), d: (y / h) * spread * .35 + (x / w) * spread * .65 + Math.random() * 280 });
+      out.push({ x, y, r: c * rk * Math.sqrt(Math.min(v, 1)), d: delay(x / w, y / h) + Math.random() * 280 });
     }
     return out;
   }
-  function build() {
-    const dpr = Math.min(devicePixelRatio || 1, 2), cw = cyg.clientWidth, w = Math.round(cw * dpr), h = Math.round(cyg.clientHeight * dpr);
-    if (!w || !h || !img.complete || !img.naturalWidth) return false;
-    const cell = Math.max(4.5, cw / 120) * dpr;
+  function sample(img, w, h, inset, blur) {
     const m = document.createElement('canvas'); m.width = w; m.height = h;
     const g = m.getContext('2d', { willReadFrequently: true });
-    g.filter = `blur(${cell * .5}px)`; g.drawImage(img, 0, 0, w, h);
-    const a = g.getImageData(0, 0, w, h).data;
-    cC.width = cB.width = w; cC.height = cB.height = h;
-    /* Cream: full near the top, thinning towards the water. */
-    dotsC = screen(a, w, h, cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), 900);
-    /* Blue: a light second pass in the water, laid a touch off register. */
-    dotsB = screen(a, w, h, cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, 900);
-    offB = 3 * dpr;
+    g.filter = `blur(${blur}px)`; g.drawImage(img, inset, inset, w - 2 * inset, h - 2 * inset);
+    return g.getImageData(0, 0, w, h).data;
+  }
+  const prints = [];
+  const cygEl = $('#cyg');
+  prints.push({ el: cygEl, cv: $('#cygC'), src: '../../img/cygnet-mark.svg', build(p, a, w, h, dpr) {
+    const cell = p.cell;
+    return [
+      { col: BLUE, dx: 3 * dpr, dy: -2 * dpr, dots: screen(a, w, h, cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, (u, v) => v * 315 + u * 585) },
+      { col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, (u, v) => v * 315 + u * 585) }
+    ];
+  }, cellOf: cw => Math.max(4.5, cw / 120), inset: 0 });
+  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `../../img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140,
+    build(p, a, w, h) { return [{ col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, () => 1, .58, (u, v) => 300 + i * 140 + u * 260) }]; },
+    cellOf: cw => cw / 24, inset: .1, blur: .15 }));
+
+  let t0 = -1e6, raf = 0, shown = false;
+  function build(p) {
+    const dpr = Math.min(devicePixelRatio || 1, 2), cw = p.el.clientWidth, w = Math.round(cw * dpr), h = Math.round(p.el.clientHeight * dpr);
+    if (!w || !h || !p.img || !p.img.naturalWidth) return false;
+    p.cell = p.cellOf(cw) * dpr; p.dpr = dpr;
+    const a = sample(p.img, w, h, Math.round(w * p.inset), p.cell * (p.blur || .45));
+    p.cv.width = w; p.cv.height = h;
+    p.layers = p.build(p, a, w, h, dpr);
     return true;
   }
-  const ease = t => 1 - Math.pow(1 - t, 3);
-  function paint(cv, dots, col, now, dx, dy) {
-    const g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height);
-    g.fillStyle = col; g.beginPath(); let busy = false;
-    for (const d of dots) {
-      const t = clamp((now - t0 - d.d) / 360); if (t < 1) busy = true;
-      const r = d.r * ease(t); if (r < .3) continue;
-      g.moveTo(d.x + dx + r, d.y + dy); g.arc(d.x + dx, d.y + dy, r, 0, 6.2832);
+  function paint(p, now) {
+    if (!p.layers) return false;
+    const g = p.cv.getContext('2d'), W = p.cv.width, H = p.cv.height; let busy = false;
+    g.clearRect(0, 0, W, H);
+    for (const L of p.layers) {
+      g.fillStyle = L.col; g.beginPath();
+      for (const d of L.dots) {
+        const t = clamp((now - t0 - d.d) / 360); if (t < 1) busy = true;
+        const r = d.r * ease(t); if (r < .3) continue;
+        g.moveTo(d.x + L.dx + r, d.y + L.dy); g.arc(d.x + L.dx, d.y + L.dy, r, 0, 6.2832);
+      }
+      g.fill();
     }
-    g.fill(); return busy;
+    if (p.cross != null) {
+      /* One heavy strike in a second ink, a little off register. */
+      const k = ease(clamp((now - t0 - p.cross) / 420)); if (k < 1) busy = true;
+      if (k > 0) {
+        const ox = 2 * p.dpr, oy = -1.5 * p.dpr, y0 = H * .6 + oy, y1 = H * .4 + oy;
+        g.strokeStyle = BLUE; g.lineWidth = W * .1; g.lineCap = 'butt'; g.beginPath();
+        g.moveTo(ox, y0); g.lineTo(ox + W * k, y0 + (y1 - y0) * k); g.stroke();
+      }
+    }
+    return busy;
   }
-  const draw = now => paint(cB, dotsB, BLUE, now, offB, -offB * .6) | paint(cC, dotsC, CREAM, now, 0, 0);
-  function frame() { raf = draw(performance.now()) ? requestAnimationFrame(frame) : 0; }
-  const settle = () => { t0 = -1e6; draw(0); };
+  const drawAll = now => prints.reduce((b, p) => paint(p, now) || b, false);
+  function frame() { raf = drawAll(performance.now()) ? requestAnimationFrame(frame) : 0; }
+  const settle = () => { t0 = -1e6; drawAll(0); };
   function start() {
     if (shown) return; shown = true;
     if (reduce) return settle();
     t0 = performance.now() + 120; raf = requestAnimationFrame(frame);
-    setTimeout(() => { if (raf) { cancelAnimationFrame(raf); raf = 0; settle(); } }, 3200);
+    setTimeout(() => { if (raf) { cancelAnimationFrame(raf); raf = 0; settle(); } }, 3600);
   }
-  function ready() {
-    if (!build()) return;
+  Promise.all(prints.map(p => new Promise(res => { p.img = new Image(); p.img.onload = p.img.onerror = res; p.img.src = p.src; }))).then(() => {
+    if (!prints.every(build)) return;
     if (reduce || !('IntersectionObserver' in window)) { shown = true; return settle(); }
     const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); start(); } }, { threshold: .3 });
-    io.observe(cyg);
+    io.observe(cygEl);
+  });
+
+  /* The same feed, twice. */
+  const SB = '<svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".7" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx=".7" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx=".7" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx=".7" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a9.9 9.9 0 0 1 14 0l-1.4 1.4a7.9 7.9 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M25 4v4c.8-.3 1.3-1.1 1.3-2S25.8 4.3 25 4z" fill="currentColor" opacity=".5"/></svg>';
+  const I = (n, cls = '') => `<svg class="ic ${cls}"><use href="#i-${n}"/></svg>`;
+  const av = (l, c) => `<span class="av c${c}">${l}</span>`;
+  const im = id => `<img src="../../img/photos/${id}.jpg" alt="" width="480" height="480" decoding="async">`;
+  const acts = `<div class="acts">${I('heart')}${I('chat')}${I('send')}<span class="sv">${I('save')}</span></div>`;
+  const post = (h, l, c, ph, t, likes, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>${t}</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div>${acts}<div class="likes">${likes}</div><div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const reel = (h, l, c, ph, cap) => `<article class="post reel"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Suggested reel</small></div><span class="more">${I('more')}</span></div><div class="ph tall">${im(ph)}<span class="badge">${I('reels')}Reels</span><span class="audio">Original audio</span><span class="rbar"><i></i></span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const ad = (h, l, c, ph, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Sponsored</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div><div class="shop">Shop now<span>›</span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const sugg = list => `<div class="sugg"><div class="row"><span>Suggested for you</span><span>See all</span></div><div class="cards">${list.map(([n, l, c]) => `<div class="card">${av(l, c)}<b>${n}</b><small>Suggested for you</small><span class="btn-b">Follow</span></div>`).join('')}</div></div>`;
+  const stories = `<div class="stories">${[['Your story', '+', 6], ['maya', 'M', 1], ['leo', 'L', 3], ['priya', 'P', 2], ['sam', 'S', 4]].map(([n, l, c]) => `<span class="story"><span class="ring">${av(l, c)}</span>${n}</span>`).join('')}</div>`;
+  const maya = post('maya.walks', 'M', 1, 128, '2h', 'Liked by leo.makes and others', 'Swam before breakfast. Freezing. Perfect.');
+  const priya = post('priya.reads', 'P', 2, 42, '4h', 'Liked by sam_k and others', 'Long tables, three hours gone.');
+  const leo = post('leo.makes', 'L', 3, 76, '7h', 'Liked by maya.walks and others', 'She rides again.');
+  const sam = post('sam_k', 'S', 4, 225, 'Yesterday', 'Liked by priya.reads and others', 'Sunday pot.');
+  const head = `<div class="sb"><span>9:41</span><span class="ri">${SB}</span></div><div class="hd"><b>Home${I('chev')}</b><span class="ri">${I('heart')}${I('send')}</span></div>`;
+  const tabs = `<div class="tb">${I('home', 'f')}${I('search')}${I('plus')}${I('reels')}${I('user')}</div>`;
+  const loop = maya + reel('dune.days', 'D', 6, 184, 'Golden hour, again. Wait for the end.') + priya + sugg([['dailywins', 'D', 3], ['clipvault', 'C', 2], ['loopdeals', 'L', 6]]) + ad('Berrybox', 'B', 1, 102, 'Fresh every week, straight to your door.') + leo + reel('pupdates', 'P', 3, 237, 'He knows exactly what he did.') + ad('Filmwerk', 'F', 6, 250, 'Shoot real film again.') + sam;
+  const appB = $('#appB'), appA = $('#appA'), pair = $('#pair');
+  appB.innerHTML = head + `<div class="vp"><div class="feed">${stories}<div class="blk">${loop}</div><div class="blk">${loop}</div></div></div>` + tabs;
+  appA.innerHTML = head + `<div class="vp"><div class="feed">${stories}${maya}${priya}${leo}${sam}<div class="caught"><div class="ck">${I('check')}</div><b>You're all caught up</b><p>You've seen all new posts from the past 3 days.</p></div></div></div>` + tabs;
+  const mk = el => ({ vp: el.querySelector('.vp'), feed: el.querySelector('.feed'), y: 0 });
+  const B = mk(appB), A = mk(appA);
+  function measure() {
+    const blk = B.feed.querySelector('.blk');
+    B.topH = blk.offsetTop; B.loopH = blk.offsetHeight; B.H = B.vp.clientHeight;
+    A.max = Math.max(0, A.feed.offsetHeight - A.vp.clientHeight);
   }
-  if (img.complete && img.naturalWidth) ready(); else img.onload = ready;
+  const place = s => { s.feed.style.transform = `translate3d(0,${-s.y.toFixed(2)}px,0)`; };
+  function still() {
+    measure();
+    const r = B.feed.querySelector('.reel');
+    B.y = Math.max(0, r.offsetTop - B.H * .25); A.y = A.max; place(B); place(A);
+  }
+  let v = 0, wait = 1.2, endAt = 0, clock = 0, running = false, last = 0, lr = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function restart() { v = 0; wait = 1.2; endAt = 0; clock = 0; B.y = 0; A.y = 0; place(B); place(A); }
+  function step(now) {
+    lr = 0; if (!running) return;
+    const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; clock += dt;
+    const H = B.H || 500;
+    if (v < 4 && wait > 0) { wait -= dt; if (wait <= 0) v = Math.random() < .35 ? H * rnd(.45, .7) : H * rnd(1.2, 2); }
+    else if (v >= 4) { v *= Math.exp(-2.9 * dt); if (v < 4) { v = 0; wait = rnd(.9, 2.2); } }
+    const dy = v * dt;
+    B.y += dy; if (B.loopH && B.y > B.topH + B.loopH) B.y -= B.loopH;
+    if (A.y < A.max) A.y = Math.min(A.max + 14, A.y + dy);
+    if (A.y > A.max) { A.y += (A.max - A.y) * Math.min(1, dt * 9); if (!endAt) endAt = clock; }
+    place(B); place(A);
+    if (endAt && clock - endAt > 5.5) {
+      endAt = Infinity; appB.classList.add('fading'); appA.classList.add('fading');
+      setTimeout(() => { restart(); appB.classList.remove('fading'); appA.classList.remove('fading'); }, 340);
+    }
+    lr = requestAnimationFrame(step);
+  }
+  function setRunning(on) {
+    running = on; pair.classList.toggle('paused', !on);
+    if (on && !lr) { last = performance.now(); lr = requestAnimationFrame(step); }
+  }
+  requestAnimationFrame(() => { measure(); if (reduce) still(); });
+  if (document.fonts) document.fonts.ready.then(() => { measure(); if (reduce) still(); });
+  if (reduce) pair.classList.add('paused');
+  else {
+    const vis = () => { const r = pair.getBoundingClientRect(); return !document.hidden && r.top < innerHeight && r.bottom > 0; };
+    new IntersectionObserver(() => setRunning(vis()), { threshold: [0, .15] }).observe(pair);
+    document.addEventListener('visibilitychange', () => setRunning(vis()));
+  }
+
   let rt;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (build() && shown && !raf) settle(); }, 150); });
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+    if (prints.every(build) && shown && !raf) settle();
+    measure(); if (reduce) still();
+  }, 150); });
 })();
 </script>
 </body>
