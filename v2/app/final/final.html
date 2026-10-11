@@ -468,6 +468,10 @@ window.IDYLL_ROOT = '../../../';
 
   const ACCENTS = { magenta: ['#d81b7a', '#2d5bff'], blue: ['#2d5bff', '#d81b7a'], black: ['#161514', '#d81b7a'] };
   function prep(root, mode, accent = 'magenta') {
+    /* Appearance: the chosen accent and icon show as selected. */
+    { const i = { magenta: 0, blue: 1, black: 2 }[accent] ?? 0;
+      root.querySelectorAll('.swatch').forEach((el, n) => { const tick = el.querySelector('.ok'); if (n === i) { el.classList.add('sel'); if (!tick) el.insertAdjacentHTML('beforeend', '<span class="ok"><svg class="ic"><use href="#i-check"/></svg></span>'); } else { el.classList.remove('sel'); tick && tick.remove(); } });
+      root.querySelectorAll('.icn .choice').forEach((el, n) => { const tick = el.querySelector('.ok'); if (n === i) { el.classList.add('sel'); if (!tick) el.insertAdjacentHTML('beforeend', '<span class="ok" style="top:-8px;right:-8px"><svg class="ic"><use href="#i-check"/></svg></span>'); } else { el.classList.remove('sel'); tick && tick.remove(); } }); }
     const dark = mode === 'dark';
     const [acc, ink2] = ACCENTS[accent];
     root.querySelectorAll('.cap').forEach(c => { const n = c.closest('.cell').dataset.idx; c.insertAdjacentHTML('afterbegin', `<b>${n}</b>`); });
@@ -497,7 +501,8 @@ window.IDYLL_ROOT = '../../../';
   const clone = id => [...document.getElementById(id).content.cloneNode(true).children];
   const number = (cells, start) => cells.forEach((c, i) => c.dataset.idx = String(start + i).padStart(2, '0'));
   const name = m => m === 'dark' ? 'Dark' : 'Light';
-  modes.forEach(m => { const c = clone('screens'); number(c, 1); addRow(name(m), [{ mode: m, cells: c }]); });
+  const urlAccent = new URLSearchParams(location.search).get('accent') || 'magenta';
+  modes.forEach(m => { const c = clone('screens'); number(c, 1); addRow(name(m), [{ mode: m, cells: c, accent: urlAccent }]); });
   board.insertAdjacentHTML('beforeend', `<h2 class="section">Riffs on the first-run sheet<b class="stop">.</b></h2><p>The plate sheet from screen 3, four ways, dark then light. The plate is always the accent with cream type, so it reads the same in both modes.</p>`);
   addRow(modes.map(name).join(', then '), modes.map(m => { const c = clone('riffs'); number(c, 13); c.forEach(x => x.querySelector('.cap').append(`, ${m}`)); return { mode: m, cells: c }; }));
   board.insertAdjacentHTML('beforeend', `<h2 class="section">Accents<b class="stop">.</b></h2><p>Chosen in Settings, Appearance. Only the accent, the second ink and the plate change. Electric blue swaps places with magenta. Black is ink on paper with an ink plate; on night it turns cream, with a raised near-black plate. Magenta is its second ink.</p>`);
