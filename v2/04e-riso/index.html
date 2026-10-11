@@ -41,7 +41,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
 .p { color: var(--pink); transform: translate(var(--mx), var(--my)); }
 .inked { filter: url(#ink); }
 @media (prefers-reduced-motion: no-preference) {
-  /* The one moment: the pink drum comes round and lands, a little off. */
+  /* The pink drum comes round and lands, a little off. */
   .land { animation: land 1.1s cubic-bezier(.2,.7,.1,1) .5s both; }
   @keyframes land {
     0% { transform: translate(calc(var(--mx) + 18px), calc(var(--my) - 26px)); opacity: 0; }
@@ -61,87 +61,74 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
 .top a.go:hover { color: var(--pink); }
 
 /* The headline act. */
-.presents { font: italic 400 clamp(24px, 3vw, 42px)/1 var(--serif); letter-spacing: -.01em; margin: clamp(12px, 3vw, 40px) 0 clamp(10px, 1.6vw, 22px); }
-.hero { position: relative; }
+.hero { position: relative; margin-top: clamp(16px, 3.5vw, 48px); }
 .hero h1 { position: relative; z-index: 2; font: 900 clamp(60px, min(14.6vw, 23vh), 200px)/.8 var(--sans); letter-spacing: -.045em; text-transform: uppercase; }
 .hero h1 span { display: block; }
 .hero h1 .r { text-align: right; }
 .cyg { position: absolute; z-index: 3; pointer-events: none; right: 0; top: 47%; width: 50%; aspect-ratio: 640 / 380; }
 .cyg canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; }
 
-/* The bill: support, date, venue, door. */
-.bill { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 0 clamp(28px, 5vw, 80px); margin-top: clamp(30px, 5vw, 64px); padding-top: 16px; border-top: 4px solid var(--blue); }
-.name { font: 900 clamp(110px, 19vw, 280px)/.74 var(--sans); letter-spacing: -.06em; margin: .1em 0 0 -.04em; rotate: -1.5deg; transform-origin: 0 100%; }
-.lines > p { padding: 14px 0 16px; border-bottom: 1.5px solid var(--blue); }
-.lines > p:first-child { padding-top: 4px; }
-.lines .with { font: italic 400 19px/1.2 var(--serif); }
-.lines .with + b, .lines b.act { display: block; font: 900 clamp(24px, 2.6vw, 36px)/1.05 var(--sans); letter-spacing: -.025em; margin-top: 4px; }
-.lines .when { font: 900 clamp(22px, 2.2vw, 30px)/1.1 var(--sans); letter-spacing: -.02em; }
-.lines .when em { font: italic 400 1em/1 var(--serif); color: var(--pink); mix-blend-mode: multiply; }
-.lines .where { font: 700 17px/1.4 var(--sans); }
-.door { margin-top: 18px; font: 900 clamp(30px, 3.6vw, 50px)/.95 var(--sans); letter-spacing: -.035em; text-transform: uppercase; }
-.door span { display: inline-block; }
+/* The lineup: support acts in falling sizes, stacked tight, two inks colliding. */
+.lineup { position: relative; margin-top: clamp(40px, 6vw, 90px); padding-top: 14px; border-top: 5px solid var(--blue); text-transform: uppercase; letter-spacing: -.04em; }
+.lineup li { display: block; font-weight: 900; line-height: .84; }
+.l1 { font-size: clamp(64px, 15.6vw, 220px); }
+.l2 { font-size: clamp(42px, 9.4vw, 132px); margin-top: -.12em; text-align: right; }
+.l3 { font-size: clamp(30px, 6.2vw, 88px); margin-top: .04em; }
+.l3 .dot, .l4 .dot { color: var(--pink); mix-blend-mode: multiply; }
+.l4 { font-size: clamp(24px, 4.2vw, 60px); margin-top: .1em; padding-left: 14%; }
+.l5 { font-size: clamp(20px, 2.6vw, 36px); margin-top: .5em; text-transform: none; letter-spacing: -.01em; font: italic 400 clamp(22px, 2.8vw, 40px)/1.05 var(--serif) !important; max-width: 17em; margin-left: auto; text-align: right; }
 
-/* Not appearing. */
-.na { margin-top: clamp(90px, 12vw, 170px); }
-.na h2 { font: 900 clamp(52px, 10vw, 146px)/.8 var(--sans); letter-spacing: -.05em; text-transform: uppercase; border-bottom: 4px solid var(--blue); padding-bottom: .06em; }
-.na h2 .p { display: inline-block; }
-.acts { display: grid; grid-template-columns: 1.15fr .9fr 1fr .95fr; margin-top: 0; }
-.acts > div { padding: 22px 20px 26px 0; }
-.acts > div + div { padding-left: 20px; border-left: 1.5px solid var(--blue); }
-.acts h3 { font: 900 clamp(22px, 2.3vw, 30px)/1 var(--sans); letter-spacing: -.03em; margin-bottom: 16px; }
-.acts li { position: relative; width: fit-content; font: 800 clamp(17px, 1.6vw, 21px)/1.15 var(--sans); margin-bottom: 10px; }
-.x { position: absolute; left: -4px; right: -6px; top: 46%; height: .32em; background: var(--pink); mix-blend-mode: multiply; transform-origin: left center; transform: translate(var(--mx), var(--my)) scaleX(var(--s, 1)) rotate(-2deg); }
-.acts li:nth-child(2n) .x { transform: translate(var(--mx), var(--my)) scaleX(var(--s, 1)) rotate(1.5deg); }
-.acts li:nth-child(3n) .x { transform: translate(var(--mx), var(--my)) scaleX(var(--s, 1)) rotate(-.6deg); }
-.still { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 28px; align-items: baseline; padding-top: 16px; border-top: 1.5px solid var(--blue); }
-.still h3 { font: italic 400 clamp(26px, 3vw, 40px)/1 var(--serif); color: var(--pink); mix-blend-mode: multiply; }
-.still p { font: 800 clamp(19px, 2vw, 26px)/1.25 var(--sans); letter-spacing: -.015em; max-width: 34em; }
+/* Removed: a full blue flood, knocked out to paper, struck through in pink. */
+.flood { position: relative; margin-top: clamp(70px, 9vw, 130px); background: var(--blue); color: var(--paper); overflow: hidden; isolation: isolate; }
+.flood-in { position: relative; max-width: 1320px; margin: 0 auto; padding: clamp(40px, 6vw, 84px) var(--pad) clamp(46px, 6vw, 90px); }
+.flood .hdr { font: 900 clamp(15px, 1.5vw, 19px)/1.2 var(--sans); text-transform: uppercase; letter-spacing: .01em; padding-bottom: 14px; border-bottom: 2px solid var(--paper); }
+.gone { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px clamp(14px, 2.2vw, 34px); margin-top: 22px; text-transform: uppercase; font-weight: 900; letter-spacing: -.04em; line-height: .9; }
+.gone li { position: relative; }
+.gone li:nth-child(1) { font-size: clamp(54px, 11vw, 158px); }
+.gone li:nth-child(2) { font-size: clamp(54px, 11vw, 158px); }
+.gone li:nth-child(3) { font-size: clamp(34px, 6.6vw, 96px); }
+.gone li:nth-child(4) { font-size: clamp(34px, 6.6vw, 96px); }
+.gone li:nth-child(5) { font-size: clamp(44px, 8.6vw, 124px); }
+.gone li:nth-child(6) { font-size: clamp(28px, 4.8vw, 68px); }
+.gone li:nth-child(7) { font-size: clamp(28px, 4.8vw, 68px); }
+.gone li:nth-child(8) { font-size: clamp(38px, 7.4vw, 106px); }
+.gone li:nth-child(n+9) { font-size: clamp(22px, 3.4vw, 48px); }
+.gone small { font: italic 400 .32em/1 var(--serif); text-transform: none; letter-spacing: 0; margin-left: .2em; vertical-align: .9em; opacity: .9; }
+.x { position: absolute; left: -.04em; right: -.06em; top: 44%; height: .14em; background: var(--pink); mix-blend-mode: multiply; transform-origin: left center; transform: translate(var(--mx), var(--my)) scaleX(var(--s, 1)) rotate(-1.6deg); }
+.gone li:nth-child(2n) .x { transform: translate(var(--mx), var(--my)) scaleX(var(--s, 1)) rotate(1.3deg); }
 
-/* Free entry. */
-.free { position: relative; margin-top: clamp(90px, 12vw, 170px); }
-.free h2 { font: 900 clamp(90px, 19vw, 270px)/.76 var(--sans); letter-spacing: -.06em; text-transform: uppercase; }
-.free h2 span { display: block; }
-.free h2 .p { margin-left: .5em; }
-.free p { margin: 26px 0 0 auto; max-width: 25em; font: 700 clamp(18px, 1.8vw, 22px)/1.35 var(--sans); }
+/* Coming soon, with a lake printed in two inks. */
+.dates { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .82fr); gap: 0 clamp(20px, 3vw, 48px); margin-top: clamp(70px, 9vw, 130px); }
+.photo { position: relative; grid-column: 2; grid-row: 1 / span 2; aspect-ratio: 4 / 5; align-self: start; margin-top: clamp(30px, 5vw, 70px); }
+.photo canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: multiply; }
+.soon { grid-column: 1 / -1; grid-row: 1; position: relative; z-index: 2; font: 900 clamp(70px, 15.2vw, 216px)/.8 var(--sans); letter-spacing: -.055em; text-transform: uppercase; }
+.soon span { display: block; }
+.soon .p { padding-left: .55em; }
+.info { grid-column: 1; grid-row: 2; position: relative; z-index: 2; margin-top: 26px; }
+.venues { font: 900 clamp(26px, 3.6vw, 52px)/.95 var(--sans); letter-spacing: -.035em; text-transform: uppercase; }
+.venues i { font-style: normal; color: var(--pink); mix-blend-mode: multiply; }
+.entry { margin-top: 30px; font: 900 clamp(60px, 9.4vw, 136px)/.82 var(--sans); letter-spacing: -.05em; text-transform: uppercase; }
+.entry span { display: block; }
+.entry + p { margin-top: 14px; max-width: 26em; font: 700 16px/1.45 var(--sans); }
 
-/* The small print, as on every poster worth keeping. */
-.small { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px clamp(24px, 4vw, 56px); margin-top: clamp(80px, 10vw, 140px); padding-top: 14px; border-top: 1.5px solid var(--blue); font: 500 14.5px/1.55 var(--sans); }
-.small h3 { font: 900 15px/1.3 var(--sans); margin-bottom: 6px; }
-.small p + p { margin-top: 8px; }
+/* The foot of the poster: sponsors, legal, small and dense. */
+.foot { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 22px; align-items: start; margin-top: clamp(70px, 9vw, 120px); padding: 12px 0 34px; border-top: 5px solid var(--blue); font: 600 11.5px/1.45 var(--sans); }
+.foot img { width: 44px; height: 44px; border-radius: 22.5%; }
+.foot p + p { margin-top: 5px; }
+.foot b { font-weight: 900; text-transform: uppercase; letter-spacing: .02em; }
 
-/* Tear-offs: cut by hand, a bit crooked, a few already gone. */
-.tear { display: flex; align-items: flex-start; margin-top: 56px; border-top: 2px dashed var(--blue); rotate: -.8deg; transform-origin: 0 0; }
-.tear > span { flex: 1 1 0; min-width: 0; height: 150px; display: flex; justify-content: center; align-items: center; border-right: 2px dashed var(--blue); }
-.tear > span:last-child { border-right: 0; }
-.tear > span:nth-child(3n) { rotate: 1.2deg; transform-origin: 50% 0; }
-.tear > span:nth-child(4n+1) { rotate: -.9deg; transform-origin: 50% 0; }
-.tear em { writing-mode: vertical-rl; font: 900 15px/1 var(--sans); font-style: normal; white-space: nowrap; }
-.tear em small { font: italic 400 14px/1 var(--serif); margin-top: 10px; }
-.tear > span.gone { height: 12px; }
-.tear > span.gone em { visibility: hidden; }
-.colo { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; padding: 44px 0 30px; font: 600 13px/1.5 var(--sans); }
-
-@media (max-width: 900px) {
-  .bill { grid-template-columns: 1fr; }
-  .name { margin-bottom: 20px; }
-  .acts { grid-template-columns: 1fr 1fr; }
-  .acts > div { border-bottom: 1.5px solid var(--blue); }
-  .acts > div:nth-child(3) { padding-left: 0; border-left: 0; }
-  .small { grid-template-columns: 1fr 1fr; }
+@media (max-width: 860px) {
+  .dates { grid-template-columns: 1fr; }
+  .photo { grid-column: 1; grid-row: 2; width: 78%; margin: -8% 0 0 auto; }
+  .info { grid-row: 3; margin-top: 40px; }
 }
 @media (max-width: 600px) {
   body { font-size: 16px; }
   .cyg { position: relative; display: block; right: auto; top: auto; width: 74%; margin: -16% -3% 0 auto; }
-  .still { grid-template-columns: 1fr; }
-  .small { grid-template-columns: 1fr; }
-  .tear > span:nth-child(n+7) { display: none; }
-  .free p { margin-left: 0; }
-}
-@media (max-width: 400px) {
-  .acts { grid-template-columns: 1fr; }
-  .acts > div + div { padding-left: 0; border-left: 0; }
-}
+  .l4 { padding-left: 0; }
+        }
+@media (prefers-reduced-motion: reduce) {
+  }
 </style>
 </head>
 <body>
@@ -158,11 +145,10 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
 <div class="sheet">
   <header class="top b">
     <a class="wm" href="#top" aria-label="Idyll"><img src="../../img/icons/H2-white-on-magenta.png" width="30" height="30" alt="">Idyll</a>
-    <a class="go" href="#small">How it works</a>
+    <a class="go" href="#dates">Coming soon</a>
   </header>
 
   <main id="top">
-    <p class="presents p land">Idyll presents</p>
     <section class="hero" aria-labelledby="h">
       <h1 id="h" class="b inked"><span>Social</span><span class="r">without</span><span>the scroll.</span></h1>
       <div class="cyg" id="cyg" role="img" aria-label="A cygnet on the water, printed as a halftone in pink and blue">
@@ -171,70 +157,59 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
       </div>
     </section>
 
-    <div class="bill">
-      <div class="name p inked land" aria-hidden="true">Idyll</div>
-      <div class="lines b">
-        <p><span class="with">with special guests</span><b>your friends, your messages, and the one video someone actually sent you</b></p>
-        <p class="when">Coming soon <em>to</em> iPhone, Android, Chrome and Mac</p>
-        <p class="where">Playing YouTube, Instagram, Facebook and X. They didn't book us. We're cleaning up after them anyway.</p>
-        <p class="door"><span>Free entry.</span> <span class="p land">For good.</span></p>
-      </div>
-    </div>
-
-    <section class="na" aria-labelledby="na">
-      <h2 id="na" class="b inked">Not <span class="p">appearing</span></h2>
-      <div class="acts b" id="acts">
-        <div><h3>YouTube</h3><ul><li><span class="sr">Removed: </span>Video ads<i class="x"></i></li><li><span class="sr">Removed: </span>Shorts<i class="x"></i></li><li><span class="sr">Removed: </span>The home feed<i class="x"></i></li><li><span class="sr">Removed: </span>Up next<i class="x"></i></li></ul></div>
-        <div><h3>Instagram</h3><ul><li><span class="sr">Removed: </span>Sponsored posts<i class="x"></i></li><li><span class="sr">Removed: </span>Reels<i class="x"></i></li><li><span class="sr">Removed: </span>Explore<i class="x"></i></li></ul></div>
-        <div><h3>Facebook</h3><ul><li><span class="sr">Removed: </span>Reels<i class="x"></i></li><li><span class="sr">Removed: </span>Watch<i class="x"></i></li><li><span class="sr">Removed: </span>The algorithmic feed<i class="x"></i></li></ul></div>
-        <div><h3>X</h3><ul><li><span class="sr">Removed: </span>For you<i class="x"></i></li><li><span class="sr">Removed: </span>Promoted posts<i class="x"></i></li><li><span class="sr">Removed: </span>Trends<i class="x"></i></li><li><span class="sr">Removed: </span>Who to follow<i class="x"></i></li></ul></div>
-      </div>
-      <div class="still b">
-        <h3>Still playing</h3>
-        <p>Messages. Search. YouTube subscriptions. X Following. Facebook friends, in order. Groups. And whatever a friend sends you: that one video, not the feed after it.</p>
-      </div>
-    </section>
-
-    <section class="free" aria-labelledby="fr">
-      <h2 id="fr"><span class="b inked">Free.</span><span class="p inked">For good.</span></h2>
-      <p class="b">No subscription. No trial that turns into one. No ads. No data sold. Idyll will never charge, because a thing that gives you your evenings back shouldn't send you a bill for them.</p>
-    </section>
-
-    <section class="small b" id="small" aria-label="The small print">
-      <div>
-        <h3>iPhone</h3>
-        <p>A Safari content blocker cleans the websites. Safari applies the rules itself, and iOS shows that Idyll can't read or send anything from the pages. The optional Idyll Plus extension also skips video ads and turns Shorts into normal videos.</p>
-        <p>The real apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p>
-      </div>
-      <div>
-        <h3>Android, Chrome and Mac</h3>
-        <p>On Android: a clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops the swipe to the next Short or Reel. The one a friend sent still plays.</p>
-        <p>On Chrome and Mac: the same rules on a laptop.</p>
-      </div>
-      <div>
-        <h3>Your logins, and the honest bit</h3>
-        <p>You log in to the real sites and apps, never inside Idyll. No account. Nothing leaves your phone. Zero trackers.</p>
-        <p>No app can change what's inside the official YouTube or Instagram apps on iPhone: Apple keeps apps sealed off. Anyone claiming otherwise ships a modified copy that can get accounts flagged. So Idyll cleans the websites and gives the apps a daily limit instead.</p>
-      </div>
+    <section class="lineup" aria-label="What stays">
+      <ul>
+        <li class="l1 b inked">Your friends.</li>
+        <li class="l2 p inked">Messages.</li>
+        <li class="l3 b">Search. Subscriptions.</li>
+        <li class="l4 p">Following. Groups.</li>
+        <li class="l5 b">The video someone sent you.</li>
+      </ul>
     </section>
   </main>
+</div>
 
-  <footer class="b">
-    <div class="tear" aria-hidden="true">
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span class="gone"><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
-      <span><em>Idyll<small>free, for good</small></em></span>
+<section class="flood" id="cancelled" aria-labelledby="cx">
+  <div class="flood-in">
+    <h2 class="hdr" id="cx">Removed from YouTube, Instagram, Facebook and X</h2>
+    <ul class="gone" id="gone" aria-label="Removed">
+      <li>Reels.<i class="x"></i></li>
+      <li>Shorts.<i class="x"></i></li>
+      <li>Sponsored posts.<i class="x"></i></li>
+      <li>Suggested for you.<i class="x"></i></li>
+      <li>For you.<i class="x"></i></li>
+      <li>The home feed.<i class="x"></i></li>
+      <li>Video ads.<i class="x"></i></li>
+      <li>Up next.<i class="x"></i></li>
+      <li>Explore.<i class="x"></i></li>
+      <li>Watch.<i class="x"></i></li>
+      <li>Trends.<i class="x"></i></li>
+      <li>Promoted posts.<i class="x"></i></li>
+      <li>Who to follow.<i class="x"></i></li>
+    </ul>
+  </div>
+</section>
+
+<div class="sheet">
+  <section class="dates" id="dates" aria-labelledby="sn">
+    <h2 class="soon" id="sn"><span class="b inked">Coming</span><span class="p inked land">soon.</span></h2>
+    <div class="photo" id="photo" role="img" aria-label="A lake below mountains, printed as a halftone in blue and pink">
+      <canvas id="phB" aria-hidden="true"></canvas>
+      <canvas id="phP" aria-hidden="true"></canvas>
     </div>
-    <p class="colo"><span>Idyll. Social without the scroll. Free, for good.</span><span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span></p>
+    <div class="info b">
+      <p class="venues">iPhone<i>,</i> Android<i>,</i> Chrome<i>,</i> Mac<i>.</i></p>
+      <p class="entry"><span class="b inked">Free.</span><span class="p inked">For good.</span></p>
+      <p>No subscription, no ads, no data sold. Idyll will never charge.</p>
+    </div>
+  </section>
+
+  <footer class="foot b">
+    <img src="../../img/icons/H2-white-on-magenta.png" width="44" height="44" alt="The Idyll app icon" loading="lazy">
+    <div>
+      <p><b>The small print.</b> On iPhone, a Safari content blocker cleans the websites (Safari applies the rules, and iOS shows Idyll can't read or send anything from the pages), the optional Idyll Plus extension skips video ads and turns Shorts into normal videos, and the real apps get a daily Screen Time allowance that pauses them until midnight. On Android, a clean browser for each site and a feed guard inside the real apps; on Chrome and Mac, the same rules on a laptop. You log in to the real sites, never inside Idyll: no account, nothing leaves your phone, zero trackers. Apple keeps the official YouTube and Instagram apps sealed, so no app can change what's inside them; anyone claiming otherwise ships a modified copy that can get accounts flagged, which is why Idyll cleans the websites and gives the apps a daily limit instead.</p>
+      <p>YouTube, Instagram, Facebook and X are trademarks of their owners; Idyll isn't affiliated with any of them. Free, for good.</p>
+    </div>
   </footer>
 </div>
 
@@ -243,6 +218,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a = 0, b = 1) => v < a ? a : v > b ? b : v;
   const BLUE = '45,91,255', PINK = '216,27,122';
+  const DPR = () => Math.min(devicePixelRatio || 1, 2);
 
   /* The cygnet: pink on a 75 degree screen, a blue shadow pass at 15
      degrees. On load the dots print on, left to right. */
@@ -261,7 +237,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
     return out;
   }
   function build() {
-    const dpr = Math.min(devicePixelRatio || 1, 2), w = Math.round(cyg.clientWidth * dpr), h = Math.round(cyg.clientHeight * dpr);
+    const dpr = DPR(), w = Math.round(cyg.clientWidth * dpr), h = Math.round(cyg.clientHeight * dpr);
     if (!w || !h || !img.complete) return false;
     const cell = Math.max(5, Math.round(cyg.clientWidth / 58)) * dpr;
     const m = document.createElement('canvas'); m.width = w; m.height = h;
@@ -294,20 +270,56 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 50; pointer-event
   };
   if (document.fonts) document.fonts.ready.then(() => { if (!raf && build()) settle(); });
 
-  /* The strike bars print through the acts as you read down the bill. */
-  const acts = document.getElementById('acts'), bars = [...acts.querySelectorAll('.x')];
+  /* The lake: blue carries the darks on a 15 degree screen, pink the warm
+     midtones at 75 degrees, the second plate a touch off register. */
+  const photo = document.getElementById('photo'), pB = document.getElementById('phB'), pP = document.getElementById('phP');
+  const lake = new Image(); lake.src = '../../img/photos/128.jpg';
+  function dotsInk(cv, d, w, h, cell, ang, rgb, fn, ox, oy) {
+    cv.width = w; cv.height = h;
+    const g = cv.getContext('2d'), ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / cell / 2) + 2;
+    g.fillStyle = `rgb(${rgb})`; g.beginPath();
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+      const x = cx + (i * ca - j * sa) * cell, y = cy + (i * sa + j * ca) * cell;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const o = ((y | 0) * w + (x | 0)) * 4, v = fn(d[o], d[o + 1], d[o + 2]);
+      if (v < .05) continue;
+      const r = cell * .68 * Math.sqrt(Math.min(v, 1.1));
+      g.moveTo(x + ox + r, y + oy); g.arc(x + ox, y + oy, r, 0, 6.2832);
+    }
+    g.fill();
+  }
+  function printLake() {
+    const dpr = DPR(), w = Math.round(photo.clientWidth * dpr), h = Math.round(photo.clientHeight * dpr);
+    if (!w || !h || !lake.complete) return;
+    const cell = Math.max(4.5, photo.clientWidth / 92) * dpr;
+    const o = document.createElement('canvas'); o.width = w; o.height = h;
+    const g = o.getContext('2d', { willReadFrequently: true });
+    const s = Math.max(w / lake.width, h / lake.height);
+    g.filter = `blur(${cell * .3}px)`;
+    g.drawImage(lake, (w - lake.width * s) / 2, (h - lake.height * s) / 2, lake.width * s, lake.height * s);
+    const d = g.getImageData(0, 0, w, h).data;
+    const L = (r, gg, b) => (.299 * r + .587 * gg + .114 * b) / 255;
+    dotsInk(pB, d, w, h, cell, 15 * Math.PI / 180, BLUE, (r, gg, b) => clamp((1 - L(r, gg, b)) * 1.15 - .2, 0, 1.05), 0, 0);
+    dotsInk(pP, d, w, h, cell, 75 * Math.PI / 180, PINK, (r, gg, b) => clamp((r - b) / 255 * 1.6 + (1 - L(r, gg, b)) * .3 + .05, 0, 1), 2.5 * dpr, -1.5 * dpr);
+  }
+  lake.onload = printLake;
+
+  /* The strike bars print across the removed list as it scrolls up. */
+  const gone = document.getElementById('gone'), bars = [...gone.querySelectorAll('.x')];
   function strikes() {
-    const r = acts.getBoundingClientRect(), vh = innerHeight;
-    const p = clamp((vh * .82 - r.top) / (r.height * .7 + vh * .1));
+    const r = gone.getBoundingClientRect(), vh = innerHeight;
+    const p = clamp((vh * .85 - r.top) / (r.height * .8 + vh * .1));
     bars.forEach((b, i) => { const k = Math.max(b._k || 0, clamp((p - i / bars.length * .8) / .2)); b._k = k; b.style.setProperty('--s', k.toFixed(3)); });
   }
   if (!reduce) {
+    bars.forEach(b => b.style.setProperty('--s', 0));
     let tick = false;
     addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(() => { tick = false; strikes(); }); } }, { passive: true });
     strikes();
   }
+
   let rt;
-  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (build()) settle(); if (!reduce) strikes(); }, 150); });
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (build()) settle(); printLake(); if (!reduce) strikes(); }, 150); });
 })();
 </script>
 </body>
