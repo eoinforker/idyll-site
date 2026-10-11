@@ -9,7 +9,6 @@
 <link rel="icon" href="../../img/icons/H2-white-on-magenta.png" type="image/png">
 <link rel="apple-touch-icon" href="../../img/icons/H2-white-on-magenta.png">
 <link rel="stylesheet" href="../../fonts.css">
-<script>(() => { const q = new URLSearchParams(location.search); for (const k of ["marks", "soon", "win", "type", "plate"]) { const v = +q.get(k); if (v >= 1 && v <= 10) document.documentElement.dataset[k] = v; } })();</script>
 <style>
 /* Quiet paper, near-black ink, one magenta plate, then night. */
 :root {
@@ -95,25 +94,34 @@ a:hover { color: var(--pink); }
 .win { width: 100%; max-width: 380px; background: var(--cream); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); font: 400 15px/1.3 var(--sans); }
 .bar { background: var(--blue); color: var(--cream); border-bottom: 1.5px solid var(--ink); padding: 5px 12px; }
 .win ul { padding: 12px 14px 14px; }
-.wgo { display: none; }
 .win li { display: grid; grid-template-columns: 7px 1fr; gap: 10px; align-items: baseline; padding: 3px 0; }
 .win li::before { content: ""; width: 7px; height: 7px; background: var(--pink); transform: translateY(-.1em); }
 
 /* The same feed, twice. */
-.twice { padding: clamp(72px, 11vw, 140px) 0 0; --gap: clamp(16px, 5vw, 88px); }
+.twice { padding: clamp(72px, 11vw, 140px) 0 0; --gap: clamp(14px, 6vw, 112px); }
 .pair { display: flex; justify-content: center; gap: var(--gap); }
-.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.pair figcaption { font: 400 12px/1.3 var(--mono); letter-spacing: .02em; }
+.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.pair figcaption { font: 400 13px/1.3 var(--mono); letter-spacing: .02em; color: var(--ink); }
 .fine { margin: 26px auto 0; max-width: 34em; text-align: center; font: 400 13px/1.5 var(--sans); color: var(--soft); }
-.device { --w: min(300px, calc((100vw - 2 * var(--pad) - var(--gap)) / 2), max(200px, calc((100svh - 150px) / 2.17))); position: relative; width: var(--w); aspect-ratio: 9 / 19.5; background: var(--ink); border-radius: calc(var(--w) * .16); padding: calc(var(--w) * .03); }
-.screen { position: relative; height: 100%; overflow: hidden; border-radius: calc(var(--w) * .13); background: #fff; isolation: isolate; font: 400 calc(var(--w) * .039)/1.3 var(--sans); color: #0e0f14; transform: translateZ(0); }
-.island { position: absolute; z-index: 5; top: calc(var(--w) * .025); left: 50%; width: 30%; height: calc(var(--w) * .085); transform: translateX(-50%); border-radius: 99px; background: var(--ink); }
+.device { --w: min(320px, calc((100vw - 2 * var(--pad) - var(--gap)) / 2), max(220px, calc((100svh - 116px) / 2.06))); position: relative; width: var(--w); aspect-ratio: 71.6 / 147.6; border-radius: calc(var(--w) * .165); padding: calc(var(--w) * .012);
+  /* Titanium band with a thin highlight on its edge, a soft shadow on the paper. */
+  background: #3b3b3e;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2), inset 0 1px 0 1px rgba(255,255,255,.14), inset 0 0 0 calc(var(--w) * .005 + 1px) #2a2a2d,
+    0 1px 2px rgba(20,20,22,.14), 0 14px 28px -14px rgba(20,20,22,.32), 0 44px 80px -36px rgba(20,20,22,.34); }
+.device .btn { position: absolute; width: max(2px, calc(var(--w) * .01)); border-radius: 2px; background: #333336; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.18); }
+.device .b1 { left: calc(var(--w) * -.008); top: 17%; height: 4%; }
+.device .b2 { left: calc(var(--w) * -.008); top: 24.5%; height: 7.5%; }
+.device .b3 { left: calc(var(--w) * -.008); top: 34%; height: 7.5%; }
+.device .b4 { right: calc(var(--w) * -.008); top: 27%; height: 11.5%; }
+.glass { height: 100%; border-radius: calc(var(--w) * .153); background: #050506; padding: calc(var(--w) * .025); }
+.screen { position: relative; height: 100%; overflow: hidden; border-radius: calc(var(--w) * .128); background: #fff; isolation: isolate; font: 400 calc(var(--w) * .039)/1.3 var(--sans); color: #0e0f14; transform: translateZ(0); }
+.island { position: absolute; z-index: 5; top: calc(var(--w) * .03); left: 50%; width: 32%; height: calc(var(--w) * .09); transform: translateX(-50%); border-radius: 99px; background: #050506; }
 .app { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; transition: opacity .3s ease; }
 .app.fading { opacity: 0; }
-.sb { flex: none; height: 3.55em; display: flex; justify-content: space-between; align-items: center; padding: .55em 2.05em 0 2.35em; font-weight: 700; font-size: 1.02em; }
+.sb { flex: none; height: 3.9em; display: flex; justify-content: space-between; align-items: center; padding: .55em 2.05em 0 2.35em; font-weight: 700; font-size: 1.02em; }
 .sb .ri { display: flex; align-items: center; gap: .32em; }
 .sb svg { height: .82em; width: auto; }
-.hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: .35em 1.05em .5em; }
+.hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: .35em 1.05em .6em; border-bottom: 1px solid #efeff2; position: relative; z-index: 2; background: #fff; }
 .hd b { font: 800 1.42em/1 var(--sans); letter-spacing: -.025em; display: flex; align-items: center; gap: .2em; }
 .hd .ri { display: flex; gap: .95em; }
 .ic { width: 1.6em; height: 1.6em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
@@ -126,10 +134,6 @@ a:hover { color: var(--pink); }
 .c1 { background: #ffe1ef; color: #a8105c; } .c2 { background: #e3e9ff; color: #1a3fd6; } .c3 { background: #ffe8d4; color: #9a4a12; } .c4 { background: #ddf3e6; color: #1f6b45; } .c6 { background: #fff1c9; color: #7a5a00; }
 .ph { position: relative; overflow: hidden; background: #e9e6e2; }
 .ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.stories { display: flex; gap: .75em; padding: .2em 1em .75em; border-bottom: 1px solid #efeff2; overflow: hidden; }
-.story { display: flex; flex-direction: column; align-items: center; gap: .3em; font-size: .82em; width: 4.7em; flex: none; }
-.story .ring { padding: .17em; border-radius: 50%; background: var(--pink); }
-.story .ring .av { width: 3.7em; height: 3.7em; box-shadow: 0 0 0 .17em #fff; font-size: 1em; }
 .post { padding-bottom: .9em; }
 .post .ph-h { display: flex; align-items: center; gap: .6em; padding: .7em 1em; }
 .post .ph-h .av { width: 2.25em; height: 2.25em; font-size: .85em; }
@@ -207,157 +211,9 @@ footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; displ
 }
 @media (prefers-reduced-motion: reduce) { .rbar i { animation: none; transform: scaleX(.4); } .app { transition: none; } }
 
-/* ===== Variants, keyed on ?marks ?soon ?win ?type ?plate (1 to 10). Inert without them. ===== */
-html[data-soon] .soon { font-family: var(--sans); }
-/* soon */
-html[data-soon="1"] .soon { font: 400 12.5px/1.2 var(--mono); gap: 10px; color: var(--blue); }
-html[data-soon="1"] .s-rule { width: 56px; border-bottom: 2px dotted var(--pink); }
-html[data-soon="2"] .soon { font: 500 15px/1.3 var(--sans); gap: 10px; letter-spacing: -.005em; }
-html[data-soon="2"] .s-cyg { width: 42px; height: 25px; background: var(--pink); -webkit-mask: url(../../img/cygnet-mark.svg) center / contain no-repeat; mask: url(../../img/cygnet-mark.svg) center / contain no-repeat; }
-html[data-soon="3"] .s-stamp { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 7px 14px 8px; border: 2px solid var(--pink); color: var(--pink); rotate: -4deg; font: 400 11px/1.2 var(--mono); }
-html[data-soon="3"] .s-stamp b { font: 600 15px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-html[data-soon="4"] .soon { font: 400 13px/1.4 var(--mono); }
-html[data-soon="4"] .soon u { text-decoration: underline 2px var(--pink); text-underline-offset: .35em; }
-html[data-soon="5"] .soon { font: 400 15px/1.3 var(--sans); gap: 6px 10px; }
-html[data-soon="5"] .s-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--pink); }
-html[data-soon="5"] .soon b { font-weight: 600; }
-html[data-soon="5"] .s-mut, html[data-soon="10"] .s-mut { color: var(--soft); }
-html[data-soon="6"] .soon { width: min(100%, 560px); justify-content: space-between; background: var(--ink); color: var(--cream); font: 400 12px/1.2 var(--mono); letter-spacing: .03em; padding: 7px 12px; }
-html[data-soon="7"] .soon { font: italic 400 clamp(18px, 2vw, 23px)/1.25 var(--serif); text-align: center; }
-html[data-soon="8"] .soon { font: 400 12.5px/1 var(--mono); gap: 10px 16px; isolation: isolate; }
-html[data-soon="8"] .s-ov { position: relative; background: var(--pink); color: var(--cream); padding: 6px 10px; }
-html[data-soon="8"] .s-ov::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--blue); transform: translate(4px, 3px); }
-html[data-soon="8"] .s-b { color: var(--blue); }
-html[data-soon="9"] .soon { display: none; }
-html[data-soon="9"] .leader { width: min(100%, 540px); }
-html[data-soon="9"] .leader span:first-child { color: var(--pink); }
-html[data-soon="10"] .soon { flex-direction: column; gap: 8px; }
-html[data-soon="10"] .s-fl { display: flex; align-items: center; gap: 12px; font: 600 14px/1 var(--sans); letter-spacing: .01em; }
-html[data-soon="10"] .s-fl i { width: 44px; border-top: 1px solid var(--ink); }
-html[data-soon="10"] .s-mut { font: 400 12px/1 var(--mono); }
-
-/* win */
-html[data-win="1"] .bar { background: radial-gradient(circle, var(--blue) 1.5px, transparent 1.9px) 0 0 / 6px 6px, var(--cream); color: var(--ink); padding: 6px 10px; }
-html[data-win="1"] .bar span { background: var(--cream); padding: 1px 6px; }
-html[data-win="2"] .win { max-width: 460px; }
-html[data-win="2"] .wl { display: grid; grid-template-columns: 1fr 1fr; }
-html[data-win="2"] .wgo { display: block; border-right: 1.5px solid var(--ink); }
-html[data-win="2"] .wl ul::before { content: attr(data-h); display: block; font: 400 11px/1 var(--mono); letter-spacing: .03em; margin-bottom: 9px; }
-html[data-win="2"] .wgo li::before { display: none; }
-html[data-win="2"] .wgo li { display: block; }
-html[data-win="2"] .wgo s { color: var(--soft); text-decoration: line-through 2px var(--pink); }
-html[data-win="3"] .win { background: none; border: 0; box-shadow: none; color: inherit; }
-html[data-win="3"] .bar { background: none; color: inherit; border: 0; padding: 0 0 10px; }
-html[data-win="3"] .win ul { padding: 0; }
-html[data-win="3"] .win li { font: 400 clamp(22px, 2.2vw, 28px)/1.1 var(--sans); letter-spacing: -.02em; grid-template-columns: 9px 1fr; gap: 14px; padding: 4px 0; }
-html[data-win="3"] .win li::before { width: 9px; height: 9px; background: currentColor; }
-html[data-win="4"] .win { background: var(--blue); color: var(--cream); }
-html[data-win="4"] .bar { background: var(--cream); color: var(--blue); }
-html[data-win="4"] .win li::before { background: var(--cream); }
-html[data-win="5"] .win { background: var(--ink); color: var(--cream); border-color: var(--ink); box-shadow: 6px 6px 0 var(--blue); }
-html[data-win="5"] .bar { background: var(--pink); border-bottom: 0; }
-html[data-win="6"] .win { border-width: 3px; box-shadow: 9px 9px 0 var(--blue); }
-html[data-win="6"] .bar { background: var(--cream); color: var(--ink); border-bottom: 3px solid var(--ink); }
-html[data-win="6"] .win li::before { width: 10px; height: 5px; background: none; border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink); transform: translateY(-.2em) rotate(-45deg); }
-html[data-win="6"] .win li { grid-template-columns: 10px 1fr; }
-html[data-win="7"] .bar { padding: 10px 14px; font-size: 13px; }
-html[data-win="7"] .win ul { padding: 4px 16px 8px; }
-html[data-win="7"] .win li { display: block; font: 500 21px/1.2 var(--sans); letter-spacing: -.015em; padding: 9px 0; }
-html[data-win="7"] .win li + li { border-top: 1px solid var(--ink); }
-html[data-win="7"] .win li::before { display: none; }
-html[data-win="8"] .win { max-width: 320px; box-shadow: none; border: 0; }
-html[data-win="8"] .bar { background: none; color: var(--ink); border-bottom: 1.5px dotted var(--ink); text-align: center; padding: 12px 0 10px; margin: 0 16px; }
-html[data-win="8"] .win ul { padding: 10px 16px 16px; }
-html[data-win="8"] .win li { display: flex; gap: 8px; font: 400 13px/1.5 var(--mono); padding: 2px 0; }
-html[data-win="8"] .win li::before { order: 1; flex: 1; height: auto; background: none; border-bottom: 1.5px dotted var(--ink); transform: translateY(-.35em); }
-html[data-win="8"] .win li::after { content: "kept"; order: 2; color: var(--blue); }
-html[data-win="9"] .win { border-color: var(--blue); box-shadow: -6px 5px 0 var(--blue); }
-html[data-win="9"] .bar { background: var(--pink); border-bottom-color: var(--blue); }
-html[data-win="9"] .win li::before { background: var(--blue); }
-html[data-win="10"] .win { background: none; border: 0; box-shadow: none; }
-html[data-win="10"] .bar { display: inline-block; position: relative; z-index: 1; top: 1.5px; padding: 6px 14px 5px; border: 1.5px solid var(--ink); border-bottom: 0; }
-html[data-win="10"] .wl { background: var(--cream); border: 1.5px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
-html[data-win="10"] .win li { font-size: 17px; }
-
-/* type: all Timeless Sans; the differences are everything else. */
-html[data-type="1"] .hero, html[data-type="1"] .free { text-align: left; }
-html[data-type="1"] .go { justify-content: flex-start; }
-html[data-type="1"] .free p { margin-left: 0; }
-html[data-type="2"] .hero h1 { color: var(--blue); }
-html[data-type="2"] .free h2 { color: var(--pink); }
-html[data-type="3"] .hero h1 { font-weight: 800; font-size: clamp(38px, min(13vw, 23vh), 196px); letter-spacing: -.05em; line-height: .86; }
-html[data-type="3"] .free h2 { font-weight: 800; font-size: clamp(58px, 15.5vw, 280px); letter-spacing: -.055em; }
-html[data-type="4"] .hero h1 { font-weight: 800; text-transform: uppercase; font-size: clamp(30px, min(9.4vw, 19vh), 148px); letter-spacing: -.035em; line-height: .86; }
-html[data-type="4"] .free h2 { font-weight: 800; text-transform: uppercase; font-size: clamp(50px, 12.5vw, 226px); letter-spacing: -.045em; }
-html[data-type="5"] .hero h1 { font-size: clamp(54px, min(15.5vw, 17vh), 200px); }
-html[data-type="5"] .free h2 span { display: block; }
-html[data-type="5"] .hero h1 .acc { font: italic 400 1em/1 var(--serif); letter-spacing: -.03em; color: var(--pink); }
-html[data-type="6"] .hcyg { position: absolute; right: 2%; bottom: -16%; width: 34%; aspect-ratio: 640 / 380; pointer-events: none; }
-html[data-type="6"] .hcyg canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-html[data-type="7"] .hero, html[data-type="7"] .free { text-align: left; }
-html[data-type="7"] .hero h1 span + span { padding-left: 1.4em; }
-html[data-type="7"] .free h2 span { display: block; }
-html[data-type="7"] .free h2 span + span { padding-left: 1.1em; }
-html[data-type="7"] .go { justify-content: flex-start; padding-left: clamp(0px, 20vw, 290px); }
-html[data-type="7"] .free p { margin-left: 0; }
-html[data-type="8"] .stop { color: var(--pink); font-weight: inherit; }
-html[data-type="9"] .hero h1 { text-shadow: .035em .028em 0 rgba(45, 91, 255, .9); }
-html[data-type="9"] .free h2 { text-shadow: .03em .025em 0 rgba(45, 91, 255, .95); }
-html[data-type="10"] .hero { padding-top: clamp(48px, 12vh, 140px); padding-bottom: clamp(90px, 18vh, 200px); }
-html[data-type="10"] .hero h1 { font-weight: 600; font-size: clamp(36px, min(7.4vw, 14vh), 112px); letter-spacing: -.045em; line-height: .95; }
-html[data-type="10"] .free { padding: clamp(140px, 22vw, 300px) 0; }
-html[data-type="10"] .free h2 { font-weight: 600; font-size: clamp(48px, 9vw, 150px); letter-spacing: -.05em; line-height: .95; }
-
-/* plate */
-html[data-plate="1"] .plate, html[data-plate="4"] .plate { background: var(--blue); }
-html[data-plate="3"] .plate { background: #a3125c; }
-html[data-plate="5"] .plate, html[data-plate="10"] .plate { background: var(--cream); color: var(--ink); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
-html[data-plate="5"] .plate .crop, html[data-plate="10"] .plate .crop { --c: var(--ink); }
-html[data-plate="5"] .plate::after, html[data-plate="10"] .plate::after { opacity: .28; }
-html[data-plate="6"] .plate { background: var(--ink); }
-html[data-plate="7"] .plate::after { opacity: .9; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .02 0 0 0 0 .2 0 0 0 2.2 -1.05'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-html[data-plate="8"] .plate::after { opacity: 1; mix-blend-mode: normal; background: radial-gradient(circle, rgba(20, 20, 22, .34) 1.7px, transparent 2.1px) 0 0 / 7px 7px; -webkit-mask-image: linear-gradient(to bottom, transparent 25%, #000 100%); mask-image: linear-gradient(to bottom, transparent 25%, #000 100%); }
-html[data-plate="9"] .plate { background: linear-gradient(90deg, var(--pink) 0 60%, var(--blue) 60% 100%); }
-@media (max-width: 860px) { html[data-plate="9"] .plate { background: linear-gradient(180deg, var(--pink) 0 48%, var(--blue) 48% 100%); } }
-
-/* marks */
-.marks { --ms: 60px; }
-.mk { width: var(--ms); height: var(--ms); }
-.marks li { grid-template-columns: var(--ms) minmax(0, 1fr); }
-.mk canvas { inset: var(--ci, 0px); width: calc(100% - 2 * var(--ci, 0px)); height: calc(100% - 2 * var(--ci, 0px)); }
-html[data-marks="1"] .marks { --ms: 56px; }
-html[data-marks="3"] .marks { --ms: 84px; --ci: 10px; }
-html[data-marks="3"] .marks ul { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
-html[data-marks="3"] .marks li, html[data-marks="4"] .marks li, html[data-marks="7"] .marks li, html[data-marks="9"] .marks li { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 13.5px; }
-html[data-marks="3"] .mk, html[data-marks="8"] .mk { background: var(--cream); }
-html[data-marks="4"] .marks { --ms: clamp(64px, 9vw, 120px); width: min(100%, 1180px); margin-top: clamp(40px, 6vw, 72px); }
-html[data-marks="4"] .marks ul, html[data-marks="7"] .marks ul, html[data-marks="9"] .marks ul { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-html[data-marks="4"] .marks li, html[data-marks="7"] .marks li { align-items: center; text-align: center; }
-html[data-marks="5"] .marks { --ms: 26px; display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: clamp(28px, 5vh, 48px); }
-html[data-marks="5"] .marks .lbl { margin: 0; }
-html[data-marks="5"] .marks ul { display: flex; gap: 14px; }
-html[data-marks="5"] .mt, html[data-marks="6"] .mt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-html[data-marks="5"] .marks li, html[data-marks="6"] .marks li { display: block; }
-html[data-marks="6"] .stage { grid-template-columns: auto minmax(0, 1.5fr) minmax(260px, 1fr); }
-html[data-marks="6"] .marks { --ms: 64px; }
-html[data-marks="6"] .marks ul { gap: 14px; }
-html[data-marks="7"] .marks { --ms: 64px; width: min(100%, 640px); margin: 0 auto clamp(56px, 8vw, 110px); }
-html[data-marks="7"] .marks .lbl { text-align: center; margin-bottom: 18px; }
-html[data-marks="8"] .marks { --ms: 60px; --ci: 8px; }
-html[data-marks="9"] .marks { --ms: 40px; width: min(100%, 1180px); margin-top: clamp(36px, 5vw, 64px); padding-top: 18px; border-top: 1px solid currentColor; }
-html[data-marks="9"] .marks li { flex-direction: row; align-items: center; gap: 12px; }
-html[data-marks="10"] .marks { --ms: 62px; --ci: 9px; }
-html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2px; }
-@media (max-width: 860px) {
-  html[data-marks="6"] .stage { grid-template-columns: minmax(0, 1fr); }
-  html[data-marks="6"] .marks ul { display: flex; justify-content: center; gap: 18px; }
-  html[data-marks="4"] .marks ul, html[data-marks="7"] .marks ul { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 18px; }
-  html[data-marks="9"] .marks ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 520px) {
-  html[data-marks="5"] .marks { flex-wrap: wrap; }
-  html[data-marks="3"] .marks { --ms: 72px; }
-}
+.marks li { grid-template-columns: 60px minmax(0, 1fr); }
+.mk { width: 60px; height: 60px; }
+.stop { color: var(--pink); font-weight: inherit; }
 </style>
 </head>
 <body>
@@ -389,7 +245,7 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
     </div>
 
     <section class="hero" aria-labelledby="h">
-      <h1 id="h"><span>Social, without</span><span>the scroll.</span></h1>
+      <h1 id="h"><span>Social, without</span><span>the scroll<b class="stop">.</b></span></h1>
       <p class="go"><a href="#how">How it works</a><a href="#free">Free, for good</a></p>
     </section>
   </main>
@@ -406,23 +262,16 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
         <div class="marks">
           <p class="lbl">Gone</p>
           <ul>
-            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span class="mt"><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads, Up next</span></li>
-            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span class="mt"><span class="sr">From Instagram, Idyll removes: </span>Reels, Suggested, Sponsored</span></li>
-            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span class="mt"><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch, the algorithmic feed</span></li>
-            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span class="mt"><span class="sr">From X, Idyll removes: </span>For you, Promoted, Trends</span></li>
+            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads, Up next</span></li>
+            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Suggested, Sponsored</span></li>
+            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch, the algorithmic feed</span></li>
+            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted, Trends</span></li>
           </ul>
         </div>
         <div class="win">
           <p class="bar lbl"><span>Stays</span></p>
           <div class="wl">
-            <ul class="wgo" data-h="Goes">
-              <li><s><span class="sr">Removed: </span>Reels</s></li>
-              <li><s><span class="sr">Removed: </span>Shorts</s></li>
-              <li><s><span class="sr">Removed: </span>Sponsored posts</s></li>
-              <li><s><span class="sr">Removed: </span>Suggested for you</s></li>
-              <li><s><span class="sr">Removed: </span>For you</s></li>
-            </ul>
-            <ul class="wst" data-h="Stays">
+            <ul>
               <li>Messages</li>
               <li>Search</li>
               <li>Subscriptions</li>
@@ -441,11 +290,11 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
     <h2 class="sr" id="tw">The same feed, without and with Idyll</h2>
     <div class="pair" id="pair">
       <figure>
-        <div class="device" role="img" aria-label="Without Idyll: friends' posts with a Reel, Suggested for you and a Sponsored post between them, and no end."><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div>
+        <div class="device" role="img" aria-label="Without Idyll: a Sponsored post, Reels and Suggested for you between friends' posts, with no end."><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div></div>
         <figcaption>Without Idyll</figcaption>
       </figure>
       <figure>
-        <div class="device" role="img" aria-label="With Idyll: the same friends' posts only, ending in You're all caught up."><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div>
+        <div class="device" role="img" aria-label="With Idyll: the same friends' posts only, ending in You're all caught up."><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div></div>
         <figcaption>With Idyll</figcaption>
       </figure>
     </div>
@@ -478,7 +327,7 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
 <div class="night">
   <div class="wrap">
     <section class="free" id="free" aria-labelledby="fr">
-      <h2 id="fr"><span>Free.</span> <span>For good.</span></h2>
+      <h2 id="fr"><span>Free<b class="stop">.</b></span> <span>For good<b class="stop">.</b></span></h2>
       <p>No subscription, no ads, no data sold. Idyll will never charge.</p>
     </section>
     <footer>
@@ -496,68 +345,7 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
   const ease = t => 1 - Math.pow(1 - t, 3);
   const CREAM = '#fff6ee', BLUE = '#2d5bff';
 
-  /* Variants: ?marks= &soon= &win= &type= &plate= (1 to 10). Missing or 0 is the default page. */
-  const V = document.documentElement.dataset, vn = k => +(V[k] || 0);
-  const PINK = '#d81b7a', INK = '#141416';
-
-  /* soon: the Coming soon line above the hero. */
-  const PLAT = 'iPhone, Android, Chrome and Mac';
-  const SOON = {
-    1: `<span class="s-b">Coming soon</span><i class="s-rule" aria-hidden="true"></i><span class="s-b">${PLAT}</span>`,
-    2: `<i class="s-cyg" aria-hidden="true"></i><span>Coming soon to ${PLAT}</span>`,
-    3: `<span class="s-stamp"><b>Coming soon</b><span>${PLAT}</span></span>`,
-    4: `<span><u>Coming soon</u> to ${PLAT}</span>`,
-    5: `<i class="s-dot" aria-hidden="true"></i><b>Coming soon</b><span class="s-mut">${PLAT}</span>`,
-    6: `<span>Coming soon</span><span>${PLAT}</span>`,
-    7: `<span>Coming soon to ${PLAT}.</span>`,
-    8: `<span class="s-ov">Coming soon</span><span class="s-b">${PLAT}</span>`,
-    10: `<span class="s-fl"><i aria-hidden="true"></i>Coming soon<i aria-hidden="true"></i></span><span class="s-mut">${PLAT}</span>`
-  };
-  const soonEl = $('.soon');
-  if (SOON[vn('soon')]) soonEl.innerHTML = SOON[vn('soon')];
-  if (vn('soon') === 9) { const s = $('.leader').children; s[0].textContent = 'Coming soon'; s[2].textContent = PLAT; }
-
-  /* win: the Stays window. */
-  if (vn('win') === 2) $('.win .bar span').textContent = 'Your feed';
-
-  /* type: the two big statements. */
-  const h1 = $('.hero h1'), h2 = $('.free h2');
-  if (vn('type') === 5) { h1.innerHTML = '<span>Social,</span><span class="acc">without</span><span>the scroll.</span>'; h2.innerHTML = '<span>Free.</span> <span>For</span> <span>good.</span>'; }
-  if (vn('type') === 8) { h1.innerHTML = '<span>Social, without</span><span>the scroll<b class="stop">.</b></span>'; h2.innerHTML = '<span>Free<b class="stop">.</b></span> <span>For good<b class="stop">.</b></span>'; }
-  if (vn('type') === 6) { const d = document.createElement('div'); d.className = 'hcyg'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = '<canvas></canvas>'; h1.appendChild(d); h1.style.position = 'relative'; }
-
-  /* plate: the colour field, and the inks the canvases print with. */
-  const PL = [
-    { fg: CREAM, p2: BLUE, pass: 'water', mfg: CREAM, mx: BLUE },
-    { fg: PINK, p2: CREAM, pass: 'water', mfg: CREAM, mx: PINK },
-    { fg: CREAM, p2: BLUE, pass: 'full', mfg: CREAM, mx: BLUE },
-    { fg: CREAM, p2: BLUE, pass: 'water', mfg: CREAM, mx: BLUE },
-    { fg: CREAM, p2: null, mfg: CREAM, mx: PINK },
-    { fg: PINK, p2: BLUE, pass: 'water', mfg: PINK, mx: BLUE },
-    { fg: PINK, p2: BLUE, pass: 'water', mfg: CREAM, mx: PINK },
-    { fg: CREAM, p2: BLUE, pass: 'water', mfg: CREAM, mx: BLUE },
-    { fg: CREAM, p2: BLUE, pass: 'water', mfg: CREAM, mx: BLUE },
-    { fg: CREAM, p2: null, mfg: CREAM, mx: INK },
-    { fg: BLUE, p2: PINK, pass: 'full', blend: 'multiply', mfg: BLUE, mx: PINK }
-  ][vn('plate')];
-
-  /* marks: render, cross, placement, layout, size. */
-  const MK = [
-    { r: 'dots', x: 'strike', place: 'side' },
-    { r: 'solid', x: 'x', place: 'side' },
-    { r: 'outline', x: 'double', place: 'side' },
-    { r: 'dots', x: 'x', place: 'side', fg: BLUE, xc: PINK },
-    { r: 'dots', x: 'xoff', place: 'bottom' },
-    { r: 'solid', x: 'strike', place: 'hero', fg: INK, xc: PINK },
-    { r: 'dots', x: 'scribble', place: 'left' },
-    { r: 'solid', x: 'x', place: 'night', fg: CREAM, xc: PINK },
-    { r: 'solid', x: 'strike', place: 'side', fg: INK, xc: PINK },
-    { r: 'outline', x: 'x', place: 'bottom' },
-    { r: 'solid', x: 'strike', place: 'side' }
-  ][vn('marks')];
-  const marksEl = $('.marks');
-  ({ left: () => $('.stage').prepend(marksEl), bottom: () => $('.plate .crop').append(marksEl), night: () => $('.free').prepend(marksEl), hero: () => $('.hero').append(marksEl) })[MK.place]?.();
-  const mfg = MK.fg || PL.mfg, mxc = MK.xc || PL.mx;
+  const PINK = '#d81b7a';
 
   /* Prints: each silhouette is sampled through a rotated screen and printed as dots. */
   function screen(a, w, h, c, ang, tone, rk, delay) {
@@ -577,36 +365,20 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
     g.filter = `blur(${blur}px)`; g.drawImage(img, inset, inset, w - 2 * inset, h - 2 * inset);
     return g.getImageData(0, 0, w, h).data;
   }
-  function tint(img, w, h, inset, col, outline, dpr) {
-    const m = document.createElement('canvas'); m.width = w; m.height = h;
-    const g = m.getContext('2d');
-    const put = (dx, dy) => g.drawImage(img, inset + dx, inset + dy, w - 2 * inset, h - 2 * inset);
-    if (outline) {
-      const r = Math.max(1.5 * dpr, w * .035);
-      for (let k = 0; k < 16; k++) put(Math.cos(k / 16 * 6.283) * r, Math.sin(k / 16 * 6.283) * r);
-      g.globalCompositeOperation = 'destination-out'; put(0, 0);
-    } else put(0, 0);
-    g.globalCompositeOperation = 'source-in'; g.fillStyle = col; g.fillRect(0, 0, w, h);
-    return m;
-  }
   const prints = [];
-  const cygEl = $('#cyg');
-  const cygBuild = (cfg, cellK) => (p, a, w, h, dpr) => {
-    const cell = p.cell, L = [], dl = (u, v) => v * 315 + u * 585;
-    if (cfg.p2 && cfg.pass === 'water') L.push({ col: cfg.p2, dx: 3 * dpr, dy: -2 * dpr, dots: screen(a, w, h, cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, dl) });
-    if (cfg.p2 && cfg.pass === 'full') L.push({ col: cfg.p2, dx: 5 * dpr, dy: -4 * dpr, dots: screen(a, w, h, cell * .9, 15 * Math.PI / 180, () => .7, .56, dl) });
-    L.push({ col: cfg.fg, dx: 0, dy: 0, blend: cfg.blend, dots: screen(a, w, h, cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl) });
-    return L;
-  };
-  prints.push({ el: cygEl, cv: $('#cygC'), src: '../../img/cygnet-mark.svg', build: cygBuild(PL), cellOf: cw => Math.max(4.5, cw / 120), inset: 0 });
-  const hc = $('.hcyg canvas');
-  if (hc) prints.push({ el: hc.parentNode, cv: hc, src: '../../img/cygnet-mark.svg', build: cygBuild({ fg: PINK, p2: BLUE, pass: 'water', blend: 'multiply' }), cellOf: cw => Math.max(4, cw / 70), inset: 0 });
-  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `../../img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140, xk: MK.x, xc: mxc, seed: i + 1,
+  /* The cygnet: cream dots, with a light blue pass in the water a touch off register. */
+  prints.push({ el: $('#cyg'), cv: $('#cygC'), src: '../../img/cygnet-mark.svg', cellOf: cw => Math.max(4.5, cw / 120), inset: 0,
     build(p, a, w, h, dpr) {
-      if (MK.r === 'dots') return [{ col: mfg, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, () => 1, .58, (u, v) => 300 + i * 140 + u * 260) }];
-      return [{ bmp: tint(p.img, w, h, Math.round(w * p.inset), mfg, MK.r === 'outline', dpr), d: 300 + i * 140 }];
-    },
-    cellOf: cw => cw / 24, inset: .1, blur: .15 }));
+      const dl = (u, v) => v * 315 + u * 585;
+      return [
+        { col: BLUE, dx: 3 * dpr, dy: -2 * dpr, dots: screen(a, w, h, p.cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, dl) },
+        { col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl) }
+      ];
+    } });
+  /* The marks: our own halftone prints of each logo, struck through in blue. */
+  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `../../img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140,
+    cellOf: cw => cw / 24, inset: .1, blur: .15,
+    build(p, a, w, h) { return [{ col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, () => 1, .58, (u, v) => 300 + i * 140 + u * 260) }]; } }));
 
   let raf = 0;
   function build(p) {
@@ -618,31 +390,11 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
     p.layers = p.build(p, a, w, h, dpr);
     return true;
   }
-  /* Crosses, in a second ink. */
-  function cross(g, W, H, p, k) {
-    const ox = 2 * p.dpr, oy = -1.5 * p.dpr, seg = (x0, y0, x1, y1, t) => { if (t <= 0) return; g.moveTo(x0, y0); g.lineTo(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t); };
-    g.strokeStyle = p.xc; g.lineCap = 'butt'; g.lineJoin = 'miter';
-    const X = (o, lw, dx, dy) => { g.lineWidth = lw; g.beginPath(); seg(o + dx, o + dy, W - o + dx, H - o + dy, clamp(k * 2)); seg(W - o + dx, o + dy, o + dx, H - o + dy, clamp(k * 2 - 1)); g.stroke(); };
-    if (p.xk === 'strike') { g.lineWidth = W * .1; g.beginPath(); seg(ox, H * .6 + oy, W + ox, H * .4 + oy, k); g.stroke(); }
-    else if (p.xk === 'double') { g.lineWidth = W * .06; g.beginPath(); seg(ox, H * .54 + oy, W + ox, H * .38 + oy, clamp(k * 2)); seg(ox, H * .68 + oy, W + ox, H * .52 + oy, clamp(k * 2 - 1)); g.stroke(); }
-    else if (p.xk === 'x') X(W * .08, W * .11, ox, oy);
-    else if (p.xk === 'xoff') { g.globalAlpha = .45; X(W * .1, W * .09, 4 * p.dpr, 3 * p.dpr); g.globalAlpha = 1; X(W * .1, W * .09, 0, 0); }
-    else if (p.xk === 'scribble') {
-      let s = p.seed * 9301; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
-      const pts = []; for (let n = 0; n < 6; n++) pts.push([W * (n % 2 ? .86 + .08 * rnd() : .06 + .08 * rnd()), H * (.22 + .56 * n / 5 + (rnd() - .5) * .08)]);
-      g.lineWidth = W * .04; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(pts[0][0] + ox, pts[0][1] + oy);
-      const tot = (pts.length - 1) * k;
-      for (let n = 1; n < pts.length && n - 1 < tot; n++) { const t = Math.min(1, tot - (n - 1)); g.lineTo(pts[n - 1][0] + (pts[n][0] - pts[n - 1][0]) * t + ox, pts[n - 1][1] + (pts[n][1] - pts[n - 1][1]) * t + oy); }
-      g.stroke();
-    }
-  }
   function paint(p, now) {
     if (!p.layers || p.t0 == null) return false;
     const g = p.cv.getContext('2d'), W = p.cv.width, H = p.cv.height; let busy = false;
     g.clearRect(0, 0, W, H);
     for (const L of p.layers) {
-      g.globalCompositeOperation = L.blend || 'source-over';
-      if (L.bmp) { const t = clamp((now - p.t0 - L.d) / 500); if (t < 1) busy = true; g.globalAlpha = ease(t); g.drawImage(L.bmp, 0, 0); g.globalAlpha = 1; continue; }
       g.fillStyle = L.col; g.beginPath();
       for (const d of L.dots) {
         const t = clamp((now - p.t0 - d.d) / 360); if (t < 1) busy = true;
@@ -651,8 +403,15 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
       }
       g.fill();
     }
-    g.globalCompositeOperation = 'source-over';
-    if (p.cross != null) { const k = ease(clamp((now - p.t0 - p.cross) / 420)); if (k < 1) busy = true; if (k > 0) cross(g, W, H, p, k); }
+    if (p.cross != null) {
+      /* One heavy strike in a second ink, a little off register. */
+      const k = ease(clamp((now - p.t0 - p.cross) / 420)); if (k < 1) busy = true;
+      if (k > 0) {
+        const ox = 2 * p.dpr, oy = -1.5 * p.dpr, y0 = H * .6 + oy, y1 = H * .4 + oy;
+        g.strokeStyle = BLUE; g.lineWidth = W * .1; g.lineCap = 'butt'; g.beginPath();
+        g.moveTo(ox, y0); g.lineTo(ox + W * k, y0 + (y1 - y0) * k); g.stroke();
+      }
+    }
     return busy;
   }
   const drawAll = now => prints.reduce((b, p) => paint(p, now) || b, false);
@@ -681,54 +440,67 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
   const reel = (h, l, c, ph, cap) => `<article class="post reel"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Suggested reel</small></div><span class="more">${I('more')}</span></div><div class="ph tall">${im(ph)}<span class="badge">${I('reels')}Reels</span><span class="audio">Original audio</span><span class="rbar"><i></i></span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
   const ad = (h, l, c, ph, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Sponsored</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div><div class="shop">Shop now<span>›</span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
   const sugg = list => `<div class="sugg"><div class="row"><span>Suggested for you</span><span>See all</span></div><div class="cards">${list.map(([n, l, c]) => `<div class="card">${av(l, c)}<b>${n}</b><small>Suggested for you</small><span class="btn-b">Follow</span></div>`).join('')}</div></div>`;
-  const stories = `<div class="stories">${[['Your story', '+', 6], ['maya', 'M', 1], ['leo', 'L', 3], ['priya', 'P', 2], ['sam', 'S', 4]].map(([n, l, c]) => `<span class="story"><span class="ring">${av(l, c)}</span>${n}</span>`).join('')}</div>`;
   const maya = post('maya.walks', 'M', 1, 128, '2h', 'Liked by leo.makes and others', 'Swam before breakfast. Freezing. Perfect.');
   const priya = post('priya.reads', 'P', 2, 42, '4h', 'Liked by sam_k and others', 'Long tables, three hours gone.');
   const leo = post('leo.makes', 'L', 3, 76, '7h', 'Liked by maya.walks and others', 'She rides again.');
   const sam = post('sam_k', 'S', 4, 225, 'Yesterday', 'Liked by priya.reads and others', 'Sunday pot.');
   const head = `<div class="sb"><span>9:41</span><span class="ri">${SB}</span></div><div class="hd"><b>Home${I('chev')}</b><span class="ri">${I('heart')}${I('send')}</span></div>`;
   const tabs = `<div class="tb">${I('home', 'f')}${I('search')}${I('plus')}${I('reels')}${I('user')}</div>`;
-  const loop = maya + reel('dune.days', 'D', 6, 184, 'Golden hour, again. Wait for the end.') + priya + sugg([['dailywins', 'D', 3], ['clipvault', 'C', 2], ['loopdeals', 'L', 6]]) + ad('Berrybox', 'B', 1, 102, 'Fresh every week, straight to your door.') + leo + reel('pupdates', 'P', 3, 237, 'He knows exactly what he did.') + ad('Filmwerk', 'F', 6, 250, 'Shoot real film again.') + sam;
+  /* Without: it opens on an ad and never runs out. */
+  const loop = ad('Berrybox', 'B', 1, 102, 'Fresh every week, straight to your door.') + reel('dune.days', 'D', 6, 184, 'Golden hour, again. Wait for the end.') + maya + sugg([['dailywins', 'D', 3], ['clipvault', 'C', 2], ['loopdeals', 'L', 6]]) + reel('pupdates', 'P', 3, 237, 'He knows exactly what he did.') + priya + ad('Filmwerk', 'F', 6, 250, 'Shoot real film again.') + leo + reel('wild.water', 'W', 4, 15, 'Turn the sound on for this one.') + sam;
   const appB = $('#appB'), appA = $('#appA'), pair = $('#pair');
-  appB.innerHTML = head + `<div class="vp"><div class="feed">${stories}<div class="blk">${loop}</div><div class="blk">${loop}</div></div></div>` + tabs;
-  appA.innerHTML = head + `<div class="vp"><div class="feed">${stories}${maya}${priya}${leo}${sam}<div class="caught"><div class="ck">${I('check')}</div><b>You're all caught up</b><p>You've seen all new posts from the past 3 days.</p></div></div></div>` + tabs;
-  const mk = el => ({ vp: el.querySelector('.vp'), feed: el.querySelector('.feed'), y: 0 });
+  appB.innerHTML = head + `<div class="vp"><div class="feed"><div class="blk">${loop}</div><div class="blk">${loop}</div></div></div>` + tabs;
+  /* With: friends, then the end. */
+  appA.innerHTML = head + `<div class="vp"><div class="feed">${maya}${priya}${leo}${sam}<div class="caught"><div class="ck">${I('check')}</div><b>You're all caught up</b><p>You've seen all new posts from the past 3 days.</p></div></div></div>` + tabs;
+  const mk = el => ({ el, vp: el.querySelector('.vp'), feed: el.querySelector('.feed'), y: 0, i: 0, mv: null, wait: 0 });
   const B = mk(appB), A = mk(appA);
   function measure() {
-    const blk = B.feed.querySelector('.blk');
-    B.topH = blk.offsetTop; B.loopH = blk.offsetHeight; B.H = B.vp.clientHeight;
+    const blks = B.feed.querySelectorAll('.blk');
+    B.n = blks[0].children.length; B.loopH = blks[1].offsetTop - blks[0].offsetTop;
+    B.off = [...blks[0].children, ...blks[1].children].map(c => c.offsetTop);
     A.max = Math.max(0, A.feed.offsetHeight - A.vp.clientHeight);
+    A.off = [...A.feed.querySelectorAll('.post')].map(c => c.offsetTop).slice(1).concat(A.max);
+    if (!B.mv) B.y = B.off[B.i]; if (!A.mv) A.y = A.i ? A.off[A.i - 1] : 0;
+    place(B); place(A);
   }
   const place = s => { s.feed.style.transform = `translate3d(0,${-s.y.toFixed(2)}px,0)`; };
-  function still() {
-    measure();
-    const r = B.feed.querySelector('.reel');
-    B.y = Math.max(0, r.offsetTop - B.H * .25); A.y = A.max; place(B); place(A);
-  }
-  let v = 0, wait = 1.2, endAt = 0, clock = 0, running = false, last = 0, lr = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
-  function restart() { v = 0; wait = 1.2; endAt = 0; clock = 0; B.y = 0; A.y = 0; place(B); place(A); }
+  /* A flick: fast off the finger, easing to rest. */
+  const glide = (s, to, dur) => { s.mv = { from: s.y, to, t: 0, dur }; };
+  function move(s, dt) {
+    const m = s.mv; m.t += dt; const k = Math.min(1, m.t / m.dur);
+    s.y = m.from + (m.to - m.from) * (1 - Math.pow(1 - k, 4));
+    if (k >= 1) { s.mv = null; return true; }
+    return false;
+  }
+  let hold = 0;
+  function reset() { B.y = 0; B.i = 0; B.mv = null; B.wait = 1.4; A.y = 0; A.i = 0; A.mv = null; A.wait = 1; hold = 0; place(B); place(A); }
+  function tick(dt) {
+    /* Left: one or two items per flick, with pauses to look. It never ends. */
+    if (B.mv) { if (move(B, dt)) { B.wait = rnd(1, 2.2); if (B.i >= B.n) { B.i -= B.n; B.y -= B.loopH; } } }
+    else if ((B.wait -= dt) <= 0) { const st = Math.random() < .3 ? 2 : 1; B.i += st; glide(B, B.off[B.i], .55 + .22 * st + rnd(0, .1)); }
+    /* Right: four friends, then all caught up, a hold, and back to the top. */
+    if (A.mv) { if (move(A, dt)) A.wait = .55; }
+    else if (A.i < A.off.length) { if ((A.wait -= dt) <= 0) { A.i++; glide(A, A.off[A.i - 1], A.i === A.off.length ? .8 : .65); } }
+    else if ((hold += dt) > 4 && hold < 1e3) {
+      hold = 1e3; appA.classList.add('fading');
+      setTimeout(() => { A.y = 0; A.i = 0; A.wait = 1; hold = 0; place(A); appA.classList.remove('fading'); }, 330);
+    }
+    place(B); place(A);
+  }
+  let running = false, last = 0, lr = 0;
   function step(now) {
     lr = 0; if (!running) return;
-    const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; clock += dt;
-    const H = B.H || 500;
-    if (v < 4 && wait > 0) { wait -= dt; if (wait <= 0) v = Math.random() < .35 ? H * rnd(.45, .7) : H * rnd(1.2, 2); }
-    else if (v >= 4) { v *= Math.exp(-2.9 * dt); if (v < 4) { v = 0; wait = rnd(.9, 2.2); } }
-    const dy = v * dt;
-    B.y += dy; if (B.loopH && B.y > B.topH + B.loopH) B.y -= B.loopH;
-    if (A.y < A.max) A.y = Math.min(A.max + 14, A.y + dy);
-    if (A.y > A.max) { A.y += (A.max - A.y) * Math.min(1, dt * 9); if (!endAt) endAt = clock; }
-    place(B); place(A);
-    if (endAt && clock - endAt > 5.5) {
-      endAt = Infinity; appB.classList.add('fading'); appA.classList.add('fading');
-      setTimeout(() => { restart(); appB.classList.remove('fading'); appA.classList.remove('fading'); }, 340);
-    }
+    tick(Math.min(.05, (now - last) / 1000 || .016)); last = now;
     lr = requestAnimationFrame(step);
   }
   function setRunning(on) {
     running = on; pair.classList.toggle('paused', !on);
     if (on && !lr) { last = performance.now(); lr = requestAnimationFrame(step); }
   }
+  /* Still frames: the left on an ad, the right at the end. */
+  function still() { B.i = 0; A.i = A.off.length; measure(); }
+  reset();
   requestAnimationFrame(() => { measure(); if (reduce) still(); });
   if (document.fonts) document.fonts.ready.then(() => { measure(); if (reduce) still(); });
   if (reduce) pair.classList.add('paused');
@@ -741,7 +513,7 @@ html[data-marks="10"] .mk { outline: 2px solid currentColor; outline-offset: -2p
   let rt;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
     prints.forEach(p => { if (build(p) && p.t0 != null) paint(p, raf ? performance.now() : 0); }); if (prints.some(p => p.t0 != null)) kick();
-    measure(); if (reduce) still();
+    measure();
   }, 150); });
 })();
 </script>

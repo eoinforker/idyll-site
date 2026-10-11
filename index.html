@@ -2,38 +2,524 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Idyll</title>
-<meta name="robots" content="noindex">
-<link rel="icon" href="img/favicon-32.png" sizes="32x32">
-<link rel="stylesheet" href="fonts.css">
+<meta name="description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<meta property="og:title" content="Idyll. Social, without the scroll.">
+<meta property="og:description" content="Idyll takes the ads, Shorts, Reels and algorithmic feeds out of YouTube, Instagram, Facebook and X. Free, for good.">
+<meta property="og:image" content="https://eoinforker.github.io/idyll-site/img/icons/H2-white-on-magenta.png">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#f6f5f1">
+<link rel="icon" href="./img/icons/H2-white-on-magenta.png" type="image/png">
+<link rel="apple-touch-icon" href="./img/icons/H2-white-on-magenta.png">
+<link rel="stylesheet" href="./fonts.css">
 <style>
-:root { --bg: #f2ede4; --ink: #2b2925; --muted: #7a7266; --rule: #dcd4c6; }
+/* Quiet paper, near-black ink, one magenta plate, then night. */
+:root {
+  --paper: #f6f5f1;
+  --ink: #161514;
+  --soft: #5b5853;
+  --pink: #d81b7a;
+  --blue: #2d5bff;
+  --cream: #fff6ee;
+  --night: #141416;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Timeless Serif", Georgia, serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --pad: clamp(16px, 4vw, 48px);
+}
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 "Timeless Sans", -apple-system, system-ui, sans-serif; }
-main { max-width: 760px; margin: 0 auto; padding-inline: 20px; padding-block: 64px; }
-img { width: 72px; height: 72px; border-radius: 16px; }
-h1 { margin: 20px 0 6px; font: 400 44px/1.05 "Timeless Serif", Georgia, serif; }
-p { margin: 0 0 28px; color: var(--muted); }
-a { display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; padding: 18px 0; border-top: 1px solid var(--rule); color: inherit; text-decoration: none; }
-a:last-of-type { border-bottom: 1px solid var(--rule); }
-a b { grid-row: span 2; font: 400 13px/1.9 "Paper Mono", ui-monospace, monospace; color: var(--muted); }
-a strong { font: 400 24px/1.2 "Timeless Serif", Georgia, serif; }
-a span { color: var(--muted); font-size: 15px; }
-a:hover strong, a:focus-visible strong { text-decoration: underline; text-underline-offset: 4px; }
+html { background: var(--paper); -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; }
+a:hover { color: var(--pink); }
+::selection { background: var(--pink); color: var(--cream); }
+:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 var(--pad); }
+
+/* Crop marks: four small corners, drawn as hairlines. */
+.crop { --c: var(--ink); --l: 11px; position: relative; }
+.crop::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / var(--l) 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 0 / 1px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / var(--l) 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / 1px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / var(--l) 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / 1px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / var(--l) 1px no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / 1px var(--l) no-repeat; }
+
+/* Top */
+.top { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+.wm { display: flex; align-items: center; gap: 9px; text-decoration: none; font: 600 19px/1 var(--sans); letter-spacing: -.02em; }
+.wm img { width: 24px; height: 24px; border-radius: 22.5%; display: block; }
+.top nav { display: flex; gap: clamp(14px, 2.4vw, 28px); font: 500 15px/1 var(--sans); }
+
+.lede { display: flex; flex-direction: column; align-items: center; gap: clamp(22px, 4vh, 40px); padding-top: clamp(28px, 6vh, 64px); }
+/* Coming soon: a magenta tag whose edge breaks into halftone, then the platforms in blue. */
+.soon { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 12px; font: 400 12.5px/1 var(--mono); letter-spacing: .02em; }
+.soon .tag { display: inline-flex; align-items: stretch; color: var(--cream); }
+.soon .tag b { font-weight: 400; background: var(--pink); padding: 5px 4px 5px 9px; }
+.soon .tag svg { display: block; width: 26px; height: 22px; fill: var(--pink); }
+.soon .on { color: var(--blue); }
+.leader { display: flex; align-items: baseline; gap: 8px; width: min(100%, 420px); font: 400 13px/1.2 var(--mono); }
+.leader i { flex: 1; min-width: 24px; border-bottom: 1.5px dotted var(--ink); transform: translateY(-3px); }
+
+/* Hero */
+.hero { text-align: center; padding: clamp(18px, 4.5vh, 52px) 0 clamp(56px, 11vh, 128px); }
+.hero h1 { font: 500 clamp(40px, min(14.5vw, 25vh), 210px)/.88 var(--sans); letter-spacing: -.055em; margin: 0 -.04em; }
+.hero h1 span { display: block; }
+.go { display: flex; justify-content: center; gap: clamp(22px, 4vw, 52px); margin-top: clamp(26px, 4.5vh, 48px); font: 500 clamp(18px, 1.9vw, 24px)/1.2 var(--sans); letter-spacing: -.015em; }
+.go a { text-decoration-thickness: 1.5px; text-underline-offset: .22em; }
+
+/* The plate */
+.plate { position: relative; isolation: isolate; background: var(--pink); color: var(--cream); padding: clamp(14px, 2vw, 28px); }
+/* Paper grain, barely there. */
+.plate::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.plate .crop { --c: var(--cream); min-height: min(88vh, 860px); display: grid; place-items: center; padding: clamp(36px, 6vw, 80px) clamp(10px, 3vw, 40px); }
+.stage { width: min(100%, 1180px); display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: clamp(24px, 4vw, 64px); align-items: center; }
+@media (min-width: 1600px) { .stage { width: min(100%, 1400px); } }
+.cyg { position: relative; width: 100%; aspect-ratio: 640 / 380; }
+.cyg canvas, .mk canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 30px; }
+.lbl { font: 400 11.5px/1 var(--mono); letter-spacing: .03em; }
+.marks .lbl { margin-bottom: 12px; }
+.marks ul { display: grid; gap: 6px; }
+.marks li { display: grid; gap: 18px; align-items: center; font: 400 15px/1.3 var(--sans); }
+.mk { position: relative; display: block; flex: none; }
+
+/* A small window in our inks. */
+.win { width: 100%; max-width: 380px; background: var(--cream); color: var(--ink); border: 1.5px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); font: 400 15px/1.3 var(--sans); }
+.bar { background: var(--blue); color: var(--cream); border-bottom: 1.5px solid var(--ink); padding: 5px 12px; }
+.win ul { padding: 12px 14px 14px; }
+.win li { display: grid; grid-template-columns: 7px 1fr; gap: 10px; align-items: baseline; padding: 3px 0; }
+.win li::before { content: ""; width: 7px; height: 7px; background: var(--pink); transform: translateY(-.1em); }
+
+/* The same feed, twice. */
+.twice { padding: clamp(72px, 11vw, 140px) 0 0; --gap: clamp(14px, 6vw, 112px); }
+.pair { display: flex; justify-content: center; gap: var(--gap); }
+.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.pair figcaption { font: 400 13px/1.3 var(--mono); letter-spacing: .02em; color: var(--ink); }
+.fine { margin: 26px auto 0; max-width: 34em; text-align: center; font: 400 13px/1.5 var(--sans); color: var(--soft); }
+.device { --w: min(320px, calc((100vw - 2 * var(--pad) - var(--gap)) / 2), max(220px, calc((100svh - 116px) / 2.06))); position: relative; width: var(--w); aspect-ratio: 71.6 / 147.6; border-radius: calc(var(--w) * .165); padding: calc(var(--w) * .012);
+  /* Titanium band with a thin highlight on its edge, a soft shadow on the paper. */
+  background: #3b3b3e;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2), inset 0 1px 0 1px rgba(255,255,255,.14), inset 0 0 0 calc(var(--w) * .005 + 1px) #2a2a2d,
+    0 1px 2px rgba(20,20,22,.14), 0 14px 28px -14px rgba(20,20,22,.32), 0 44px 80px -36px rgba(20,20,22,.34); }
+.device .btn { position: absolute; width: max(2px, calc(var(--w) * .01)); border-radius: 2px; background: #333336; box-shadow: inset 0 0 0 .5px rgba(255,255,255,.18); }
+.device .b1 { left: calc(var(--w) * -.008); top: 17%; height: 4%; }
+.device .b2 { left: calc(var(--w) * -.008); top: 24.5%; height: 7.5%; }
+.device .b3 { left: calc(var(--w) * -.008); top: 34%; height: 7.5%; }
+.device .b4 { right: calc(var(--w) * -.008); top: 27%; height: 11.5%; }
+.glass { height: 100%; border-radius: calc(var(--w) * .153); background: #050506; padding: calc(var(--w) * .025); }
+.screen { position: relative; height: 100%; overflow: hidden; border-radius: calc(var(--w) * .128); background: #fff; isolation: isolate; font: 400 calc(var(--w) * .039)/1.3 var(--sans); color: #0e0f14; transform: translateZ(0); }
+.island { position: absolute; z-index: 5; top: calc(var(--w) * .03); left: 50%; width: 32%; height: calc(var(--w) * .09); transform: translateX(-50%); border-radius: 99px; background: #050506; }
+.app { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; transition: opacity .3s ease; }
+.app.fading { opacity: 0; }
+.sb { flex: none; height: 3.9em; display: flex; justify-content: space-between; align-items: center; padding: .55em 2.05em 0 2.35em; font-weight: 700; font-size: 1.02em; }
+.sb .ri { display: flex; align-items: center; gap: .32em; }
+.sb svg { height: .82em; width: auto; }
+.hd { flex: none; display: flex; align-items: center; justify-content: space-between; padding: .35em 1.05em .6em; border-bottom: 1px solid #efeff2; position: relative; z-index: 2; background: #fff; }
+.hd b { font: 800 1.42em/1 var(--sans); letter-spacing: -.025em; display: flex; align-items: center; gap: .2em; }
+.hd .ri { display: flex; gap: .95em; }
+.ic { width: 1.6em; height: 1.6em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ic.f { fill: currentColor; }
+.vp { position: relative; flex: 1; overflow: hidden; }
+.feed { position: absolute; left: 0; right: 0; top: 0; will-change: transform; }
+.tb { flex: none; height: 4.4em; padding: .55em 1.5em 1.55em; display: flex; justify-content: space-between; align-items: center; background: #fff; border-top: 1px solid #ececef; position: relative; }
+.tb::after { content: ""; position: absolute; left: 50%; bottom: .45em; width: 36%; height: .3em; transform: translateX(-50%); border-radius: 9px; background: #0e0f14; }
+.av { display: inline-grid; place-items: center; flex: none; width: 2.4em; height: 2.4em; border-radius: 50%; font: 800 .92em/1 var(--sans); }
+.c1 { background: #ffe1ef; color: #a8105c; } .c2 { background: #e3e9ff; color: #1a3fd6; } .c3 { background: #ffe8d4; color: #9a4a12; } .c4 { background: #ddf3e6; color: #1f6b45; } .c6 { background: #fff1c9; color: #7a5a00; }
+.ph { position: relative; overflow: hidden; background: #e9e6e2; }
+.ph img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.post { padding-bottom: .9em; }
+.post .ph-h { display: flex; align-items: center; gap: .6em; padding: .7em 1em; }
+.post .ph-h .av { width: 2.25em; height: 2.25em; font-size: .85em; }
+.post .ph-h b { font-weight: 700; }
+.post .ph-h small { display: block; font-size: .85em; color: #6b6e78; }
+.post .ph-h .more { margin-left: auto; }
+.post .sq { aspect-ratio: 1; }
+.post .acts { display: flex; gap: .95em; padding: .7em 1em .35em; }
+.post .acts .sv { margin-left: auto; }
+.post .likes { padding: 0 1em; font-weight: 700; }
+.post .pc { padding: .2em 1em 0; }
+.post .pc b { font-weight: 700; margin-right: .3em; }
+.reel .tall { aspect-ratio: 4 / 5; }
+.reel .badge { position: absolute; left: .7em; top: .7em; display: flex; align-items: center; gap: .3em; padding: .25em .55em; border-radius: 99px; background: rgba(0,0,0,.45); color: #fff; font-weight: 700; font-size: .85em; }
+.reel .badge .ic { width: 1.1em; height: 1.1em; }
+.reel .audio { position: absolute; left: .7em; bottom: 1em; color: #fff; font-size: .85em; font-weight: 600; }
+.rbar { position: absolute; left: 0; right: 0; bottom: 0; height: .22em; background: rgba(255,255,255,.35); }
+.rbar i { display: block; height: 100%; background: #fff; transform-origin: left; animation: rbar 7s linear infinite; }
+@keyframes rbar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.paused .rbar i { animation-play-state: paused; }
+.shop { display: flex; justify-content: space-between; align-items: center; padding: .7em 1em; background: var(--blue); color: #fff; font-weight: 700; }
+.sugg { padding: .8em 0 1em; border-top: 1px solid #efeff2; border-bottom: 1px solid #efeff2; background: #fafafa; margin-bottom: .6em; overflow: hidden; }
+.sugg .row { display: flex; justify-content: space-between; padding: 0 1em .7em; font-weight: 700; }
+.sugg .row span + span { color: var(--blue); }
+.sugg .cards { display: flex; gap: .6em; padding-left: 1em; }
+.sugg .card { flex: none; width: 8.4em; padding: 1em .6em .7em; border-radius: .8em; background: #fff; border: 1px solid #ececef; text-align: center; }
+.sugg .card .av { width: 4.4em; height: 4.4em; font-size: 1.1em; margin: 0 auto .5em; }
+.sugg .card b { display: block; font-weight: 700; }
+.sugg .card small { display: block; color: #6b6e78; font-size: .82em; margin: .1em 0 .6em; }
+.btn-b { display: block; padding: .5em; border-radius: .55em; background: var(--blue); color: #fff; font-weight: 700; font-size: .9em; }
+.caught { padding: 2.2em 1.4em 4em; text-align: center; border-top: 1px solid #efeff2; }
+.caught .ck { width: 4.2em; height: 4.2em; margin: 0 auto 1em; border-radius: 50%; display: grid; place-items: center; color: var(--pink); border: .2em solid var(--pink); }
+.caught b { display: block; font: 800 1.25em/1.2 var(--sans); }
+.caught p { margin-top: .4em; color: #6b6e78; }
+
+/* How it works */
+.how { padding: clamp(72px, 11vw, 140px) 0 clamp(80px, 12vw, 150px); }
+.how .crop { padding: 26px 22px; }
+.how .tri { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tri > div { padding: 0 clamp(16px, 2.2vw, 32px); }
+.tri > div:first-child { padding-left: 0; }
+.tri > div:last-child { padding-right: 0; }
+.tri > div + div { border-left: 1px solid var(--ink); }
+.tri h3 { font: 400 11.5px/1 var(--mono); letter-spacing: .03em; margin-bottom: 14px; }
+.tri p { font: 400 15px/1.5 var(--sans); max-width: 36em; }
+.tri p + p { margin-top: 10px; }
+.tri .honest { color: var(--soft); }
+
+/* Night: free, and the footer. */
+.night { background: var(--night); color: var(--cream); }
+.free { text-align: center; padding: clamp(96px, 15vw, 210px) 0 clamp(80px, 12vw, 170px); }
+.free h2 { font: 500 clamp(64px, 17vw, 300px)/.84 var(--sans); letter-spacing: -.06em; margin: 0 -.04em; }
+.free h2 span { display: inline-block; }
+.free p { margin: clamp(30px, 4vw, 56px) auto 0; max-width: 30em; font: 400 clamp(16px, 1.5vw, 19px)/1.45 var(--sans); }
+footer { border-top: 1px solid rgba(255,246,238,.2); padding: 16px 0 24px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; font: 400 13px/1.5 var(--sans); color: rgba(255,246,238,.62); }
+
+@media (max-width: 860px) {
+  .stage { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .side { width: min(100%, 380px); }
+}
+@media (max-width: 1024px) { .tri p { font-size: 14.5px; } }
+@media (max-width: 700px) {
+  .tri { grid-template-columns: 1fr !important; }
+  .tri > div { padding: 18px 0 !important; border-left: 0 !important; }
+  .tri > div + div { border-top: 1px solid var(--ink); }
+  .tri > div:first-child { padding-top: 0 !important; }
+  .tri > div:last-child { padding-bottom: 0 !important; }
+}
+@media (max-width: 520px) {
+  .top nav a + a { display: none; }
+  .plate .crop { min-height: 0; }
+  .how .crop { padding: 22px 16px; }
+  .pair figure { gap: 12px; }
+  footer { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { .rbar i { animation: none; transform: scaleX(.4); } .app { transition: none; } }
+
+.marks li { grid-template-columns: 60px minmax(0, 1fr); }
+.mk { width: 60px; height: 60px; }
+.stop { color: var(--pink); font-weight: inherit; }
 </style>
 </head>
 <body>
-<main>
-  <img src="img/icon.png" alt="The Idyll icon">
-  <h1>Idyll, five ways</h1>
-  <p><a href="v2/" style="display:inline;border:0;padding:0;color:inherit"><strong style="font-size:18px">See round two: ten more directions →</strong></a></p>
-  <p>Five directions for the website. Same words, same cygnet; open each one.</p>
-  <a href="1-letterpress/"><b>01</b><strong>Letterpress</strong><span>One quiet column of thick paper, type pressed in. The paper.design calm.</span></a>
-  <a href="2-notebook/"><b>02</b><strong>Notebook</strong><span>Grid paper, a red pen through the feed, notes in the margin, a form strip at the foot. The Initialized signature.</span></a>
-  <a href="3-calm/"><b>03</b><strong>Calm product</strong><span>Bright and soft, the app on a phone as the hero, checklists for each site. The Things feel.</span></a>
-  <a href="4-night/"><b>04</b><strong>Night lake</strong><span>Dark, big type, the cygnet against the moon, slow ripples. The fal energy.</span></a>
-  <a href="5-field-guide/"><b>05</b><strong>Field guide</strong><span>A naturalist’s plate: the cygnet as the specimen, Latin names, field notes. The wildcard.</span></a>
-</main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3.8l8.5 6.7V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.8 15.8 4.6 4.6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M12 8v8M8 12h8"/></symbol>
+  <symbol id="i-reels" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><path d="M3.5 8.5h17M8.5 3.5l2.5 5M14 3.5l2.5 5"/><path d="m10.5 12 4 2.3-4 2.3z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.6-4.6-7.6-10.3A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.6 2.5C19.6 15.4 12 20 12 20z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3.5 20l1.2-4.2A8.5 8.5 0 1 1 20.5 11.5z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 3 10.4l7.3 2.5L13 21z"/><path d="m10.3 12.9 5-5"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-6-4.5-6 4.5z"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m7 9.5 5 5 5-5"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <a class="wm" href="#top" aria-label="Idyll, top of page"><img src="./img/icons/H2-white-on-magenta.png" width="24" height="24" alt="">Idyll</a>
+    <nav aria-label="Page"><a href="#how">How it works</a><a href="#free">Free, for good</a></nav>
+  </header>
+
+  <main id="top">
+    <div class="lede">
+      <p class="soon"><span class="tag"><b>Coming soon</b><svg viewBox="0 0 26 22" aria-hidden="true"><circle cx="3" cy="3.7" r="3.6"/><circle cx="3" cy="11" r="3.6"/><circle cx="3" cy="18.3" r="3.6"/><circle cx="9.6" cy="3.7" r="2.9"/><circle cx="9.6" cy="11" r="2.9"/><circle cx="9.6" cy="18.3" r="2.9"/><circle cx="15.8" cy="3.7" r="2.1"/><circle cx="15.8" cy="11" r="2.1"/><circle cx="15.8" cy="18.3" r="2.1"/><circle cx="21.2" cy="3.7" r="1.3"/><circle cx="21.2" cy="11" r="1.3"/><circle cx="21.2" cy="18.3" r="1.3"/><circle cx="25" cy="7.3" r=".6"/><circle cx="25" cy="14.7" r=".6"/></svg></span><span class="on">iPhone, Android, Chrome and Mac</span></p>
+      <p class="leader"><span>Idyll</span><i aria-hidden="true"></i><span>social without the scroll</span></p>
+    </div>
+
+    <section class="hero" aria-labelledby="h">
+      <h1 id="h"><span>Social, without</span><span>the scroll<b class="stop">.</b></span></h1>
+      <p class="go"><a href="#how">How it works</a><a href="#free">Free, for good</a></p>
+    </section>
+  </main>
+</div>
+
+<section class="plate" aria-labelledby="w">
+  <h2 class="sr" id="w">What goes, and what stays</h2>
+  <div class="crop">
+    <div class="stage">
+      <div class="cyg" id="cyg" role="img" aria-label="A cygnet on the water, printed as cream halftone dots">
+        <canvas id="cygC" aria-hidden="true"></canvas>
+      </div>
+      <div class="side">
+        <div class="marks">
+          <p class="lbl">Gone</p>
+          <ul>
+            <li><span class="mk" data-mark="youtube"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From YouTube, Idyll removes: </span>Shorts, ads, Up next</span></li>
+            <li><span class="mk" data-mark="instagram"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Instagram, Idyll removes: </span>Reels, Suggested, Sponsored</span></li>
+            <li><span class="mk" data-mark="facebook"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From Facebook, Idyll removes: </span>Reels, Watch, the algorithmic feed</span></li>
+            <li><span class="mk" data-mark="x"><canvas aria-hidden="true"></canvas></span><span><span class="sr">From X, Idyll removes: </span>For you, Promoted, Trends</span></li>
+          </ul>
+        </div>
+        <div class="win">
+          <p class="bar lbl"><span>Stays</span></p>
+          <div class="wl">
+            <ul>
+              <li>Messages</li>
+              <li>Search</li>
+              <li>Subscriptions</li>
+              <li>Following</li>
+              <li>The video a friend sent</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="twice" aria-labelledby="tw">
+    <h2 class="sr" id="tw">The same feed, without and with Idyll</h2>
+    <div class="pair" id="pair">
+      <figure>
+        <div class="device" role="img" aria-label="Without Idyll: a Sponsored post, Reels and Suggested for you between friends' posts, with no end."><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appB"></div></div></div></div>
+        <figcaption>Without Idyll</figcaption>
+      </figure>
+      <figure>
+        <div class="device" role="img" aria-label="With Idyll: the same friends' posts only, ending in You're all caught up."><i class="btn b1"></i><i class="btn b2"></i><i class="btn b3"></i><i class="btn b4"></i><div class="glass"><div class="screen"><span class="island"></span><div class="app" id="appA"></div></div></div></div>
+        <figcaption>With Idyll</figcaption>
+      </figure>
+    </div>
+    <p class="fine">Illustrative screens. On iPhone, Idyll cleans Instagram in Safari, and the app itself gets a daily allowance.</p>
+  </section>
+
+  <section class="how" id="how" aria-labelledby="hw">
+    <h2 class="sr" id="hw">How it works</h2>
+    <div class="crop"><div class="tri">
+      <div>
+        <h3>iPhone</h3>
+        <p>In Safari, a content blocker cleans YouTube, Instagram, Facebook and X. Safari applies the rules itself, so Idyll can't read anything on the page.</p>
+        <p>The official apps get a daily allowance through Screen Time. They work, notifications and all, until the minutes run out, then pause until midnight.</p>
+        <p class="honest">The honest limit: no app can change what's inside the official apps on iPhone, because Apple keeps them sealed off.</p>
+      </div>
+      <div>
+        <h3>Android</h3>
+        <p>A clean built-in browser for each site, plus a feed guard inside the real apps that presses Skip ad and stops the swipe to the next Short or Reel.</p>
+        <p>The one a friend sent still plays.</p>
+      </div>
+      <div>
+        <h3>Chrome and Mac</h3>
+        <p>The same rules on a laptop.</p>
+        <p>Everywhere, you log in to the real sites and apps, never inside Idyll. No account. No trackers. Nothing leaves your device.</p>
+      </div>
+    </div></div>
+  </section>
+</div>
+
+<div class="night">
+  <div class="wrap">
+    <section class="free" id="free" aria-labelledby="fr">
+      <h2 id="fr"><span>Free<b class="stop">.</b></span> <span>For good<b class="stop">.</b></span></h2>
+      <p>No subscription, no ads, no data sold. Idyll will never charge.</p>
+    </section>
+    <footer>
+      <span>Idyll. Social without the scroll. Coming soon.</span>
+      <span>YouTube, Instagram, Facebook and X are trademarks of their owners. Idyll isn't affiliated with any of them.</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  const CREAM = '#fff6ee', BLUE = '#2d5bff';
+
+  const PINK = '#d81b7a';
+
+  /* Prints: each silhouette is sampled through a rotated screen and printed as dots. */
+  function screen(a, w, h, c, ang, tone, rk, delay) {
+    const out = [], ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / c / 2) + 2;
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+      const x = cx + (i * ca - j * sa) * c, y = cy + (i * sa + j * ca) * c;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const v = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255 * tone(x / w, y / h);
+      if (v < .05) continue;
+      out.push({ x, y, r: c * rk * Math.sqrt(Math.min(v, 1)), d: delay(x / w, y / h) + Math.random() * 280 });
+    }
+    return out;
+  }
+  function sample(img, w, h, inset, blur) {
+    const m = document.createElement('canvas'); m.width = w; m.height = h;
+    const g = m.getContext('2d', { willReadFrequently: true });
+    g.filter = `blur(${blur}px)`; g.drawImage(img, inset, inset, w - 2 * inset, h - 2 * inset);
+    return g.getImageData(0, 0, w, h).data;
+  }
+  const prints = [];
+  /* The cygnet: cream dots, with a light blue pass in the water a touch off register. */
+  prints.push({ el: $('#cyg'), cv: $('#cygC'), src: './img/cygnet-mark.svg', cellOf: cw => Math.max(4.5, cw / 120), inset: 0,
+    build(p, a, w, h, dpr) {
+      const dl = (u, v) => v * 315 + u * 585;
+      return [
+        { col: BLUE, dx: 3 * dpr, dy: -2 * dpr, dots: screen(a, w, h, p.cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, dl) },
+        { col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl) }
+      ];
+    } });
+  /* The marks: our own halftone prints of each logo, struck through in blue. */
+  document.querySelectorAll('.mk').forEach((el, i) => prints.push({ el, cv: el.querySelector('canvas'), src: `./img/brands/${el.dataset.mark}.svg`, cross: 700 + i * 140,
+    cellOf: cw => cw / 24, inset: .1, blur: .15,
+    build(p, a, w, h) { return [{ col: CREAM, dx: 0, dy: 0, dots: screen(a, w, h, p.cell, 45 * Math.PI / 180, () => 1, .58, (u, v) => 300 + i * 140 + u * 260) }]; } }));
+
+  let raf = 0;
+  function build(p) {
+    const dpr = Math.min(devicePixelRatio || 1, 2), cw = p.cv.clientWidth, w = Math.round(cw * dpr), h = Math.round(p.cv.clientHeight * dpr);
+    if (!w || !h || !p.img || !p.img.naturalWidth) return false;
+    p.cell = p.cellOf(cw) * dpr; p.dpr = dpr;
+    const a = sample(p.img, w, h, Math.round(w * p.inset), p.cell * (p.blur || .45));
+    p.cv.width = w; p.cv.height = h;
+    p.layers = p.build(p, a, w, h, dpr);
+    return true;
+  }
+  function paint(p, now) {
+    if (!p.layers || p.t0 == null) return false;
+    const g = p.cv.getContext('2d'), W = p.cv.width, H = p.cv.height; let busy = false;
+    g.clearRect(0, 0, W, H);
+    for (const L of p.layers) {
+      g.fillStyle = L.col; g.beginPath();
+      for (const d of L.dots) {
+        const t = clamp((now - p.t0 - d.d) / 360); if (t < 1) busy = true;
+        const r = d.r * ease(t); if (r < .3) continue;
+        g.moveTo(d.x + L.dx + r, d.y + L.dy); g.arc(d.x + L.dx, d.y + L.dy, r, 0, 6.2832);
+      }
+      g.fill();
+    }
+    if (p.cross != null) {
+      /* One heavy strike in a second ink, a little off register. */
+      const k = ease(clamp((now - p.t0 - p.cross) / 420)); if (k < 1) busy = true;
+      if (k > 0) {
+        const ox = 2 * p.dpr, oy = -1.5 * p.dpr, y0 = H * .6 + oy, y1 = H * .4 + oy;
+        g.strokeStyle = BLUE; g.lineWidth = W * .1; g.lineCap = 'butt'; g.beginPath();
+        g.moveTo(ox, y0); g.lineTo(ox + W * k, y0 + (y1 - y0) * k); g.stroke();
+      }
+    }
+    return busy;
+  }
+  const drawAll = now => prints.reduce((b, p) => paint(p, now) || b, false);
+  function frame() { raf = drawAll(performance.now()) ? requestAnimationFrame(frame) : 0; }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  function start(p) {
+    if (p.t0 != null) return;
+    if (reduce) { p.t0 = -1e6; return paint(p, 0); }
+    p.t0 = performance.now() + 120; kick();
+    setTimeout(() => { p.t0 = -1e6; kick(); }, 3600);
+  }
+  Promise.all(prints.map(p => new Promise(res => { p.img = new Image(); p.img.onload = p.img.onerror = res; p.img.src = p.src; }))).then(() => {
+    prints.forEach(build);
+    if (!('IntersectionObserver' in window)) return prints.forEach(p => { p.t0 = -1e6; paint(p, 0); });
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); start(e.target._p); } }), { threshold: .3 });
+    prints.forEach(p => { p.el._p = p; io.observe(p.el); });
+  });
+
+  /* The same feed, twice. */
+  const SB = '<svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx=".7" fill="currentColor"/><rect x="5" y="5.5" width="3" height="6.5" rx=".7" fill="currentColor"/><rect x="10" y="3" width="3" height="9" rx=".7" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx=".7" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a9.9 9.9 0 0 1 14 0l-1.4 1.4a7.9 7.9 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3.2" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="17" height="8" rx="2" fill="currentColor"/><path d="M25 4v4c.8-.3 1.3-1.1 1.3-2S25.8 4.3 25 4z" fill="currentColor" opacity=".5"/></svg>';
+  const I = (n, cls = '') => `<svg class="ic ${cls}"><use href="#i-${n}"/></svg>`;
+  const av = (l, c) => `<span class="av c${c}">${l}</span>`;
+  const im = id => `<img src="./img/photos/${id}.jpg" alt="" width="480" height="480" decoding="async">`;
+  const acts = `<div class="acts">${I('heart')}${I('chat')}${I('send')}<span class="sv">${I('save')}</span></div>`;
+  const post = (h, l, c, ph, t, likes, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>${t}</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div>${acts}<div class="likes">${likes}</div><div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const reel = (h, l, c, ph, cap) => `<article class="post reel"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Suggested reel</small></div><span class="more">${I('more')}</span></div><div class="ph tall">${im(ph)}<span class="badge">${I('reels')}Reels</span><span class="audio">Original audio</span><span class="rbar"><i></i></span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const ad = (h, l, c, ph, cap) => `<article class="post"><div class="ph-h">${av(l, c)}<div><b>${h}</b><small>Sponsored</small></div><span class="more">${I('more')}</span></div><div class="ph sq">${im(ph)}</div><div class="shop">Shop now<span>›</span></div>${acts}<div class="pc"><b>${h}</b>${cap}</div></article>`;
+  const sugg = list => `<div class="sugg"><div class="row"><span>Suggested for you</span><span>See all</span></div><div class="cards">${list.map(([n, l, c]) => `<div class="card">${av(l, c)}<b>${n}</b><small>Suggested for you</small><span class="btn-b">Follow</span></div>`).join('')}</div></div>`;
+  const maya = post('maya.walks', 'M', 1, 128, '2h', 'Liked by leo.makes and others', 'Swam before breakfast. Freezing. Perfect.');
+  const priya = post('priya.reads', 'P', 2, 42, '4h', 'Liked by sam_k and others', 'Long tables, three hours gone.');
+  const leo = post('leo.makes', 'L', 3, 76, '7h', 'Liked by maya.walks and others', 'She rides again.');
+  const sam = post('sam_k', 'S', 4, 225, 'Yesterday', 'Liked by priya.reads and others', 'Sunday pot.');
+  const head = `<div class="sb"><span>9:41</span><span class="ri">${SB}</span></div><div class="hd"><b>Home${I('chev')}</b><span class="ri">${I('heart')}${I('send')}</span></div>`;
+  const tabs = `<div class="tb">${I('home', 'f')}${I('search')}${I('plus')}${I('reels')}${I('user')}</div>`;
+  /* Without: it opens on an ad and never runs out. */
+  const loop = ad('Berrybox', 'B', 1, 102, 'Fresh every week, straight to your door.') + reel('dune.days', 'D', 6, 184, 'Golden hour, again. Wait for the end.') + maya + sugg([['dailywins', 'D', 3], ['clipvault', 'C', 2], ['loopdeals', 'L', 6]]) + reel('pupdates', 'P', 3, 237, 'He knows exactly what he did.') + priya + ad('Filmwerk', 'F', 6, 250, 'Shoot real film again.') + leo + reel('wild.water', 'W', 4, 15, 'Turn the sound on for this one.') + sam;
+  const appB = $('#appB'), appA = $('#appA'), pair = $('#pair');
+  appB.innerHTML = head + `<div class="vp"><div class="feed"><div class="blk">${loop}</div><div class="blk">${loop}</div></div></div>` + tabs;
+  /* With: friends, then the end. */
+  appA.innerHTML = head + `<div class="vp"><div class="feed">${maya}${priya}${leo}${sam}<div class="caught"><div class="ck">${I('check')}</div><b>You're all caught up</b><p>You've seen all new posts from the past 3 days.</p></div></div></div>` + tabs;
+  const mk = el => ({ el, vp: el.querySelector('.vp'), feed: el.querySelector('.feed'), y: 0, i: 0, mv: null, wait: 0 });
+  const B = mk(appB), A = mk(appA);
+  function measure() {
+    const blks = B.feed.querySelectorAll('.blk');
+    B.n = blks[0].children.length; B.loopH = blks[1].offsetTop - blks[0].offsetTop;
+    B.off = [...blks[0].children, ...blks[1].children].map(c => c.offsetTop);
+    A.max = Math.max(0, A.feed.offsetHeight - A.vp.clientHeight);
+    A.off = [...A.feed.querySelectorAll('.post')].map(c => c.offsetTop).slice(1).concat(A.max);
+    if (!B.mv) B.y = B.off[B.i]; if (!A.mv) A.y = A.i ? A.off[A.i - 1] : 0;
+    place(B); place(A);
+  }
+  const place = s => { s.feed.style.transform = `translate3d(0,${-s.y.toFixed(2)}px,0)`; };
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  /* A flick: fast off the finger, easing to rest. */
+  const glide = (s, to, dur) => { s.mv = { from: s.y, to, t: 0, dur }; };
+  function move(s, dt) {
+    const m = s.mv; m.t += dt; const k = Math.min(1, m.t / m.dur);
+    s.y = m.from + (m.to - m.from) * (1 - Math.pow(1 - k, 4));
+    if (k >= 1) { s.mv = null; return true; }
+    return false;
+  }
+  let hold = 0;
+  function reset() { B.y = 0; B.i = 0; B.mv = null; B.wait = 1.4; A.y = 0; A.i = 0; A.mv = null; A.wait = 1; hold = 0; place(B); place(A); }
+  function tick(dt) {
+    /* Left: one or two items per flick, with pauses to look. It never ends. */
+    if (B.mv) { if (move(B, dt)) { B.wait = rnd(1, 2.2); if (B.i >= B.n) { B.i -= B.n; B.y -= B.loopH; } } }
+    else if ((B.wait -= dt) <= 0) { const st = Math.random() < .3 ? 2 : 1; B.i += st; glide(B, B.off[B.i], .55 + .22 * st + rnd(0, .1)); }
+    /* Right: four friends, then all caught up, a hold, and back to the top. */
+    if (A.mv) { if (move(A, dt)) A.wait = .55; }
+    else if (A.i < A.off.length) { if ((A.wait -= dt) <= 0) { A.i++; glide(A, A.off[A.i - 1], A.i === A.off.length ? .8 : .65); } }
+    else if ((hold += dt) > 4 && hold < 1e3) {
+      hold = 1e3; appA.classList.add('fading');
+      setTimeout(() => { A.y = 0; A.i = 0; A.wait = 1; hold = 0; place(A); appA.classList.remove('fading'); }, 330);
+    }
+    place(B); place(A);
+  }
+  let running = false, last = 0, lr = 0;
+  function step(now) {
+    lr = 0; if (!running) return;
+    tick(Math.min(.05, (now - last) / 1000 || .016)); last = now;
+    lr = requestAnimationFrame(step);
+  }
+  function setRunning(on) {
+    running = on; pair.classList.toggle('paused', !on);
+    if (on && !lr) { last = performance.now(); lr = requestAnimationFrame(step); }
+  }
+  /* Still frames: the left on an ad, the right at the end. */
+  function still() { B.i = 0; A.i = A.off.length; measure(); }
+  reset();
+  requestAnimationFrame(() => { measure(); if (reduce) still(); });
+  if (document.fonts) document.fonts.ready.then(() => { measure(); if (reduce) still(); });
+  if (reduce) pair.classList.add('paused');
+  else {
+    const vis = () => { const r = pair.getBoundingClientRect(); return !document.hidden && r.top < innerHeight && r.bottom > 0; };
+    new IntersectionObserver(() => setRunning(vis()), { threshold: [0, .15] }).observe(pair);
+    document.addEventListener('visibilitychange', () => setRunning(vis()));
+  }
+
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+    prints.forEach(p => { if (build(p) && p.t0 != null) paint(p, raf ? performance.now() : 0); }); if (prints.some(p => p.t0 != null)) kick();
+    measure();
+  }, 150); });
+})();
+</script>
 </body>
 </html>
