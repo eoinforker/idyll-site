@@ -16,13 +16,16 @@
 (async () => {
   const CREAM = '#fff6ee', INK = '#161514', BLUE = '#2d5bff';
   /* name, width pt, height pt, attrs, inks */
+  /* Halftone only for the large moments. Water is the second ink: blue under the magenta accent, magenta under blue. */
   const cyg = [
-    ['cygnet-hello', 300, 300 * 380 / 640, { cell: '' }, { cream: CREAM }, true],
-    ['cygnet-focus', 330, 330 * 380 / 640, { cell: '' }, { cream: CREAM }, true],
-    ['cygnet-support', 120, 120 * 380 / 640, { cell: 3.4 }, { cream: CREAM, ink: INK }, false],
-    ['cygnet-chapters', 84, 84 * 380 / 640, { cell: 3 }, { cream: CREAM, ink: INK }, false],
-    ['cygnet-glint', 26, 16, { cell: 1.6 }, { cream: CREAM, ink: INK }, false],
+    ['cygnet-hello', 300, 300 * 380 / 640],
+    ['cygnet-focus', 330, 330 * 380 / 640],
+    ['cygnet-sheet', 132, 132 * 380 / 640],
   ];
+  /* Small marks: flat tone, per-size pitch (pt). */
+  const small = [[26, 1.6], [30, 1.7], [34, 1.8], [56, 2.2]];
+  const SMALLINK = { cream: CREAM, magenta: '#d81b7a', blue: BLUE };
+  const ACC = { magenta: { water: BLUE }, blue: { water: '#d81b7a' } };
   const out = {}, stage = document.getElementById('stage');
   async function render(name, w, h, data) {
     const el = document.createElement('div'); el.className = 'print';
@@ -31,12 +34,14 @@
     stage.appendChild(el); await IdyllPrint(el);
     out[name] = el.querySelector('canvas').toDataURL('image/png'); el.remove();
   }
-  for (const s of [2, 3, 4]) {
-    for (const [name, w, h, a, inks, water] of cyg) for (const [ik, col] of Object.entries(inks))
-      await render(`${name}-${ik}@${s}x`, w, h, { print: 'cygnet', ink: col, water: water ? BLUE : 'none', dpr: s, ...a });
-    for (const b of ['instagram', 'x', 'tiktok', 'youtube', 'facebook', 'snapchat', 'reddit', 'linkedin', 'threads'])
-      for (const [ik, col] of Object.entries({ cream: CREAM }))
-        await render(`mark-struck-${b}-${ik}@${s}x`, 34, 34, { print: 'mark', b, n: 22, ink: col, dpr: s });
+  for (const s of [2, 3, 4]) for (const [w, c] of small) for (const [ik, col] of Object.entries(SMALLINK))
+    await render(`cygnet-small-${w}-${ik}@${s}x`, w, w * 380 / 640, { print: 'cygnet', ink: col, water: 'none', flat: '1', cell: c, dpr: s });
+  for (const s of [2, 3, 4]) for (const [acc, a] of Object.entries(ACC)) {
+    for (const [name, w, h] of cyg) await render(`${name}-${acc}@${s}x`, w, h, { print: 'cygnet', ink: CREAM, water: a.water, dpr: s });
+    for (const b of ['instagram', 'x', 'tiktok', 'youtube', 'facebook', 'snapchat', 'reddit', 'linkedin', 'threads']) {
+      await render(`mark-struck-${b}-${acc}-34@${s}x`, 34, 34, { print: 'mark', b, n: 22, ink: CREAM, strike: a.water, dpr: s });
+      await render(`mark-struck-${b}-${acc}-40@${s}x`, 40, 40, { print: 'mark', b, n: 22, ink: CREAM, strike: a.water, dpr: s });
+    }
   }
   document.getElementById('out').textContent = JSON.stringify(out);
 })();
