@@ -5,9 +5,9 @@
 <p align="center"><b>Social, without the scroll.</b><br>The website for Idyll: the feeds out of ten social apps, Discord rested with them, your friends kept in.</p>
 
 <p align="center">
-<a href="https://eoinforker.github.io/idyll-site/">Live site</a> ·
-<a href="https://eoinforker.github.io/idyll-site/privacy.html">Privacy</a> ·
-<a href="https://eoinforker.github.io/idyll-site/support.html">Support</a> ·
+<a href="https://idyll.day/">Live site</a> ·
+<a href="https://idyll.day/privacy.html">Privacy</a> ·
+<a href="https://idyll.day/support.html">Support</a> ·
 <a href="#whats-here">What's here</a> ·
 <a href="#working-on-it">Working on it</a>
 </p>
@@ -18,7 +18,7 @@
 
 The public site for [Idyll](https://github.com/eoinforker/idyll), a free app that takes the short video, the algorithmic feeds and the ads out of YouTube, Instagram, Facebook, X, Snapchat, TikTok, Reddit, LinkedIn, Threads and Substack, keeps messages, search and whatever a friend sends you, and rests Discord along with them during Sleep and Focus.
 
-It is a static page, hand built, with no framework, no build step, no analytics and no cookies, plus a privacy page and a support page. Live at [eoinforker.github.io/idyll-site](https://eoinforker.github.io/idyll-site/) on GitHub Pages until the domain is bought.
+It is a static page, hand built, with no framework, no build step, no analytics and no cookies, plus a privacy page and a support page. Live at [idyll.day](https://idyll.day/) on GitHub Pages until the domain is bought.
 
 The apps are not in any store yet, so the page says coming soon.
 
