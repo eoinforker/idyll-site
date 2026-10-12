@@ -5,15 +5,15 @@
 <title>Idyll showcase</title>
 <link rel="stylesheet" href="../../fonts.css">
 <style>
-/* Two longer Idyll showcase videos, 1080 x 1920. ?v=tour (31 s) | keep (25 s).
+/* Two short Idyll showcase videos. ?v=tour (19.5 s) | keep (16 s), &fmt=story (1080 x 1920) | square (1080 x 1080).
    Deterministic: window.seek(t) draws the frame at t seconds; window.DURATION is the length.
-   Text stays inside 250 to 1520. Screens are the Android app's own renders, in showcase-shots/. */
+   Story text stays inside 250 to 1670 (Instagram's story safe zone). Screens are the Android app's own renders, in showcase-shots/. */
 :root { --paper: #f6f5f1; --ink: #141416; --pink: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --night: #141416;
   --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace; }
 * { box-sizing: border-box; }
-html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--night); -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; width: 1080px; overflow: hidden; background: var(--night); -webkit-font-smoothing: antialiased; }
 h1, h2, p { margin: 0; }
-#stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+#stage { position: relative; width: 1080px; overflow: hidden; }
 .scene { position: absolute; inset: 0; overflow: hidden; display: none; }
 .scene > .in { position: absolute; inset: 0; will-change: transform; }
 .magenta { background: var(--pink); color: var(--cream); }
@@ -39,8 +39,6 @@ canvas { display: block; position: absolute; }
 .night .cap, .night .reg { text-shadow: 3px 2px 0 rgba(216,27,122,.4); }
 .paper .cap { text-shadow: 3px 2px 0 rgba(45,91,255,.22); }
 .cap.s { text-shadow: none !important; }
-.tag { position: absolute; left: 0; right: 0; top: 252px; text-align: center; font: 400 30px/1 var(--mono); letter-spacing: .08em; z-index: 20; opacity: .9; }
-.tag i { font-style: normal; display: inline-block; width: 70px; border-bottom: 3px dotted currentColor; transform: translateY(-8px); margin: 0 16px; }
 /* Real app screens: a white phone page with the brand's hard shadow. The img inside pans and zooms. */
 .scr { position: absolute; border-radius: 52px; overflow: hidden; background: #fff; box-shadow: 18px 18px 0 var(--ink); will-change: transform, opacity; z-index: 12; }
 .night .scr { box-shadow: 18px 18px 0 #000; outline: 3px solid #4a4850; }
@@ -54,18 +52,20 @@ canvas { display: block; position: absolute; }
 .li { position: absolute; left: 110px; right: 80px; font: 500 104px/1 var(--sans); letter-spacing: -.05em; z-index: 20; white-space: nowrap; }
 .li .tk { display: inline-block; width: 74px; height: 74px; margin-right: 26px; vertical-align: -6px; }
 .li .st { position: absolute; left: -10px; top: 52%; height: 11px; background: var(--pink); transform-origin: 0 50%; }
-.end-url { position: absolute; left: 0; right: 0; text-align: center; font: 400 31px/1 var(--mono); letter-spacing: .02em; z-index: 20; }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><filter id="vblur" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="vblurk" stdDeviation="0 0"/></filter></svg>
 <div id="stage"></div>
+<script>window.IDYLL_ROOT = '../../';</script>
+<script src="print.js"></script>
 <script>
 (async () => {
   const q = new URLSearchParams(location.search);
-  const V = q.get('v') || 'tour';
-  const W = 1080, H = 1920;
+  const V = q.get('v') || 'tour', SQ = q.get('fmt') === 'square';
+  const W = 1080, H = SQ ? 1080 : 1920;
   const stage = document.getElementById('stage');
+  document.body.style.height = stage.style.height = H + 'px';
   const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
   const out3 = t => 1 - Math.pow(1 - clamp(t), 3), out5 = t => 1 - Math.pow(1 - clamp(t), 5);
   const io = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
@@ -90,14 +90,23 @@ canvas { display: block; position: absolute; }
       const k = i === 0 ? 1 : io((t - o.at) / PUSH);
       o.s.style.clipPath = k < 1 ? `inset(${((1 - k) * 100).toFixed(3)}% 0 0 0)` : 'none';
       const away = next ? io((t - next.at) / PUSH) : 0;
-      o.in.style.transform = `translateY(${((1 - k) * 420 - away * 520).toFixed(2)}px)`;
+      o.in.style.transform = `translateY(${((1 - k) * H * .22 - away * H * .27).toFixed(2)}px)`;
     });
   }
 
   const land = (el, t, at, dur = .6, rise = 30) => { const k = out3((t - at) / dur); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * rise}px)`; return k; };
   const leave = (el, t, at, dur = .3) => { if (t > at) el.style.opacity = Math.min(+el.style.opacity, 1 - clamp((t - at) / dur)); };
   const cap = (parent, html, top, cls = '', style = '') => mk(parent, `<h1 class="cap ${cls}" style="top:${top}px;${style}">${html}</h1>`);
-  const tag = (parent, a, b) => mk(parent, `<p class="tag">${a}<i></i>${b}</p>`);
+  /* Square: a caption in the left column, set left, centred on the screen beside it. */
+  const sideCap = (parent, html, size = 92) => cap(parent, html, 0, 'l', `left:76px;right:auto;width:470px;font-size:${size}px;top:50%;margin-top:-${size}px`);
+  /* One frame, several renders of the same screen: only the current one shows, all move together. */
+  const variants = (sh, names) => {
+    const imgs = [sh.img, ...names.slice(1).map(n => mk(sh.el, `<img src="showcase-shots/${n}.png" alt="" style="position:absolute;left:0;top:0;width:100%;opacity:0">`))];
+    if (names[0] !== null) sh.img.src = `showcase-shots/${names[0]}.png`;
+    return i => imgs.forEach((im, j) => { if (j) { im.style.transform = sh.img.style.transform; im.style.transformOrigin = sh.img.style.transformOrigin; } im.style.opacity = j === i ? 1 : 0; });
+  };
+  /* A caption whose number changes on the beat, with a small lift as it lands. */
+  const swapCap = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); const sp = el.querySelector('.n'); if (sp.textContent !== list[i]) sp.textContent = list[i]; const k = out3((t - times[i]) / .25); sp.style.display = 'inline-block'; sp.style.transform = `translateY(${(i ? (1 - k) * 14 : 0).toFixed(1)}px)`; sp.style.opacity = i ? .4 + .6 * k : 1; return i; };
 
   /* A real screen in a frame. cam(t) moves the frame (y, scale) and the page inside it (pan, zoom). */
   const shot = (parent, name, x, y, w, h) => {
@@ -205,72 +214,65 @@ canvas { display: block; position: absolute; }
     return cards;
   }
 
-  /* The end card: the family cygnet prints in, Idyll., where it runs, and the site. */
+  /* The end card: the family cygnet prints in, Idyll., and where it runs. */
   async function endCard(cls, at, water) {
     const S = scene(cls, at), p = S.in;
-    const pr = await print(p, 'family', 760, 430, { ink: C.cream, water, seed: 21, dur: 1.1 });
+    const L = SQ ? { pw: 600, py: 150, ty: 520, ts: 200, py2: 770 } : { pw: 780, py: 500, ty: 990, ts: 240, py2: 1270 };
+    const pr = await print(p, 'family', L.pw, L.py, { ink: C.cream, water, seed: 21, dur: 1.1 });
     const stop = cls === 'magenta' ? 'ik' : 'pk';
-    const a = cap(p, `Idyll<b class="${stop}">.</b>`, 900, 'big', 'font-size:230px');
-    const b = cap(p, `Android · iPhone · Chrome`, 1166, 's', 'font-size:58px');
-    const u = mk(p, `<p class="end-url" style="top:1270px">eoinforker.github.io/idyll-site</p>`);
-    return t => { pr.paint(t - at - .15); land(a, t, at + .45, .7, 26); land(b, t, at + .85, .6, 18); land(u, t, at + 1.25, .6, 10); };
+    const a = cap(p, `Idyll<b class="${stop}">.</b>`, L.ty, 'big', `font-size:${L.ts}px`);
+    const b = cap(p, `Android · iPhone · Chrome`, L.py2, 's', 'font-size:58px');
+    return t => { pr.paint(t - at - .15); land(a, t, at + .45, .7, 26); land(b, t, at + .85, .6, 18); };
   }
+
+  /* A screen placed for the format: centred under the caption in a story, in the right column in a square. */
+  const place = (parent, name) => SQ ? shot(parent, name, 560, 110, 440, 860) : shot(parent, name, 200, 560, 680, 1180);
 
   const pieces = {};
 
-  /* The tour, 31 s. Music: ticks speed up under the feed, a dead stop at 2.5 s, then 120 bpm from 2.9 s. */
+  /* The tour, 19.5 s. Music: ticks speed up under the feed, a dead stop at 2.5 s, a pickup at 2.9 s, then 120 bpm
+     from 3.9 s, so scenes and every number change land on a beat; home to F on the end card at 15.9 s. */
   pieces.tour = async () => {
-    const DUR = 31;
-    /* 0 to 3.9: the feed runs, faster and faster, then stops dead. */
+    const DUR = 19.5;
+    /* 0: the feed runs, faster and faster, then stops dead. */
     const S0 = scene('blue', 0);
-    const vp = mk(S0.in, `<div style="position:absolute;left:0;right:0;top:600px;bottom:0;overflow:hidden;z-index:12"><div style="position:absolute;left:0;right:0;top:0;will-change:transform"></div></div>`);
+    const vp = mk(S0.in, `<div style="position:absolute;left:0;right:0;top:${SQ ? 330 : 560}px;bottom:0;overflow:hidden;z-index:12"><div style="position:absolute;left:0;right:0;top:0;will-change:transform"></div></div>`);
     const col = vp.firstElementChild;
-    const cards = await feedCards(col, 17, 9);
+    await feedCards(col, 17, 9);
     const blurK = document.getElementById('vblurk');
-    const c0 = cap(S0.in, `The feed<br>never ends<b class="pk">.</b>`, 310);
-    const c1 = cap(S0.in, `Now it does<b class="pk">.</b>`, 360, '', 'font-size:150px');
+    const c0 = cap(S0.in, `The feed<br>never ends<b class="pk">.</b>`, SQ ? 80 : 300);
+    const c1 = cap(S0.in, `Now it does<b class="pk">.</b>`, SQ ? 120 : 350, '', `font-size:${SQ ? 130 : 150}px`);
     const STOP = 2.5;
     const yAt = t => { const u = Math.min(t, STOP); return 700 * u + 1250 * u * u; };
-    /* 3.9: Home. */
+    const both = (S, html, size) => SQ ? sideCap(S.in, html, size) : cap(S.in, html, 300);
+    /* 3.9: YouTube in Idyll, Shorts gone. */
     const S1 = scene('magenta', 3.9);
-    tag(S1.in, 'IDYLL', 'HOME');
-    const c2 = cap(S1.in, `Same apps<b class="ik">.</b><br>No feed<b class="ik">.</b>`, 310);
-    const home = shot(S1.in, 'home', 200, 640, 680, 1180);
-    /* 7.9: YouTube in Idyll, Shorts gone. */
-    const S2 = scene('blue', 7.9);
-    tag(S2.in, 'YOUTUBE', 'IN IDYLL');
-    const c3 = cap(S2.in, `YouTube<b class="pk">.</b><br>No Shorts<b class="pk">.</b>`, 310);
-    const yt = shot(S2.in, 'youtube', 200, 640, 680, 1180);
-    const strip = mk(yt.el, `<img src="showcase-shots/removed.png" alt="" style="position:absolute;left:3.33%;bottom:28px;width:93.33%;z-index:3">`);
-    /* 11.9: the one video a friend sent, and nothing after it. */
-    const S3 = scene('paper', 11.9);
-    tag(S3.in, 'A LINK', 'ON ITS OWN');
-    const c4 = cap(S3.in, `The one video<br>a friend sent<b class="pk">.</b>`, 310);
-    const c4b = cap(S3.in, `And nothing<br>after it<b class="pk">.</b>`, 310);
-    const lat = shot(S3.in, 'later', 200, 640, 680, 1180);
-    const fin = sheet(lat, 'end');
-    /* 15.9: Focus. */
-    const S4 = scene('magenta', 15.9);
-    tag(S4.in, 'IDYLL', 'FOCUS');
-    const c5 = cap(S4.in, `Focus for<br>50 minutes<b class="ik">.</b>`, 310);
-    const fo = shot(S4.in, 'focus', 200, 640, 680, 1180);
-    /* 19.9: Sleep. */
-    const S5 = scene('night', 19.9);
-    tag(S5.in, 'IDYLL', 'SLEEP');
-    const c6 = cap(S5.in, `Sleep from<br>23:00 to 07:00<b class="pk">.</b>`, 310);
-    const sl = shot(S5.in, 'sleep', 200, 640, 680, 1180);
-    const gn = shot(S5.in, 'goodnight', 200, 640, 680, 1180);
-    /* 23.9: the promise. */
-    const S6 = scene('blue', 23.9);
-    const fe = await print(S6.in, 'feather', 820, 1150, { ink: C.cream, water: C.pink, seed: 17, dur: 1.2 });
-    const c7 = cap(S6.in, `Free<b class="pk">.</b><br>For good<b class="pk">.</b>`, 330, 'big');
-    const c8 = cap(S6.in, `No account<b class="pk">.</b>`, 760, '', 'font-size:84px');
-    const c9 = cap(S6.in, `Nothing leaves<br>your phone<b class="pk">.</b>`, 860, '', 'font-size:84px');
-    /* 26.9: the end card. */
-    const end = await endCard('magenta', 26.9, C.blue);
+    const c2 = both(S1, `YouTube<b class="ik">.</b><br>No Shorts<b class="ik">.</b>`);
+    const yt = place(S1.in, 'youtube');
+    const strip = mk(yt.el, `<img src="showcase-shots/removed.png" alt="" style="position:absolute;left:3.33%;bottom:${SQ ? 18 : 28}px;width:93.33%;z-index:3">`);
+    /* 5.9: an app opens, and Idyll's pause comes first, in your own words, which change on the beat. */
+    const S2 = scene('paper', 5.9);
+    const c3 = both(S2, `Your words<br>first<b class="pk">.</b>`);
+    const pz = place(S2.in, 'pause-1');
+    const pzv = variants(pz, ['pause-1', 'pause-2', 'pause-3']);
+    const tw = SQ ? 440 : 680, tile = mk(pz.el, `<div style="position:absolute;inset:0;z-index:4;background:var(--cream);display:grid;place-items:center"><canvas style="position:relative;width:${Math.round(tw * .42)}px;height:${Math.round(tw * .42)}px"></canvas></div>`);
+    S2.s.style.display = 'block'; /* print.js measures the canvas, so it needs the scene laid out while it samples. */
+    const ig = await Print(tile.firstElementChild, { kind: 'mark', b: 'instagram', ink: C.ink, strike: null, n: 22, seed: 4 });
+    S2.s.style.display = 'none';
+    /* 9.9: Focus, the length stepping 25, 50, 90 on the beat. */
+    const S3 = scene('magenta', 9.9);
+    const c4 = both(S3, `Focus for<br><span class="n">25</span> minutes<b class="ik">.</b>`, 84);
+    const fo = place(S3.in, 'focus-25');
+    const fov = variants(fo, ['focus-25', 'focus-50', 'focus-90']);
+    /* 12.9: Sleep, the bedtime stepping 22:30, 23:00, 00:00. */
+    const S4 = scene('night', 12.9);
+    const c5 = both(S4, `Sleep<br>at <span class="n">22:30</span><b class="pk">.</b>`);
+    const sl = place(S4.in, 'sleep-2230');
+    const slv = variants(sl, ['sleep-2230', 'sleep-2300', 'sleep-0000']);
+    /* 15.9: the end card, on the resolving chord. */
+    const end = await endCard('blue', 15.9, C.pink);
 
     return [DUR, t => {
-      /* The feed: a quickening scroll with motion blur, then a dead stop with the smallest give. */
       const v = t < STOP ? 700 + 2500 * t : 0;
       const give = t >= STOP ? 26 * Math.exp(-(t - STOP) * 14) * Math.cos((t - STOP) * 40) : 0;
       col.style.transform = `translateY(${(-yAt(t) - give).toFixed(2)}px)`;
@@ -278,96 +280,64 @@ canvas { display: block; position: absolute; }
       col.style.filter = bl > .2 ? 'url(#vblur)' : 'none';
       land(c0, t, -1, .5, 24); if (t >= STOP) c0.style.opacity = 0;
       const kc = out5((t - STOP) / .35); c1.style.opacity = t >= STOP ? 1 : 0; c1.style.transform = `scale(${(1.08 - .08 * kc).toFixed(4)})`;
-      /* Home: rises, then the page leans in toward the Messages row and the Focus button. */
-      land(c2, t, 4.25, .6);
-      glide(home, t, 4.1, 3.6, { pan: [0, 290], r: 2 });
-      /* YouTube: the page shows what's gone, then Shorts removed slides up. */
-      land(c3, t, 8.25, .6);
-      glide(yt, t, 8.1, 3.6, { z: [1, 1.05] });
-      const ks = out5((t - 9.7) / .6); strip.style.transform = `translateY(${((1 - ks) * 140).toFixed(2)}%)`;
-      /* The link: Later rises, the lone video sheet slides over it. */
-      land(c4, t, 12.25, .6); leave(c4, t, 13.65, .25); land(c4b, t, 13.95, .55);
-      glide(lat, t, 12.1, 3.6, { z: [1, 1.05], r: -2 });
-      fin(t, 13.45);
-      /* Focus and Sleep: slow pushes in. */
-      land(c5, t, 16.25, .6);
-      glide(fo, t, 16.1, 3.6, { z: [1, 1.06], oy: 600, r: -2 });
-      land(c6, t, 20.25, .6);
-      glide(sl, t, 20.1, 3.6, { z: [1, 1.1], oy: 520, r: 2 });
-      const kg = io((t - 21.9) / .9); pose(gn, { op: kg, y: (1 - kg) * 60, z: 1.04 - .04 * kg });
-      /* Promise. */
-      land(c7, t, 24.2, .6, 34); land(c8, t, 24.9, .5, 18); land(c9, t, 25.3, .5, 18);
-      fe.paint(t - 24.3); fe.cv.style.transform = `translateX(${((1 - sine((t - 24) / 3)) * 70).toFixed(2)}px)`;
+      land(c2, t, 4.2, .5);
+      glide(yt, t, 4.05, 1.9, { z: [1, 1.04] });
+      const ks = out5((t - 4.9) / .55); strip.style.transform = `translateY(${((1 - ks) * 140).toFixed(2)}%)`;
+      /* The app tile prints, swells as if opening, and gives way to the pause. */
+      land(c3, t, 6.2, .5);
+      glide(pz, t, 6.05, 1.4, { z: [1, 1.2], oy: SQ ? 330 : 520 });
+      ig.paint((t - 6.1) * 1000);
+      const ko = io((t - 6.75) / .45); tile.style.opacity = (1 - ko).toFixed(3); tile.firstElementChild.style.transform = `scale(${(1 + 1.6 * ko).toFixed(3)})`;
+      pzv(t < 7.4 ? 0 : t < 8.4 ? 1 : 2);
+      land(c4, t, 10.2, .5); swapCap(c4, ['25', '50', '90'], [0, 10.9, 11.9], t);
+      glide(fo, t, 10.05, 2.8, { z: [1, 1.04], oy: SQ ? 300 : 460, r: -2 });
+      fov(t < 10.9 ? 0 : t < 11.9 ? 1 : 2);
+      land(c5, t, 13.2, .5); swapCap(c5, ['22:30', '23:00', '00:00'], [0, 13.9, 14.9], t);
+      glide(sl, t, 13.05, 2.8, { z: [1, 1.04], oy: SQ ? 300 : 520, r: 2 });
+      slv(t < 13.9 ? 0 : t < 14.9 ? 1 : 2);
       end(t);
     }];
   };
 
-  /* Keep your people, lose the feed: 25 s at 120 bpm, a bar every 2 s, so every change lands on the beat. */
+  /* Keep your people, 16 s at 120 bpm, a bar every 2 s: title, what stays, what goes, free, the end card on the D at 12 s. */
   pieces.keep = async () => {
-    const DUR = 25;
-    /* 0: Keep your people. The pair prints in. */
+    const DUR = 16;
+    /* 0: the title card, the pair already printed (frame 0 is the thumbnail), just breathing. */
     const S0 = scene('magenta', 0);
-    const pr = await print(S0.in, 'pair', 940, 820, { ink: C.cream, water: C.blue, seed: 3, dur: 1.3 });
-    const c0 = cap(S0.in, `Keep your<br>people<b class="ik">.</b>`, 330, '', 'font-size:150px;line-height:.9');
-    /* 2: Lose the feed. Cards fly off one per beat. */
-    const S1 = scene('blue', 2);
-    const fv = mk(S1.in, `<div style="position:absolute;left:0;right:0;top:640px;bottom:0;overflow:hidden;z-index:12"><div style="position:absolute;left:0;right:0;top:0"></div></div>`);
-    const cards = await feedCards(fv.firstElementChild, 4, 4);
-    const c1 = cap(S1.in, `Lose the<br>feed<b class="pk">.</b>`, 330, '', 'font-size:150px;line-height:.9');
-    /* 4: what stays, with a tick on each beat, over the real Home. */
-    const S2 = scene('paper', 4);
-    tag(S2.in, 'WHAT', 'STAYS');
+    const pr = await print(S0.in, 'pair', SQ ? 820 : 940, SQ ? 560 : 820, { ink: C.cream, water: C.blue, seed: 3, dur: 1.3 });
+    const c0 = cap(S0.in, `Keep your<br>people<b class="ik">.</b>`, SQ ? 110 : 330, '', `font-size:${SQ ? 140 : 150}px;line-height:.9`);
+    /* 2: what stays, a tick on each beat, over the real Home. */
+    const S1 = scene('paper', 2);
     const tick = `<svg class="tk" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5" fill="none" stroke="#d81b7a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`;
-    const stays = ['Messages', 'Friends', 'Search', 'The video they sent'].map((w, i) => mk(S2.in, `<p class="li" style="top:${330 + i * 122}px;${i === 3 ? 'font-size:88px' : ''}">${tick}${w}<b class="pk">.</b></p>`));
-    const hm = shot(S2.in, 'home', 190, 870, 700, 960);
-    /* 8: what goes, struck through on the beat, over the real Chrome menu. */
-    const S3 = scene('blue', 8);
-    tag(S3.in, 'WHAT', 'GOES');
-    const goes = ['Reels', 'Shorts', 'For You', 'Up next', 'Autoplay'].map((w, i) => mk(S3.in, `<p class="li" style="top:${320 + i * 112}px;font-size:100px"><span style="position:relative;display:inline-block">${w}<i class="st" style="right:-10px"></i></span></p>`));
-    const ch = shot(S3.in, 'chrome', 240, 960, 600, 760);
+    const ls = SQ ? { top: 90, gap: 100, fs: 84, last: 76 } : { top: 320, gap: 122, fs: 104, last: 88 };
+    const stays = ['Messages', 'Friends', 'Search', 'The video they sent'].map((w, i) => mk(S1.in, `<p class="li" style="top:${ls.top + i * ls.gap}px;font-size:${i === 3 ? ls.last : ls.fs}px;${SQ ? 'left:90px' : ''}">${tick}${w}<b class="pk">.</b></p>`));
+    const hw = SQ ? 520 : 700, hm = SQ ? shot(S1.in, 'home', 280, 540, hw, 620) : shot(S1.in, 'home', 190, 860, hw, 800);
+    const hp = Math.round(722 * hw / 1080);
+    /* 6: what goes, struck through on the beat, over the real Chrome menu. */
+    const S2 = scene('blue', 6);
+    const gs = SQ ? { top: 120, gap: 100, fs: 90 } : { top: 320, gap: 112, fs: 100 };
+    const goes = ['Reels', 'Shorts', 'For You', 'Up next', 'Autoplay'].map((w, i) => mk(S2.in, `<p class="li" style="top:${gs.top + i * gs.gap}px;font-size:${gs.fs}px;${SQ ? 'left:80px' : ''}"><span style="position:relative;display:inline-block">${w}<i class="st" style="right:-10px"></i></span></p>`));
+    const ch = SQ ? shot(S2.in, 'chrome', 560, 200, 440, 650) : shot(S2.in, 'chrome', 240, 960, 600, 710);
     ch.el.style.borderRadius = '14px';
-    /* 12: Home again, the apps with only the people left. */
-    const S4 = scene('magenta', 12);
-    const c4 = cap(S4.in, `Same apps<b class="ik">.</b><br>Just your people<b class="ik">.</b>`, 310, '', 'font-size:100px');
-    const yt = shot(S4.in, 'youtube', 200, 640, 680, 1180);
-    /* 14: one link, nothing after it. */
-    const S5 = scene('paper', 14);
-    const c5 = cap(S5.in, `One link<b class="pk">.</b><br>Nothing after it<b class="pk">.</b>`, 310, '', 'font-size:100px');
-    const lat = shot(S5.in, 'later', 200, 640, 680, 1180);
-    const fin = sheet(lat, 'end');
-    /* 16: Free. For good. The skip cygnet over its grains. */
-    const S6 = scene('night', 16);
-    const gw = 900, gh = Math.round(gw * POSE.skip);
-    const gc = canvasAt(S6.in, (W - gw) / 2, 900, gw, gh, 9);
+    /* 10: Free. For good. The skip cygnet over its grains. */
+    const S3 = scene('night', 10);
+    const gw = SQ ? 700 : 900, gh = Math.round(gw * POSE.skip), gy = SQ ? 500 : 900;
+    const gc = canvasAt(S3.in, (W - gw) / 2, gy, gw, gh, 9);
     const gr = await grains(gc, 'skip', C.pink, 5);
-    const sk = await print(S6.in, 'skip', gw, 900, { ink: C.cream, seed: 6, dur: 1.1 });
-    const c6 = cap(S6.in, `Free<b class="pk">.</b><br>For good<b class="pk">.</b>`, 330, 'big');
-    /* 19: no account. */
-    const S7 = scene('blue', 19);
-    const st = await print(S7.in, 'stretch', 760, 1000, { ink: C.cream, water: C.pink, seed: 11, dur: 1.1 });
-    const c7 = cap(S7.in, `No account<b class="pk">.</b>`, 330, '', 'font-size:120px');
-    const c7b = cap(S7.in, `Nothing leaves<br>your phone<b class="pk">.</b>`, 500, '', 'font-size:120px');
-    /* 22: the end card. */
-    const end = await endCard('magenta', 22, C.blue);
+    const sk = await print(S3.in, 'skip', gw, gy, { ink: C.cream, seed: 6, dur: .9 });
+    const c3 = cap(S3.in, `Free<b class="pk">.</b><br>For good<b class="pk">.</b>`, SQ ? 80 : 330, 'big', SQ ? 'font-size:170px' : '');
+    /* 12: the end card. */
+    const end = await endCard('magenta', 12, C.blue);
 
     return [DUR, t => {
-      pr.paint(t - .1); land(c0, t, -1, .6, 30);
-      pr.cv.style.transform = `translateX(${((1 - sine(t / 2.6)) * 60).toFixed(2)}px)`;
-      land(c1, t, 2.25, .5, 30);
-      cards.forEach((c, i) => {
-        const at = 2.5 + i * .5, k = io((t - at) / .55);
-        c.card.style.transform = `translate(${(c.dir * k * 1250).toFixed(1)}px, ${(-k * 200 - 60 * sine((t - 2) / 2)).toFixed(1)}px) rotate(${(c.r + c.dir * k * 16).toFixed(2)}deg)`;
-        c.card.style.boxShadow = k > 0 && k < 1 ? `${10 + 20 * k}px ${10 + 20 * k}px 0 rgba(20,20,22,.35)` : 'none';
-      });
-      stays.forEach((e, i) => { const at = 4.45 + i * 1.0; land(e, t, at, .45, 30); e.querySelector('path').style.strokeDashoffset = (1 - out3((t - at - .05) / .3)).toFixed(3); });
-      glide(hm, t, 4.2, 3.6, { z: [1, 1.05], oy: 466, pan: [466, 466] });
-      goes.forEach((e, i) => { land(e, t, 8.2 + i * .22, .4, 26); const k = out3((t - (9.5 + i * .5)) / .2); e.querySelector('.st').style.transform = `scaleX(${k.toFixed(3)})`; });
-      glide(ch, t, 8.3, 3.4, { z: [1, 1.06], r: -2 });
-      land(c4, t, 12.25, .5); glide(yt, t, 12.1, 1.9, { z: [1, 1.05] });
-      land(c5, t, 14.25, .5); glide(lat, t, 14.1, 1.9, { z: [1, 1.04], r: 2 }); fin(t, 14.7);
-      gr(t - 16.3, 1.0); sk.paint(t - 16.4); land(c6, t, 16.3, .6, 34);
-      const gx = `translateX(${((1 - io((t - 16.2) / 2.8)) * 90).toFixed(2)}px)`; gc.style.transform = gx; sk.cv.style.transform = gx;
-      st.paint(t - 19.4); land(c7, t, 19.25, .5); land(c7b, t, 20.0, .5);
+      pr.paint(99); land(c0, t, -1, .6, 30);
+      pr.cv.style.transform = `translate(${(30 - 30 * sine(t / 2.2)).toFixed(2)}px, ${(6 * Math.sin(t * 2.4)).toFixed(2)}px)`;
+      stays.forEach((e, i) => { const at = 2.5 + i * .5; land(e, t, at, .4, 30); e.querySelector('path').style.strokeDashoffset = (1 - out3((t - at - .05) / .3)).toFixed(3); });
+      glide(hm, t, 2.2, 3.6, { z: [1, 1.05], oy: hp, pan: [hp, hp] });
+      goes.forEach((e, i) => { land(e, t, 6.2 + i * .15, .4, 26); const k = out3((t - (7.0 + i * .5)) / .2); e.querySelector('.st').style.transform = `scaleX(${k.toFixed(3)})`; });
+      glide(ch, t, 6.3, 3.4, { z: [1, 1.05], r: -2 });
+      gr(t - 10.3, .8); sk.paint(t - 10.35); land(c3, t, 10.3, .5, 34);
+      const gx = `translateX(${((1 - io((t - 10.2) / 2)) * 80).toFixed(2)}px)`; gc.style.transform = gx; sk.cv.style.transform = gx;
       end(t);
     }];
   };
