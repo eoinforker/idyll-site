@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll directions, side by side</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* The comparison sheet. Reads the rendered PNGs from shots/ (a link to ~/Desktop/Idyll directions while rendering).
+   Render: node ../tools/render.mjs shot ".../sheet.html" directions.png 1960 2650 */
+html, body { width: 1960px; background: #ebe8e1; color: var(--ink); }
+#c { width: 1960px; padding: 70px 70px 0; }
+header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; }
+header h1 { font: 400 64px/1 var(--serif); letter-spacing: -.02em; }
+header h1 em { font-style: italic; }
+.row { display: grid; grid-template-columns: 340px 560px 394px 394px; gap: 40px; padding: 40px 0; border-top: 1.5px solid #3b3934; }
+.lab h2 { font: 500 54px/1 var(--sans); letter-spacing: -.035em; }
+.lab h2 b { font-weight: 500; color: var(--pink); margin-right: 14px; }
+.lab p { font: 400 25px/1.35 var(--sans); margin-top: 20px; color: #2b2a27; }
+figure { margin: 0; }
+figure img { display: block; height: 700px; box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 10px 30px rgba(0,0,0,.08); }
+figcaption { margin-top: 14px; font: 400 20px/1.3 var(--mono); color: #57534b; }
+</style>
+</head>
+<body>
+<div id="c">
+  <header><h1>Three directions for Idyll, <em>side by side.</em></h1><span class="mono">same three subjects in every row</span></header>
+  <div class="row">
+    <div class="lab"><h2><b>A</b>Print shop</h2><p>Each piece is a sheet from a small press. The real screen is printed into the paper inside a plate mark, under a big serif line.</p></div>
+    <figure><img src="shots/A-feed.png"><figcaption>post 1080 x 1350, YouTube without Shorts</figcaption></figure>
+    <figure><img src="shots/A-story.png"><figcaption>story, the pause</figcaption></figure>
+    <figure><img src="shots/A-store.png"><figcaption>store, Focus</figcaption></figure>
+  </div>
+  <div class="row">
+    <div class="lab"><h2><b>B</b>Close up</h2><p>The one thing that matters, at heroic scale, on a field of the screen's own colour. No phone. Built to be read on a phone.</p></div>
+    <figure><img src="shots/B-feed.png"><figcaption>post 1080 x 1350, YouTube without Shorts</figcaption></figure>
+    <figure><img src="shots/B-story.png"><figcaption>story, the pause</figcaption></figure>
+    <figure><img src="shots/B-store.png"><figcaption>store, Focus</figcaption></figure>
+  </div>
+  <div class="row">
+    <div class="lab"><h2><b>C</b>In life</h2><p>The phone lying on real tables, photographed from above, with the line on a printed card beside it. Unsplash photos, no people.</p></div>
+    <figure><img src="shots/C-feed.png"><figcaption>post 1080 x 1350, YouTube without Shorts</figcaption></figure>
+    <figure><img src="shots/C-story.png"><figcaption>story, the pause</figcaption></figure>
+    <figure><img src="shots/C-store.png"><figcaption>store, Focus</figcaption></figure>
+  </div>
+</div>
+<script>
+const imgs = [...document.images].map(i => i.decode().catch(() => {}));
+Promise.all([document.fonts.ready, ...imgs]).then(() => setTimeout(() => { window.ready = true; }, 200));
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll direction C, in life</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* C, In life: top down photographs of real tables (Unsplash, see photos/CREDITS.txt), with the phone lying on them
+   showing the real screen, and the line printed on a small card beside it, as if it came out of the same press.
+   Flat lay only, so nothing has to fake a perspective. No people. */
+body { background: #000; }
+.photo { position: absolute; display: block; max-width: none; filter: saturate(.86) contrast(1.04); }
+/* light falls from the top left in all three photos */
+.lie { position: absolute; filter: drop-shadow(14px 22px 22px rgba(0,0,0,.32)) drop-shadow(3px 5px 4px rgba(0,0,0,.35)); z-index: 3; }
+.phone { position: relative; width: var(--w); padding: calc(var(--w) * .03); border-radius: calc(var(--w) * .135);
+  background: linear-gradient(135deg, #3a3a3e, #121214 30%, #0d0d0f 70%, #2a2a2e);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.08), 0 0 0 1.5px #050506; }
+.phone .scr { position: relative; border-radius: calc(var(--w) * .11); overflow: hidden; height: var(--h); background: #000; }
+.phone .scr img { display: block; width: 100%; filter: brightness(.97); }
+/* the room's light on the glass */
+.phone .scr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(118deg, rgba(255,255,255,.13), rgba(255,255,255,0) 34%, rgba(255,255,255,0) 70%, rgba(255,255,255,.05)); }
+.card { position: absolute; z-index: 4; background: #fbf6ec; color: var(--ink); padding: 44px 48px 36px;
+  filter: drop-shadow(4px 7px 6px rgba(0,0,0,.28)) drop-shadow(1px 1px 1px rgba(0,0,0,.2)); }
+.card::before { content: ""; position: absolute; inset: 0; background: var(--fibre); opacity: .14; mix-blend-mode: multiply; }
+.card::after { content: ""; position: absolute; inset: 0; background: var(--grain); opacity: .22; mix-blend-mode: multiply; }
+.card h1 { font: 400 66px/1.02 var(--serif); letter-spacing: -.025em; position: relative; }
+.card h1 em { font-style: italic; }
+.card h1 .ghost { position: absolute; inset: 0; color: var(--pink); transform: translate(2px, 2px); opacity: .3; mix-blend-mode: multiply; }
+.card .row { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; color: #57534b; font-size: 21px; }
+.card .cyg { position: relative; display: inline-block; }
+.grain { opacity: .2; }
+</style>
+</head>
+<body>
+<div id="c">
+
+  <!-- 1. Feed post: YouTube without Shorts. Pale wood, an open book, a few dry stems. -->
+  <div data-piece="feed">
+    <img class="photo" src="photos/464.jpg" style="width: 3600px; left: -1380px; top: -60px">
+    <div class="lie" style="left: 270px; top: -300px; transform: rotate(-6deg)">
+      <div class="phone" style="--w: 720px; --h: 1466px"><div class="scr"><img src="../showcase-shots/youtube.png"></div></div>
+    </div>
+    <div class="card" style="left: 56px; top: 1046px; width: 680px; transform: rotate(-1.8deg)">
+      <h1><span class="ghost">YouTube, with the <em>Shorts</em> taken out.</span>YouTube, with the <em>Shorts</em> taken out.</h1>
+      <div class="row mono"><span>idyll.day</span><span class="cyg" style="--m: url(../../../img/cygnet-pair-mark.png); --s: 5px; width: 110px; height: 42px"></span></div>
+    </div>
+  </div>
+
+  <!-- 2. Story: the pause with your own words. A dark table in the evening. -->
+  <div data-piece="story">
+    <img class="photo" src="photos/999.jpg" style="width: 5200px; left: -1450px; top: -260px; filter: saturate(.8) contrast(1.05) brightness(.9)">
+    <div class="lie" style="left: 150px; top: 610px; transform: rotate(4deg); filter: drop-shadow(14px 22px 26px rgba(0,0,0,.5)) drop-shadow(3px 5px 4px rgba(0,0,0,.45))">
+      <div class="phone" style="--w: 780px; --h: 1560px"><div class="scr"><img src="../showcase-shots/pause-2.png"></div></div>
+    </div>
+    <div class="card" style="left: 330px; top: 250px; width: 620px; transform: rotate(-2.6deg)">
+      <h1><span class="ghost">Before Instagram<br>opens, <em>a line<br>you wrote.</em></span>Before Instagram<br>opens, <em>a line<br>you wrote.</em></h1>
+      <div class="row mono"><span>idyll.day</span><span class="cyg" style="--m: url(../../../img/cygnet-feather-mark.png); --s: 5px; width: 110px; height: 50px"></span></div>
+    </div>
+  </div>
+
+  <!-- 3. Store screenshot: Focus. The writing desk. -->
+  <div data-piece="store">
+    <img class="photo" src="photos/885.jpg" style="width: 6000px; left: -2520px; top: -930px">
+    <div class="lie" style="left: 170px; top: 600px; transform: rotate(-3.5deg)">
+      <div class="phone" style="--w: 760px; --h: 1500px"><div class="scr"><img src="../showcase-shots/focus-50.png"></div></div>
+    </div>
+    <div class="card" style="left: 70px; top: 150px; width: 640px; transform: rotate(2deg)">
+      <h1><span class="ghost">Fifty minutes. <em>Then the apps come back.</em></span>Fifty minutes. <em>Then the apps come back.</em></h1>
+      <div class="row mono"><span>Focus, in Idyll</span><span class="cyg" style="--m: url(../../../img/cygnet-focus-mark.png); --s: 5px; width: 100px; height: 54px"></span></div>
+    </div>
+  </div>
+
+  <div class="grain"></div>
+</div>
+<script src="common.js"></script>
+</body>
+</html>

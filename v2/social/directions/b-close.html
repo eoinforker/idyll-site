@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll direction B, close up</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* B, Close up: the one element that matters at heroic scale, on a full bleed field of the screen's own colour,
+   so the UI and the page are one surface. No phone. Grain and a hair of misregistration keep it printed. */
+body { background: var(--ink); }
+.field-blue { background: var(--blue); color: var(--cream); }
+.field-pink { background: var(--pink); color: var(--cream); }
+.big { position: absolute; left: 80px; right: 80px; font: 500 150px/.92 var(--sans); letter-spacing: -.055em; z-index: 5; }
+.field-blue .big { text-shadow: 4px 3px 0 rgba(216,27,122,.5); }
+.field-pink .big { text-shadow: 4px 3px 0 rgba(45,91,255,.42); }
+.sub { position: absolute; left: 80px; right: 80px; font: 400 44px/1.22 var(--sans); letter-spacing: -.015em; z-index: 5; }
+.ink { color: var(--ink); }
+.slab { border-radius: 56px 0 0 0; box-shadow: 0 40px 90px rgba(10,20,80,.28), 0 6px 18px rgba(10,20,80,.16); background: var(--paper); }
+.marks { --c: rgba(255,246,238,.75); }
+.foot { position: absolute; left: 80px; right: 80px; display: flex; justify-content: space-between; z-index: 5; }
+.note { position: absolute; z-index: 6; }
+.note .mono { color: var(--ink); font-size: 28px; }
+.grain { opacity: .26; }
+</style>
+</head>
+<body>
+<div id="c">
+
+  <!-- 1. Feed post: YouTube without Shorts -->
+  <div data-piece="feed" class="abs field-blue" style="inset: 0">
+    <div class="marks"></div>
+    <h1 class="big" style="top: 110px">Shorts, gone<span class="pk">.</span></h1>
+    <p class="sub" style="top: 268px">YouTube in Idyll keeps search and<br>your subscriptions. Nothing else.</p>
+    <div class="crop slab" style="left: 120px; top: 452px" data-src="../showcase-shots/youtube.png" data-x="20" data-y="1068" data-w="600" data-h="600" data-s="1.6"></div>
+  </div>
+
+  <!-- 2. Story: the pause with your own words -->
+  <div data-piece="story" class="abs field-pink" style="inset: 0">
+    <div class="marks"></div>
+    <p class="sub ink" style="top: 262px; font-size: 54px; text-align: center">Before Instagram opens,</p>
+    <div class="crop" style="left: 0; top: 352px" data-src="../showcase-shots/pause-2.png" data-x="90" data-y="230" data-w="900" data-h="980" data-s="1.2"></div>
+    <div class="note" style="left: 192px; top: 1518px; width: 696px">
+      <div style="height: 20px; border: 3px solid var(--ink); border-top: 0"></div>
+      <p class="mono" style="text-align: center; margin-top: 18px">the line you wrote for yourself</p>
+    </div>
+    <p class="sub" style="top: 1636px; text-align: center; font-size: 40px">Open it without the feed, or wait five seconds.</p>
+    <div class="foot mono" style="top: 1760px; justify-content: center"><span>idyll.day</span></div>
+  </div>
+
+  <!-- 3. Store screenshot: Focus -->
+  <div data-piece="store" class="abs field-pink" style="inset: 0">
+    <div class="marks"></div>
+    <h1 class="big ink" style="top: 150px; font-size: 128px; text-shadow: none">Fifty minutes<span style="color: var(--cream)">.</span><br>Then the apps<br>come back<span style="color: var(--cream)">.</span></h1>
+    <div class="crop" style="left: 0; top: 640px" data-src="../showcase-shots/focus-50.png" data-x="26" data-y="545" data-w="1029" data-h="770" data-s="1.05"></div>
+    <p class="sub" style="top: 1520px">Rounds with short breaks, if you like.<br>A soft chime when it ends.</p>
+    <div class="foot mono" style="top: 1790px; color: var(--cream)"><span>idyll.day</span><span>free, for good</span></div>
+  </div>
+
+  <div class="grain"></div>
+</div>
+<script src="common.js"></script>
+</body>
+</html>
