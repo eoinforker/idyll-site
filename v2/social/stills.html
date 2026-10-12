@@ -89,7 +89,7 @@ canvas { display: block; position: absolute; }
 <!-- e: free, for good -->
 <section class="frame night" id="e">
   <h1 class="abs" style="left:40px;right:40px;top:230px;text-align:center;font:500 228px/.84 var(--sans);letter-spacing:-.06em">Free<b class="stop">.</b><br>For good<b class="stop">.</b></h1>
-  <p class="abs" style="left:90px;right:90px;top:760px;text-align:center;font:400 44px/1.4 var(--sans)">No subscription, no ads, no data sold.<br><span style="opacity:.68">Idyll will never charge.</span></p>
+  <p class="abs" style="left:90px;right:90px;top:760px;text-align:center;font:400 44px/1.4 var(--sans)">No subscription, no ads, nothing collected.<br><span style="opacity:.68">Nothing is locked.</span></p>
   <canvas data-cyg data-cell="5" style="left:410px;top:1010px;width:260px;height:154px"></canvas>
 </section>
 
@@ -117,8 +117,8 @@ canvas { display: block; position: absolute; }
 <!-- h: story, free for good -->
 <section class="frame story night" id="h">
   <h1 class="abs" style="left:40px;right:40px;top:400px;text-align:center;font:500 228px/.84 var(--sans);letter-spacing:-.06em">Free<b class="stop">.</b><br>For good<b class="stop">.</b></h1>
-  <p class="abs" style="left:90px;right:90px;top:950px;text-align:center;font:400 46px/1.4 var(--sans)">No subscription, no ads,<br>no data sold.</p>
-  <p class="abs" style="left:90px;right:90px;top:1100px;text-align:center;font:400 46px/1.4 var(--sans);opacity:.68">Idyll will never charge.</p>
+  <p class="abs" style="left:90px;right:90px;top:950px;text-align:center;font:400 46px/1.4 var(--sans)">No subscription, no ads,<br>nothing collected.</p>
+  <p class="abs" style="left:90px;right:90px;top:1100px;text-align:center;font:400 46px/1.4 var(--sans);opacity:.68">Nothing is locked.</p>
   <canvas data-cyg data-cell="5" style="left:405px;top:1290px;width:270px;height:160px"></canvas>
 </section>
 
@@ -133,9 +133,13 @@ canvas { display: block; position: absolute; }
   document.getElementById('sprite').innerHTML = Feed.sprite;
   await document.fonts.ready;
   if (f === 'b') {
-    const order = ['youtube', 'instagram', 'facebook', 'x', 'snapchat', 'tiktok', 'reddit', 'linkedin', 'threads'];
-    for (let i = 0; i < 9; i++) {
-      const c = document.createElement('canvas'); c.style.cssText = `left:${110 + (i % 3) * 330}px;top:${400 + Math.floor(i / 3) * 300}px;width:200px;height:200px`;
+    /* The ten apps Idyll takes the feed out of, in rows of three, four and three. Discord only pauses, so it isn't here. */
+    const order = ['youtube', 'instagram', 'facebook', 'x', 'snapchat', 'tiktok', 'reddit', 'linkedin', 'threads', 'substack'];
+    const size = 190, sx = 235, sy = 270, top = 400, rows = [3, 4, 3];
+    let i = 0;
+    for (const [r, n] of rows.entries()) for (let k = 0; k < n; k++, i++) {
+      const left = (1080 - ((n - 1) * sx + size)) / 2 + k * sx;
+      const c = document.createElement('canvas'); c.style.cssText = `left:${left}px;top:${top + r * sy}px;width:${size}px;height:${size}px`;
       document.getElementById('bmarks').appendChild(c);
       (await Print(c, { kind: 'mark', b: order[i], ink: '#fff6ee', strike: '#2d5bff', n: 24, seed: 11 + i })).paint(1e9);
     }
@@ -146,7 +150,8 @@ canvas { display: block; position: absolute; }
     const fb = document.querySelector('#appB .feed'), fa = document.querySelector('#appA .feed'), vpA = document.querySelector('#appA .vp');
     const kids = [...fb.querySelectorAll('.blk > *')];
     fb.style.transform = `translateY(${-kids[1].offsetTop}px)`;
-    fa.style.transform = `translateY(${-Math.max(0, fa.offsetHeight - vpA.clientHeight)}px)`;
+    /* With Idyll: a friend's post from its top, as the left phone shows the suggested reel from its top. */
+    fa.style.transform = `translateY(${-Math.min(fa.querySelectorAll('.post')[2].offsetTop, Math.max(0, fa.offsetHeight - vpA.clientHeight))}px)`;
   }
   for (const c of frame.querySelectorAll('canvas[data-cyg]'))
     (await Print(c, { kind: 'cygnet', ink: '#fff6ee', water: c.dataset.water || null, cell: +c.dataset.cell || undefined, seed: 3 })).paint(1e9);
