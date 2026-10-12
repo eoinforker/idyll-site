@@ -1,14 +1,14 @@
 # Music for the two Idyll showcase videos, synthesised from scratch (sine partials and filtered noise).
 # Extends the felt-piano bed used in the 10 s ads with a marimba-like pluck, a soft bass, a soft kick and a shaker.
-#   python3 score.py tour out.wav     (31.0 s)
-#   python3 score.py keep out.wav     (25.0 s)
+#   python3 score.py tour out.wav     (19.5 s)
+#   python3 score.py keep out.wav     (16.0 s)
 import sys, wave
 import numpy as np
 from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
 piece, out = sys.argv[1], sys.argv[2]
-DUR = {'tour': 31.0, 'keep': 25.0}[piece]
+DUR = {'tour': 19.5, 'keep': 16.0}[piece]
 N = int(SR * DUR)
 t = np.arange(N) / SR
 bus = {k: np.zeros(N) for k in ('piano', 'pluck', 'bass', 'drums', 'fx')}
@@ -73,54 +73,56 @@ if piece == 'tour':
     put('fx', 0, .2 * sw * (seg / STOP) ** 2)
     # The stop: one soft low thump into silence, then the piano picks it up.
     kick(STOP, .8)
-    # From 2.9 s: 120 bpm, a bar every 2 s. F major colours, like the ad beds.
-    T0, BAR = 2.9, 2.0
-    prog = [([41, 53, 57, 60, 64], 41), ([36, 52, 55, 59, 64], 36), ([38, 50, 53, 57, 62], 38), ([46, 50, 57, 60, 65], 34),
-            ([41, 53, 57, 60, 67], 41), ([45, 52, 57, 60, 64], 33), ([38, 50, 57, 60, 65], 38), ([43, 50, 55, 58, 62], 31),
-            ([41, 53, 57, 60, 64], 41), ([36, 52, 55, 59, 64], 36), ([46, 53, 57, 62, 65], 34), ([36, 52, 55, 60, 64], 36), ([41, 48, 57, 60, 65, 69], 29)]
-    arp = [[72, 69, 64, 69, 72, 76, 72, 69], [71, 67, 64, 67, 71, 74, 71, 67], [74, 69, 65, 69, 74, 77, 74, 69], [72, 69, 65, 69, 72, 77, 74, 72],
-           [76, 72, 69, 72, 76, 79, 76, 72], [76, 72, 69, 72, 76, 81, 76, 72], [77, 72, 69, 72, 77, 74, 72, 69], [74, 70, 67, 70, 74, 79, 74, 70]]
-    mel = {0: [(76, 0)], 2: [(74, 0), (72, 1)], 4: [(79, 0)], 5: [(76, .5), (77, 1.5)], 6: [(76, 0), (74, 1)], 8: [(76, 0)], 9: [(79, 0), (76, 1)], 10: [(77, 0), (74, 1)], 11: [(72, .5)]}
+    # 2.9 s: a soft pickup chord out of the silence. From 3.9 s, 120 bpm, a bar every 2 s, so each scene lands on a downbeat.
+    chord([40, 52, 55, 60, 64], 2.9, 1.0, .2)
+    T0, BAR = 3.9, 2.0
+    prog = [([41, 53, 57, 60, 64], 29), ([40, 52, 55, 60, 64], 28), ([38, 50, 53, 57, 60], 26), ([46, 50, 57, 60, 65], 34),
+            ([43, 50, 55, 58, 65], 31), ([36, 48, 55, 58, 64], 36)]
+    arp = [[72, 69, 64, 69, 72, 76, 72, 69], [72, 67, 64, 67, 72, 76, 72, 67], [74, 69, 65, 69, 74, 77, 74, 69], [74, 69, 65, 69, 74, 77, 74, 72],
+           [74, 70, 67, 70, 74, 79, 74, 70], [72, 70, 67, 70, 72, 76, 79, 76]]
+    mel = {0: [(76, 0)], 1: [(76, 0), (74, 1)], 2: [(77, 0), (76, 1)], 3: [(74, 0), (72, 1)], 4: [(74, 0), (77, 1)], 5: [(76, 0), (79, 1)]}
     for b, (ch, bn) in enumerate(prog):
         at = T0 + b * BAR
-        if at >= DUR: break
-        last = b == len(prog) - 1
-        chord(ch, at, 3.5 if last else 1.9, .2 if b else .26)
-        if b >= 1 and not last: bass(bn - 12 if bn > 40 else bn, at, 1.8, .34)
-        if 1 <= b <= 11:
-            for i, n in enumerate(arp[b % 8]): pluck(n, at + i * .25, (.16 if i % 2 == 0 else .11) * (.7 if b == 1 else 1))
-        if 2 <= b <= 11:
-            for q in range(4):
-                if q in (0, 2): kick(at + q * .5, .42)
-                shaker(at + q * .5 + .25, .07)
+        chord(ch, at, 1.9, .2)
+        bass(bn + 12 if bn < 33 else bn, at, 1.8, .34)
+        for i, n in enumerate(arp[b]): pluck(n, at + i * .25, (.16 if i % 2 == 0 else .11))
+        for q in range(4):
+            if q in (0, 2): kick(at + q * .5, .42)
+            shaker(at + q * .5 + .25, .07)
         for n, off in mel.get(b, []): piano(n + 12, at + off, 1.3, .13)
-    for i, n in enumerate([81, 77, 72]): pluck(n, 26.9 + .5 + i * .5, .1, .5)
+    # A light bell where the words and numbers change on screen.
+    for s_, n in ((7.4, 84), (8.4, 86), (10.9, 84), (11.9, 89), (13.9, 84), (14.9, 81)): pluck(n, s_, .13, .3)
+    pluck(96, 6.75, .07, .05)
+    # 15.9 s, the end card: home to F, held, with three falling notes.
+    END = T0 + 6 * BAR
+    chord([29, 41, 48, 57, 60, 65, 69], END, 3.2, .24); kick(END, .5)
+    piano(81, END + .05, 2.0, .12)
+    for i, n in enumerate([81, 77, 72]): pluck(n, END + .5 + i * .5, .1, .5)
 else:
     # 120 bpm from the first frame, a bar every 2 s, D major. Fuller: kick, clap, shaker, bass from bar 2.
     BAR = 2.0
     prog = [([38, 50, 54, 57, 61], 38), ([35, 50, 54, 57, 62], 35), ([43, 50, 55, 59, 62], 31), ([45, 52, 57, 61, 64], 33),
-            ([38, 50, 54, 57, 61], 38), ([47, 50, 54, 57, 62], 35), ([43, 50, 55, 59, 64], 31), ([45, 49, 52, 57, 64], 33),
-            ([42, 49, 54, 57, 61], 30), ([43, 50, 55, 59, 62], 31), ([45, 52, 57, 61, 64], 33), ([38, 50, 54, 57, 61, 64], 26)]
-    arp = [[74, 69, 66, 69, 74, 78, 74, 69], [74, 71, 66, 71, 74, 78, 74, 71], [74, 71, 67, 71, 74, 79, 74, 71], [76, 73, 69, 73, 76, 81, 76, 73]]
-    mel = {4: [(78, 0), (76, 1), (74, 1.5)], 5: [(74, 0), (71, 1)], 6: [(79, 0), (78, 1)], 7: [(76, 0)], 8: [(78, 0), (81, 1)], 9: [(79, 0), (78, 1)], 10: [(76, 0), (73, 1)], 11: [(74, 0)]}
+            ([47, 50, 54, 57, 62], 35), ([45, 49, 52, 55, 61], 33)]
+    arp = [[74, 69, 66, 69, 74, 78, 74, 69], [74, 71, 66, 71, 74, 78, 74, 71], [74, 71, 67, 71, 74, 79, 74, 71], [76, 73, 69, 73, 76, 81, 76, 73],
+           [74, 71, 66, 71, 74, 78, 74, 71], [76, 73, 67, 73, 76, 79, 76, 73]]
+    mel = {1: [(78, 0), (76, 1), (74, 1.5)], 2: [(79, 0), (78, 1)], 3: [(76, 0)], 4: [(78, 0), (81, 1)], 5: [(79, 0), (76, 1)]}
     for b, (ch, bn) in enumerate(prog):
         at = b * BAR
-        if at >= DUR: break
-        last = b >= 11
-        chord(ch, at, 3.6 if last else 1.9, .2 if b else .26)
-        if 1 <= b < 11:
+        chord(ch, at, 1.9, .2 if b else .26)
+        if b >= 1:
             bass(bn, at, .9, .38); bass(bn, at + 1.0, .45, .3); bass(bn + 7, at + 1.5, .45, .26)
-        if b < 11:
-            for i, n in enumerate(arp[b % 4]): pluck(n, at + i * .25, (.16 if i % 2 == 0 else .1) * (.6 if b == 0 else 1))
-        if 1 <= b < 11:
+        for i, n in enumerate(arp[b]): pluck(n, at + i * .25, (.16 if i % 2 == 0 else .1) * (.6 if b == 0 else 1))
+        if b >= 1:
             for q in range(4):
-                kick(at + q * .5, .5 if q in (0, 2) else (.28 if b >= 4 else 0))
+                kick(at + q * .5, .5 if q in (0, 2) else (.28 if b >= 3 else 0))
                 if q in (1, 3) and b >= 2: clap(at + q * .5, .2)
                 shaker(at + q * .5 + .25, .085); shaker(at + q * .5 + .125, .035)
-            # The strikes in "what goes" (9.5 to 11.5 s) land on a woody tick.
         for n, off in mel.get(b, []): piano(n + 12, at + off, 1.2, .14)
-    for s in (9.5, 10.0, 10.5, 11.0, 11.5): pluck(93, s, .1, .04)
-    kick(22.0, .55)
+    # The strikes in "what goes" land on a woody tick.
+    for s_ in (7.0, 7.5, 8.0, 8.5, 9.0): pluck(93, s_, .1, .04)
+    # 12 s, the end card: home to D, held.
+    chord([26, 38, 45, 50, 54, 57, 62, 66], 12.0, 3.0, .24); kick(12.0, .55)
+    for i, n in enumerate([78, 74, 69]): pluck(n, 12.5 + i * .5, .1, .5)
 
 # Mix: piano and plucks through a small room, drums drier, a gentle low pass over all.
 ir_t = np.arange(int(2.2 * SR)) / SR
