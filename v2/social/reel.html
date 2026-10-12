@@ -60,7 +60,7 @@ canvas { display: block; position: absolute; }
 <section class="scene plate" id="s1">
   <div class="crop"></div>
   <canvas id="cyg1" style="left:120px;top:400px;width:840px;height:499px"></canvas>
-  <p class="mono in" id="t1b" style="position:absolute;left:60px;right:60px;top:1420px;display:flex;align-items:baseline;gap:16px"><span>Idyll</span><i style="flex:1;border-bottom:3px dotted var(--cream);transform:translateY(-8px)"></i><span>free, for good</span></p>
+  <p class="mono in" id="t1b" style="position:absolute;left:60px;right:60px;top:1420px;display:flex;align-items:baseline;gap:16px"><span>idyll.day</span><i style="flex:1;border-bottom:3px dotted var(--cream);transform:translateY(-8px)"></i><span>free, for good</span></p>
   <h1 class="big in" id="t1" style="position:absolute;left:60px;right:60px;top:1050px;text-align:center">Social, without<br>the scroll<b class="ik">.</b></h1>
 </section>
 
@@ -100,6 +100,7 @@ canvas { display: block; position: absolute; }
   <h1 class="in" id="t5" style="position:absolute;left:60px;right:60px;top:800px;font:500 240px/.9 var(--sans);letter-spacing:-.06em">Idyll<b class="stop">.</b></h1>
   <p class="in" id="t5b" style="position:absolute;left:60px;right:60px;top:1100px;font:500 64px/1.1 var(--sans);letter-spacing:-.03em">Free, for good.</p>
   <p class="in" id="t5c" style="position:absolute;left:60px;right:60px;top:1200px;font:400 40px/1.35 var(--sans);color:rgba(255,246,238,.68)">Coming soon to Android,<br>iPhone and Chrome.</p>
+  <p class="in" id="t5d" style="position:absolute;left:60px;right:60px;top:1380px;font:500 76px/1 var(--sans);letter-spacing:-.035em">idyll.day</p>
 </section>
 
 <script>window.IDYLL_ROOT = '../../';</script>
@@ -167,7 +168,7 @@ canvas { display: block; position: absolute; }
       const e = out3((t - 15.5) / .35); $('#end').style.opacity = e;
       land($('#t4b'), t, 15.85, .45, 24);
     } else {
-      show($('#s5')); land($('#icon'), t, 17.0, .5, 16); land($('#t5'), t, 17.3, .45, 24); land($('#t5b'), t, 17.65, .45, 18); land($('#t5c'), t, 17.85, .45, 18);
+      show($('#s5')); land($('#icon'), t, 17.0, .5, 16); land($('#t5'), t, 17.3, .45, 24); land($('#t5b'), t, 17.65, .45, 18); land($('#t5c'), t, 17.85, .45, 18); land($('#t5d'), t, 18.1, .45, 18);
     }
   };
   window.seek(0);

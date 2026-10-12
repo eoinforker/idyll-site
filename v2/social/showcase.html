@@ -214,15 +214,16 @@ canvas { display: block; position: absolute; }
     return cards;
   }
 
-  /* The end card: the family cygnet prints in, Idyll., and where it runs. */
+  /* The end card: the family cygnet prints in, Idyll., where it runs, and the address. */
   async function endCard(cls, at, water) {
     const S = scene(cls, at), p = S.in;
-    const L = SQ ? { pw: 600, py: 150, ty: 520, ts: 200, py2: 770 } : { pw: 780, py: 500, ty: 990, ts: 240, py2: 1270 };
+    const L = SQ ? { pw: 600, py: 130, ty: 490, ts: 200, py2: 735, url: 845, us: 70 } : { pw: 780, py: 480, ty: 970, ts: 240, py2: 1250, url: 1370, us: 84 };
     const pr = await print(p, 'family', L.pw, L.py, { ink: C.cream, water, seed: 21, dur: 1.1 });
     const stop = cls === 'magenta' ? 'ik' : 'pk';
     const a = cap(p, `Idyll<b class="${stop}">.</b>`, L.ty, 'big', `font-size:${L.ts}px`);
     const b = cap(p, `Android · iPhone · Chrome`, L.py2, 's', 'font-size:58px');
-    return t => { pr.paint(t - at - .15); land(a, t, at + .45, .7, 26); land(b, t, at + .85, .6, 18); };
+    const c = cap(p, `idyll.day`, L.url, '', `font-size:${L.us}px;letter-spacing:-.035em`);
+    return t => { pr.paint(t - at - .15); land(a, t, at + .45, .7, 26); land(b, t, at + .85, .6, 18); land(c, t, at + 1.15, .6, 18); };
   }
 
   /* A screen placed for the format: centred under the caption in a story, in the right column in a square. */
