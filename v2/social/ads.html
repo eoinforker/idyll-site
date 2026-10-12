@@ -5,7 +5,8 @@
 <title>Idyll ads</title>
 <link rel="stylesheet" href="../../fonts.css">
 <style>
-/* Three 10 s Idyll ads. ?ad=1|2|3 &fmt=story (1080 x 1920) | feed (1080 x 1350).
+/* Four 10 s Idyll ads. ?ad=1|2|3|4 &fmt=story (1080 x 1920) | feed (1080 x 1350).
+   &end=soon (the default) ends on Coming soon; &end=play is the launch card, for when the app is on Google Play.
    Deterministic: window.seek(t) draws the frame at t seconds. Story safe zone: 250 to 1520. */
 :root { --paper: #f6f5f1; --ink: #141416; --soft: #5b5853; --pink: #d81b7a; --blue: #2d5bff; --cream: #fff6ee; --night: #141416;
   --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace; }
@@ -40,7 +41,7 @@ canvas { display: block; position: absolute; }
 /* Real app screens, as rendered from the Android app. */
 .scr { position: absolute; border-radius: 46px; overflow: hidden; background: #fff; box-shadow: 16px 16px 0 var(--ink); will-change: transform, opacity; }
 .night .scr { box-shadow: 16px 16px 0 #000; border: 3px solid #4a4850; }
-.scr img { display: block; width: 100%; }
+.scr img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
 .grain { position: absolute; inset: -40px; pointer-events: none; z-index: 40; opacity: .42; mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .05 0 0 0 0 .25 0 0 0 .9 -.42'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .night .grain { mix-blend-mode: screen; opacity: .08; }
@@ -92,6 +93,11 @@ canvas { display: block; position: absolute; }
 (async () => {
   const q = new URLSearchParams(location.search);
   const AD = +(q.get('ad') || 1), FEED = q.get('fmt') === 'feed';
+  /* The end card's two lines under Idyll. */
+  const END = {
+    soon: { big: 'Free, for good', small: 'Coming soon to Android, iPhone and Chrome.<br>No account.' },
+    play: { big: 'On Google Play', small: 'Free, for good.' },
+  }[q.get('end') || 'soon'];
   const W = 1080, H = FEED ? 1350 : 1920;
   document.body.style.height = H + 'px';
   const stage = document.getElementById('stage'); stage.style.height = H + 'px';
@@ -163,10 +169,11 @@ canvas { display: block; position: absolute; }
     };
   }
   const canvasAt = (parent, x, y, w, h, z = 10) => mk(parent, `<canvas style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;z-index:${z}"></canvas>`);
-  const shot = (parent, name, x, y, w, crop) => mk(parent, `<div class="scr" style="left:${x}px;top:${y}px;width:${w}px;${crop ? `height:${crop}px` : ''}"><img src="ads-shots/${name}.png" alt=""></div>`);
+  /* An app screen (1080 x 2340, from the app's store-tall shots) at width w, cut at src pixels of the screen, between rows. */
+  const shot = (parent, name, x, y, w, src = 2340) => mk(parent, `<div class="scr" style="left:${x}px;top:${y}px;width:${w}px;height:${Math.round(src * w / 1080)}px"><img src="ads-shots/${name}.png" alt=""></div>`);
   const grainJitter = t => { const k = Math.floor(t * 12); document.querySelectorAll('.grain').forEach(g => g.style.transform = `translate(${(k * 37) % 40 - 20}px, ${(k * 53) % 40 - 20}px)`); };
 
-  /* End card: the family cygnet, Idyll., Free, for good. */
+  /* End card: the family cygnet, Idyll., then END's two lines. */
   async function endCard(cls, water) {
     const s = scene(cls); mk(s, '<div class="crop"></div>');
     const pw = FEED ? 700 : 780, ph = Math.round(pw * 457 / 860);
@@ -175,8 +182,8 @@ canvas { display: block; position: absolute; }
     const stop = cls === 'magenta' ? 'ik' : 'pk';
     const top = FEED ? 600 : 860;
     const a = mk(s, `<h1 class="cap" style="top:${top}px;font-size:${FEED ? 190 : 210}px;line-height:.9;letter-spacing:-.06em">Idyll<b class="${stop}">.</b></h1>`);
-    const b = mk(s, `<p class="cap s" style="top:${top + (FEED ? 210 : 235)}px;font-size:${FEED ? 84 : 92}px">Free, for good<b class="${stop}">.</b></p>`);
-    const c = mk(s, `<p class="cap xs" style="top:${top + (FEED ? 330 : 370)}px;opacity:.82">Coming soon to Android and iPhone.<br>No account.</p>`);
+    const b = mk(s, `<p class="cap s" style="top:${top + (FEED ? 210 : 235)}px;font-size:${FEED ? 84 : 92}px">${END.big}<b class="${stop}">.</b></p>`);
+    const c = mk(s, `<p class="cap xs" style="top:${top + (FEED ? 330 : 370)}px;opacity:.82">${END.small}</p>`);
     return (t, t0) => { paint(t - t0 - .05); land(a, t, t0 + .35, .6, 22); land(b, t, t0 + .65, .6, 18); land(c, t, t0 + .9, .6, 14); };
   }
 
@@ -231,8 +238,9 @@ canvas { display: block; position: absolute; }
 
     const s2 = scene('blue'); mk(s2, '<div class="crop"></div>');
     const c3 = mk(s2, `<h2 class="cap s" style="top:${L.cap - 10}px">Messages, search and<br>who you follow stay<b class="pk">.</b></h2>`);
-    const sw = FEED ? 560 : 700;
-    const scr = shot(s2, 'home', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+    /* Home down to the Messages row (feed) or to Paste a link (story). */
+    const sw = FEED ? 560 : 600;
+    const scr = shot(s2, 'home', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 1815 : 2262);
 
     const end = await endCard('magenta', C.blue);
     const s3 = stage.lastElementChild;
@@ -288,8 +296,9 @@ canvas { display: block; position: absolute; }
 
     const s3 = scene('paper'); mk(s3, '<div class="crop"></div>');
     const c3 = mk(s3, `<h2 class="cap s" style="top:${L.cap - 10}px">Then the apps<br>come back<b class="pk">.</b></h2>`);
-    const sw = FEED ? 560 : 700;
-    const scr = shot(s3, 'focus', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+    /* Focus down to When it ends (feed), or whole with Start Focus (story). */
+    const sw = FEED ? 560 : 600;
+    const scr = shot(s3, 'focus', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 1805 : 2340);
 
     const end = await endCard('blue', C.pink);
     const s4 = stage.lastElementChild;
@@ -333,11 +342,12 @@ canvas { display: block; position: absolute; }
 
     const s2 = scene('night'); mk(s2, '<div class="crop"></div>');
     const c2 = mk(s2, `<h2 class="cap s" style="top:${L.cap - 10}px">Bedtime at 23:00<b class="pk">.</b></h2>`);
-    const sw = FEED ? 560 : 700;
-    const a = shot(s2, 'sleep', (W - sw) / 2, L.cap + (FEED ? 130 : 150), sw, FEED ? 1000 : 1400);
+    /* Sleep down to All the apps (feed), or whole with Start Sleep (story). Goodnight down to its notes, or whole. */
+    const sw = FEED ? 560 : 640, gw = FEED ? 530 : 600;
+    const a = shot(s2, 'sleep', (W - sw) / 2, L.cap + (FEED ? 130 : 150), sw, FEED ? 1780 : 2340);
     const s3 = scene('night'); mk(s3, '<div class="crop"></div>');
     const c3 = mk(s3, `<h2 class="cap s" style="top:${L.cap - 10}px">The apps rest<br>until morning<b class="pk">.</b></h2>`);
-    const b = shot(s3, 'goodnight', (W - sw) / 2, L.cap + (FEED ? 200 : 230), sw, FEED ? 940 : 1300);
+    const b = shot(s3, 'goodnight', (W - gw) / 2, L.cap + (FEED ? 200 : 230), gw, FEED ? 1930 : 2340);
 
     const s4 = scene('night');
     const lk = mk(s4, `<div class="lock"><p class="reg" style="position:absolute;left:0;right:0;top:${FEED ? 330 : 520}px;font:300 ${FEED ? 230 : 280}px/1 var(--sans);letter-spacing:-.05em">23:12</p>
