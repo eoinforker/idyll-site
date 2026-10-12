@@ -3,16 +3,23 @@
 //   node render.mjs shot  <url> <out.png> <width> <height>
 // Pages set window.ready = true when loaded; videos also expose window.seek(t).
 import { spawn } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const [mode, url, out, a, b, c, d] = process.argv.slice(2);
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const port = 9300 + Math.floor(Math.random() * 500);
-const profile = process.env.CDP_PROFILE || join(tmpdir(), `idyll-cdp-${port}`);
+const ownProfile = !process.env.CDP_PROFILE, profile = process.env.CDP_PROFILE || join(tmpdir(), `idyll-cdp-${port}`);
 const chrome = spawn(CHROME, ['--headless=new', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--hide-scrollbars', '--force-color-profile=srgb', '--no-first-run', '--no-default-browser-check', '--window-size=1080,1920', 'about:blank'], { stdio: 'ignore' });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+/* Chrome leaves its profile behind; remove ours once Chrome has exited, also on Ctrl-C. */
+const exited = new Promise(r => chrome.once('exit', r));
+async function cleanup() {
+  chrome.kill('SIGKILL'); await Promise.race([exited, sleep(3000)]);
+  if (ownProfile) for (let i = 0; i < 5; i++) { try { rmSync(profile, { recursive: true, force: true }); break; } catch { await sleep(200); } }
+}
+for (const sig of ['SIGINT', 'SIGTERM']) process.once(sig, () => cleanup().finally(() => process.exit(130)));
 
 let ws, seq = 0; const pending = new Map();
 function send(method, params = {}) { const id = ++seq; ws.send(JSON.stringify({ id, method, params })); return new Promise((res, rej) => pending.set(id, { res, rej })); }
@@ -44,4 +51,4 @@ try {
     writeFileSync(out, await shot());
   }
 } catch (e) { console.error(e); process.exitCode = 1; }
-finally { try { ws && ws.close(); } catch {} chrome.kill('SIGKILL'); }
+finally { try { ws && ws.close(); } catch {} await cleanup(); }
