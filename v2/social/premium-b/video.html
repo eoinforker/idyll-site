@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll premium B, videos</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* Six 12 s videos. ?v=shorts|words|focus|sleep|stays|free &fmt=story (1080 x 1920) | feed (1080 x 1350).
+   Deterministic: window.seek(t) draws the frame at t seconds. The skeptic's order: 0 s the real screen is already
+   doing the thing, the claim lands by 3 s, a second proof from 4 s, the end card from 8 s. 120 bpm, a bar every 2 s.
+   The sound cues (taps, strikes, slides) are listed in cues.json, which score.py reads too. */
+.scene { position: absolute; inset: 0; overflow: hidden; display: none; }
+.scene > .in { position: absolute; inset: 0; will-change: transform; }
+.f-paper { background: var(--paper); color: var(--ink); --mk: var(--ink); --reg: rgba(45,91,255,.2); --dot: var(--pink); }
+.f-paper .grain { opacity: .18; }
+.cap { position: absolute; left: 80px; right: 140px; color: inherit; font: 500 120px/.94 var(--sans); letter-spacing: -.052em; z-index: 20; text-shadow: 4px 3px 0 var(--reg); will-change: opacity, transform; }
+.cap.s { font: 400 46px/1.22 var(--sans); letter-spacing: -.012em; text-shadow: none; }
+.vc { position: absolute; overflow: hidden; z-index: 10; will-change: transform, opacity; }
+.vc .cam { position: absolute; inset: 0; will-change: transform; }
+.vc img { position: absolute; display: block; max-width: none; }
+.ring { position: absolute; z-index: 30; border-radius: 50%; border: 5px solid var(--ink); pointer-events: none; opacity: 0; }
+canvas { position: absolute; display: block; }
+</style>
+</head>
+<body>
+<div id="c"></div>
+<script>window.IDYLL_ROOT = '../../../';</script>
+<script src="../print.js"></script>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const V = q.get('v') || 'shorts', FEED = q.get('fmt') === 'feed';
+  const W = 1080, H = FEED ? 1350 : 1920;
+  const Y = (story, feed) => FEED ? feed : story;
+  const stage = document.getElementById('c');
+  stage.style.height = H + 'px';
+  const cues = (await (await fetch('cues.json')).json())[V];
+  const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+  const out3 = t => 1 - Math.pow(1 - clamp(t), 3), out5 = t => 1 - Math.pow(1 - clamp(t), 5);
+  const io = t => { t = clamp(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+  const sine = t => .5 - .5 * Math.cos(Math.PI * clamp(t));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const C = { pink: '#d81b7a', blue: '#2d5bff', cream: '#fff6ee', ink: '#141416', paper: '#f6f5f1' };
+  const mk = (parent, html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); const e = d.firstElementChild; parent.appendChild(e); return e; };
+  const cue = kind => cues.filter(c => c[1] === kind).map(c => c[0]);
+
+  /* Scenes push in from below, as in the showcase: the new field is revealed bottom up while the old rides away. */
+  const scenes = [], PUSH = .7;
+  const scene = (cls, at) => {
+    const s = mk(stage, `<section class="scene ${cls}"><div class="in"></div><div class="marks"></div><div class="grain"></div></section>`);
+    const o = { s, in: s.firstElementChild, at }; scenes.push(o); return o;
+  };
+  function drawScenes(t) {
+    scenes.forEach((o, i) => {
+      const next = scenes[i + 1];
+      const vis = t >= o.at && (!next || t < next.at + PUSH);
+      o.s.style.display = vis ? 'block' : 'none';
+      if (!vis) return;
+      const k = i === 0 ? 1 : io((t - o.at) / PUSH);
+      o.s.style.clipPath = k < 1 ? `inset(${((1 - k) * 100).toFixed(3)}% 0 0 0)` : 'none';
+      const away = next ? io((t - next.at) / PUSH) : 0;
+      o.in.style.transform = `translateY(${((1 - k) * H * .2 - away * H * .25).toFixed(2)}px)`;
+    });
+  }
+  const land = (el, t, at, dur = .55, rise = 28) => { const k = out3((t - at) / dur); el.style.opacity = k; el.style.transform = `translateY(${((1 - k) * rise).toFixed(2)}px)`; return k; };
+  const cap = (parent, html, top, cls = '', style = '') => mk(parent, `<h1 class="cap ${cls}" style="top:${top}px;${style}">${html}</h1>`);
+
+  /* A crop of a real render, in the app's dp at s px per dp, with a camera inside (pan and zoom) and variants that swap. */
+  function crop(parent, srcs, x, y, w, h, s, left, top, extra = '') {
+    srcs = [].concat(srcs);
+    const el = mk(parent, `<div class="vc" style="left:${left}px;top:${top}px;width:${w * s}px;height:${h * s}px;${extra}"><div class="cam"></div></div>`);
+    const cam = el.firstElementChild;
+    const imgs = srcs.map((src, i) => mk(cam, `<img src="shots/${src}.png" alt="" style="width:${360 * s}px;left:${-x * s}px;top:${-y * s}px;opacity:${i ? 0 : 1}">`));
+    return {
+      el, cam, s, x, y, left, top,
+      show: i => imgs.forEach((im, j) => { im.style.opacity = j === i ? 1 : 0; }),
+      /* where a dp point of the render sits on the canvas */
+      at: (dx, dy) => [left + (dx - x) * s, top + (dy - y) * s],
+      pose: ({ z = 1, pan = 0, ox = 50, oy = 50, op = 1, ty = 0 } = {}) => {
+        cam.style.transformOrigin = `${ox}% ${oy}%`;
+        cam.style.transform = `translateY(${(-pan * s).toFixed(2)}px) scale(${z.toFixed(4)})`;
+        el.style.opacity = op; el.style.transform = `translateY(${ty.toFixed(2)}px)`;
+      },
+    };
+  }
+  /* A finger's touch: a ring that blooms and fades where the tap lands. */
+  const ring = (parent, [cx, cy], r = 46) => { const e = mk(parent, `<div class="ring" style="left:${cx - r}px;top:${cy - r}px;width:${2 * r}px;height:${2 * r}px"></div>`); return (t, at) => { const k = clamp((t - at) / .45); e.style.opacity = t < at ? 0 : ((1 - k) * .55).toFixed(3); e.style.transform = `scale(${(.6 + .7 * out3(k)).toFixed(3)})`; }; };
+  /* A press: the element dips a little as the finger lands. */
+  const press = (t, at) => 1 - .025 * Math.sin(Math.PI * clamp((t - at) / .22));
+
+  /* The existing halftone cygnet prints (img/cygnet-*-mark.png), dots growing in, as in the showcase. */
+  function rng(seed) { let s = seed >>> 0; return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function screen(a, w, h, c, ang, tone, rk, delay, rnd) {
+    const out = [], ca = Math.cos(ang), sa = Math.sin(ang), cx = w / 2, cy = h / 2, n = Math.ceil(Math.hypot(w, h) / c / 2) + 2;
+    for (let j = -n; j <= n; j++) for (let i = -n; i <= n; i++) {
+      const x = cx + (i * ca - j * sa) * c, y = cy + (i * sa + j * ca) * c;
+      if (x < 0 || y < 0 || x >= w || y >= h) continue;
+      const v = a[((y | 0) * w + (x | 0)) * 4 + 3] / 255 * tone(x / w, y / h);
+      if (v < .05) continue;
+      out.push({ x, y, r: c * rk * Math.sqrt(Math.min(v, 1)), d: delay(x / w, y / h) + rnd() });
+    }
+    return out;
+  }
+  const load = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+  const POSE = { family: 959 / 1806, pair: 760 / 1969, focus: 797 / 1466, sleep: 760 / 1280, feather: 759 / 1663, stretch: 761 / 1282 };
+  async function printer(cv, { pose, ink, water, seed = 5, dur = 1.2 }) {
+    const w = cv.width = Math.round(parseFloat(cv.style.width)), h = cv.height = Math.round(parseFloat(cv.style.height)), g = cv.getContext('2d');
+    const m = document.createElement('canvas'); m.width = w; m.height = h;
+    const mg = m.getContext('2d', { willReadFrequently: true });
+    const cell = Math.max(6.5, w / 120); mg.filter = `blur(${cell * .45}px)`;
+    mg.drawImage(await load(`../../../img/cygnet-${pose}-mark.png`), 0, 0, w, h);
+    const a = mg.getImageData(0, 0, w, h).data, rnd = rng(seed);
+    const dl = (u, v) => (v * .35 + u * .65) * dur * .7, jit = () => rnd() * dur * .22;
+    const layers = [];
+    if (water) layers.push({ col: water, dx: 3 * cell / 4.5, dy: -2 * cell / 4.5, dots: screen(a, w, h, cell * .9, 15 * Math.PI / 180, (u, v) => .45 * Math.max(0, (v - .66) * 2.6) ** 1.4, .56, dl, jit) });
+    layers.push({ col: ink, dx: 0, dy: 0, dots: screen(a, w, h, cell, 45 * Math.PI / 180, (u, v) => .5 + .5 * Math.min(1, .25 + 1.1 * u * u + .6 * v), .56, dl, jit) });
+    let last = null;
+    return s => {
+      const qq = Math.round(s * 60) / 60; if (qq === last) return; last = qq;
+      g.clearRect(0, 0, w, h);
+      for (const L of layers) { g.fillStyle = L.col; g.beginPath(); for (const d of L.dots) { const r = d.r * out3((qq - d.d) / .35); if (r < .3) continue; g.moveTo(d.x + L.dx + r, d.y + L.dy); g.arc(d.x + L.dx, d.y + L.dy, r, 0, 6.2832); } g.fill(); }
+    };
+  }
+
+  /* The end card, the same on all six: the cygnet prints in, then Free. No account. and the address. */
+  async function endCard(cls, at, { ink = C.cream, water = C.blue, pose = 'family' } = {}) {
+    const S = scene(cls, at), p = S.in;
+    const pw = Y(760, 600), ph = Math.round(pw * POSE[pose]), py = Y(430, 170);
+    const cv = mk(p, `<canvas style="left:${(W - pw) / 2}px;top:${py}px;width:${pw}px;height:${ph}px;z-index:8"></canvas>`);
+    const paint = await printer(cv, { pose, ink, water, seed: 21 });
+    const ty = py + ph + Y(90, 60);
+    const a = cap(p, `Free<span class="dot">.</span> No account<span class="dot">.</span>`, ty, '', `left:0;right:0;text-align:center;font-size:${Y(124, 112)}px`);
+    const b = cap(p, `idyll.day`, ty + Y(190, 160), '', `left:0;right:0;text-align:center;font-size:${Y(84, 76)}px;letter-spacing:-.035em`);
+    const c = mk(p, `<p class="mono" style="position:absolute;left:0;right:0;text-align:center;top:${ty + Y(320, 270)}px;z-index:20;opacity:0">Android, iPhone and Chrome</p>`);
+    return t => { paint(t - at - .1); land(a, t, at + .4, .6, 24); land(b, t, at + .8, .6, 18); const k = land(c, t, at + 1.1, .6, 12); c.style.opacity = (k * .8).toFixed(3); };
+  }
+
+  const pieces = {};
+
+  /* Shorts gone. Ink, YouTube in Idyll in dark. 0: the Shorts link has just been stopped, the strip rising.
+     4: the list of what goes, each line landing on the beat, then the switch that stops autoplay. */
+  pieces.shorts = async () => {
+    const A = scene('f-ink', 0);
+    const strip = crop(A.in, 'removed-yt-dark', 12, 696, 336, 72, 4.0, 40, Y(820, 560), 'border-radius:18px 0 0 18px;box-shadow:0 30px 70px rgba(0,0,0,.55)');
+    const note = mk(A.in, `<p class="mono" style="position:absolute;left:80px;right:140px;top:${Y(1180, 920)}px;z-index:20;opacity:0">a Shorts link, opened in<br>YouTube in Idyll</p>`);
+    const c0 = cap(A.in, `Shorts, gone<span class="dot">.</span>`, Y(290, 110));
+    const B = scene('f-ink', 4);
+    const list = crop(B.in, 'youtube-dark', 12, 352, 340, 202, Y(3.1, 2.9), Y(13, 47), Y(600, 380));
+    const c1 = cap(B.in, `Up next and<br>autoplay too.`, Y(290, 110));
+    const also = crop(B.in, 'youtube-dark', 12, 606, 340, 56, Y(3.1, 2.9), Y(13, 47), Y(1280, 1000));
+    const end = await endCard('f-blue', 8, { water: C.pink });
+    const [sUp] = cue('slide');
+    return t => {
+      const ks = out5((t - sUp + .3) / .7); strip.el.style.transform = `translateY(${((1 - ks) * 700).toFixed(1)}px) scale(${lerp(1, 1.025, sine((t - 1) / 3)).toFixed(4)})`;
+      note.style.opacity = (out3((t - .8) / .5) * .8).toFixed(3);
+      land(c0, t, .9, .5);
+      land(c1, t, 4.5, .5);
+      list.pose({ z: lerp(1, 1.03, sine((t - 4) / 4)), ox: 0, oy: 0 });
+      also.el.style.opacity = out3((t - 6.6) / .5);
+      end(t);
+    };
+  };
+
+  /* Your own words. 0: Instagram's tile is tapped, swells, and the pause arrives with the line the person wrote.
+     2.5: a different line, someone else's. 4: where you write it, being typed, kept on the phone. */
+  pieces.words = async () => {
+    const A = scene('f-pink', 0);
+    const pz = crop(A.in, ['pause-mum'], 20, 72, 320, 350, Y(3.2, 2.5), Y(28, 140), Y(520, 290));
+    const tw = Y(300, 240);
+    const tile = mk(A.in, `<div style="position:absolute;left:${(W - tw) / 2}px;top:${Y(820, 560)}px;width:${tw}px;height:${tw}px;border-radius:${tw * .22}px;background:var(--cream);z-index:15;display:grid;place-items:center"><canvas style="position:relative;width:${Math.round(tw * .72)}px;height:${Math.round(tw * .72)}px"></canvas></div>`);
+    A.s.style.display = 'block';
+    const ig = await Print(tile.firstElementChild, { kind: 'mark', b: 'instagram', ink: C.ink, strike: null, n: 22, seed: 4 });
+    A.s.style.display = 'none';
+    const c0 = cap(A.in, `Your words<br>first.`, Y(270, 90), '', 'color:var(--ink);text-shadow:none;font-size:' + Y(120, 104) + 'px');
+    const B = scene('f-paper', 4);
+    const wd = crop(B.in, 'words', 10, 570, 340, 132, 3.6, 36, Y(700, 480));
+    const typing = mk(wd.cam, `<div style="position:absolute;background:${C.paper};z-index:2"></div>`);
+    const [tx0, ty0] = [(22 - 10) * wd.s, (618 - 570) * wd.s], TW = 188;
+    Object.assign(typing.style, { left: tx0 + 'px', top: ty0 + 'px', width: (320 * wd.s) + 'px', height: (30 * wd.s) + 'px' });
+    const c1 = cap(B.in, `Kept on<br>this phone<span class="dot">.</span>`, Y(290, 110));
+    const end = await endCard('f-ink', 8);
+    const tap = -1.2;
+    const keys = cue('key'), k0 = keys[0], k1 = keys[keys.length - 1];
+    return t => {
+      ig.paint(99999);
+      const kp = io((t - tap - .08) / .5);
+      tile.style.opacity = (1 - clamp((t - tap - .25) / .3)).toFixed(3);
+      tile.style.transform = `scale(${((t < tap + .08 ? press(t, tap) : 1) * (1 + 1.9 * kp)).toFixed(4)})`;
+      pz.pose({ z: lerp(.94, 1, out5((t - tap - .15) / .7)) * lerp(1, 1.03, sine((t - 1) / 3)), op: clamp((t - tap - .1) / .3), oy: 60 });
+      land(c0, t, .6, .5);
+      /* the line is typed: the cover slides off letter by letter */
+      const n = keys.filter(k => t >= k).length, frac = n / keys.length;
+      typing.style.left = (tx0 + TW * wd.s * frac) + 'px';
+      wd.pose({ z: lerp(1, 1.03, sine((t - 4) / 4)), ox: 0, oy: 40 });
+      land(c1, t, 6.0, .5);
+      end(t);
+    };
+  };
+
+  /* Focus. 0: the length is being picked, 25, 50, 90, a tap each. 4: Instagram, tapped during Focus, is paused. */
+  pieces.focus = async () => {
+    const A = scene('f-pink', 0);
+    const fo = crop(A.in, ['focus-25', 'focus-50', 'focus-90'], 18, 178, 320, 128, 3.1, 44, Y(700, 470));
+    const taps = cue('tap').filter(x => x < 4);
+    const r1 = ring(A.in, fo.at(129, 280)), r2 = ring(A.in, fo.at(181, 280));
+    const c0 = cap(A.in, `The apps wait<span class="dot">.</span>`, Y(290, 110), '', 'color:var(--ink);text-shadow:none');
+    const B = scene('f-pink', 4);
+    const bl = crop(B.in, 'block-focus-90', 40, 236, 280, 216, Y(3.6, 3.2), Y(36, 92), Y(620, 420));
+    const c1 = cap(B.in, `Until Focus<br>ends.`, Y(290, 110), '', 'color:var(--ink);text-shadow:none');
+    const end = await endCard('f-blue', 8, { water: C.pink });
+    return t => {
+      fo.show(t < taps[0] ? 0 : t < taps[1] ? 1 : 2);
+      fo.pose({ z: lerp(1, 1.02, sine(t / 4)), oy: 80 });
+      r1(t, taps[0]); r2(t, taps[1]);
+      land(c0, t, .9, .5);
+      bl.pose({ z: lerp(1.04, 1, out5((t - 4.1) / 1.2)), oy: 30 });
+      land(c1, t, 5.0, .5);
+      end(t);
+    };
+  };
+
+  /* Sleep. 0: the bedtime being set, 22:30, 23:00, 00:00. 4: Goodnight, the apps resting. Dark mode: the field is ink. */
+  pieces.sleep = async () => {
+    const A = scene('f-ink', 0);
+    const sl = crop(A.in, ['sleep-2230-dark', 'sleep-2300-dark', 'sleep-0000-dark'], 15, 248, 320, 146, 3.1, 44, Y(720, 480));
+    const taps = cue('tap').filter(x => x < 4);
+    const r1 = ring(A.in, sl.at(240, 273)), r2 = ring(A.in, sl.at(240, 273));
+    const c0 = cap(A.in, `A bedtime<br>you pick<span class="dot">.</span>`, Y(290, 110));
+    const B = scene('f-ink', 4);
+    const gn = crop(B.in, 'goodnight-dark', 0, 76, 360, 456, Y(2.7, 2.5), Y(54, 90), Y(330, 110));
+    const end = await endCard('f-pink', 8);
+    return t => {
+      sl.show(t < taps[0] ? 0 : t < taps[1] ? 1 : 2);
+      sl.pose({ z: lerp(1, 1.02, sine(t / 4)), oy: 30 });
+      r1(t, taps[0]); r2(t, taps[1]);
+      land(c0, t, .9, .5);
+      gn.pose({ z: lerp(1.05, 1, out5((t - 4.1) / 1.6)), oy: 70 });
+      end(t);
+    };
+  };
+
+  /* What stays. 0: Messages on Home, a tap on Instagram's. 2.2: Reels, headed for, removed: your messages are here.
+     4: a video a friend sent ends, and the sheet rises: that's everything. */
+  pieces.stays = async () => {
+    const A = scene('f-blue', 0);
+    const ms = crop(A.in, 'home', 10, 574, 296, 100, 3.8, 60, Y(700, 450), 'background:var(--paper);border-radius:48px 0 0 48px;box-shadow:0 40px 90px rgba(10,20,80,.28)');
+    const [tap] = cue('tap');
+    const r1 = ring(A.in, ms.at(36, 618), 54);
+    const strip = crop(A.in, 'removed-ig', 12, 696, 336, 72, Y(3.0, 2.6), Y(36, 103), Y(1200, 900), 'border-radius:12px;box-shadow:0 30px 70px rgba(10,20,80,.35)');
+    const c0 = cap(A.in, `Your people<br>stay<span class="dot">.</span>`, Y(290, 110));
+    const B = scene('f-paper', 4);
+    const en = crop(B.in, 'end', 0, 462, 360, 256, Y(3.4, 3.0), Y(-72, 0), Y(760, 500));
+    const c1 = cap(B.in, `One video<span class="dot">.</span><br>Nothing after<span class="dot">.</span>`, Y(290, 110));
+    const end = await endCard('f-pink', 8);
+    const [sUp, sUp2] = cue('slide');
+    return t => {
+      ms.el.style.transform = `scale(${press(t, tap).toFixed(4)})`; ms.el.style.transformOrigin = '0 50%';
+      r1(t, tap);
+      const ks = out5((t - sUp) / .55); strip.el.style.transform = `translateY(${((1 - ks) * 900).toFixed(1)}px)`; strip.el.style.opacity = t < sUp ? 0 : 1;
+      land(c0, t, 1.0, .5);
+      const ke = out5((t - sUp2) / .6); en.el.style.transform = `translateY(${((1 - ke) * 900).toFixed(1)}px)`;
+      land(c1, t, 5.4, .5);
+      end(t);
+    };
+  };
+
+  /* Free and private. 0: the Privacy page, what Idyll connects to, scrolling. 4: Nothing else, struck through. */
+  pieces.free = async () => {
+    const A = scene('f-paper', 0);
+    const nx = crop(A.in, 'privacy-tall', 18, 826, 322, 156, 3.2, 25, Y(640, 420));
+    const c0 = cap(A.in, `No account.<br>No servers<span class="dot">.</span>`, Y(290, 110));
+    const items = [[22, 851, 100], [132, 851, 98], [240, 851, 82], [22, 885, 38], [70, 885, 115]].map(([x, y, w]) =>
+      mk(nx.cam, `<div style="position:absolute;z-index:2;background:${C.paper};left:${(x - 18 - 2) * nx.s}px;top:${(y - 826) * nx.s}px;width:${(w + 6) * nx.s}px;height:${24 * nx.s}px;transform-origin:100% 50%"></div>`));
+    const inks = cue('tick');
+    const B = scene('f-paper', 4);
+    const pv = crop(B.in, 'privacy-tall', 22, 388, 318, 110, Y(3.3, 3.2), Y(15, 31), Y(700, 480));
+    const c1 = cap(B.in, `Nothing<br>collected<span class="dot">.</span>`, Y(290, 110));
+    const end = await endCard('f-ink', 8);
+    return t => {
+      nx.pose({ z: lerp(1, 1.02, sine(t / 4)), ox: 0, oy: 0 });
+      items.forEach((e, i) => { e.style.transform = `scaleX(${(1 - out3((t - inks[i] + .02) / .28)).toFixed(4)})`; });
+      land(c0, t, 1.0, .5);
+      pv.pose({ z: lerp(1.04, 1, out5((t - 4.1) / 1.4)), ox: 0, oy: 0 });
+      land(c1, t, 5.0, .5);
+      end(t);
+    };
+  };
+
+  await document.fonts.ready;
+  const run = await pieces[V]();
+  await Promise.all([...document.images].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+  window.DURATION = 12;
+  window.seek = t => { drawScenes(t); run(t); };
+  window.seek(+(q.get('t') || 0));
+  window.ready = true;
+  if (!/HeadlessChrome/.test(navigator.userAgent) && !q.has('t')) { const t0 = performance.now(); const loop = () => { window.seek(((performance.now() - t0) / 1000) % 12); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+})();
+</script>
+</body>
+</html>

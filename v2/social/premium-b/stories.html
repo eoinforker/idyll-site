@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idyll premium B, stories</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* Twelve stories, 1080 x 1920. All text sits between y 250 and 1670 and clear of the right edge, where the reply UI sits.
+   s01 to s03 are story native: a this or that, a which bedtime, a what would your line say. Each leaves room for the sticker. */
+.c { text-align: center; }
+.f-paper { background: var(--paper); color: var(--ink); --mk: var(--ink); --reg: rgba(45,91,255,.2); --dot: var(--pink); }
+.f-paper .grain { opacity: .18; }
+.opt { position: absolute; left: 80px; right: 140px; font: 500 150px/.92 var(--sans); letter-spacing: -.055em; z-index: 5; }
+.or { position: absolute; left: 80px; font: italic 400 64px/1 var(--serif); z-index: 5; opacity: .85; }
+.sticker { position: absolute; left: 80px; right: 140px; border: 3px dashed currentColor; border-radius: 28px; opacity: .35; z-index: 5; }
+.label { position: absolute; left: 80px; z-index: 6; }
+.blank { position: absolute; left: 140px; width: 800px; height: 3px; background: currentColor; z-index: 5; }
+</style>
+</head>
+<body>
+<div id="c">
+
+  <!-- s01 This or that: the feed, or your people. -->
+  <div data-piece="s01" class="f-ink">
+    <div class="marks"></div>
+    <p class="mono label" style="top: 290px; opacity: .8">this or that</p>
+    <h1 class="opt" style="top: 380px">The feed</h1>
+    <p class="or" style="top: 570px">or</p>
+    <h1 class="opt" style="top: 680px">your people<span class="dot">?</span></h1>
+    <div class="crop slab round" style="left: 80px; top: 1180px" data-src="shots/home-dark.png" data-x="16" data-y="597" data-w="204" data-h="40" data-s="3.9"></div>
+    <p class="mono label" style="top: 1360px; opacity: .8">Messages, on Home in Idyll.<br>The feeds aren't.</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s02 Which bedtime is yours. Three real Sleep screens, one line each. -->
+  <div data-piece="s02" class="f-pink">
+    <div class="marks"></div>
+    <h1 class="mid" style="top: 280px; right: 140px">Which bedtime<br>is yours<span class="dot">?</span></h1>
+    <div class="crop" style="left: 60px; top: 560px" data-src="shots/sleep-2230.png" data-x="30" data-y="248" data-w="300" data-h="50" data-s="3.0"></div>
+    <div class="crop" style="left: 60px; top: 760px" data-src="shots/sleep-2300.png" data-x="30" data-y="248" data-w="300" data-h="50" data-s="3.0"></div>
+    <div class="crop" style="left: 60px; top: 960px" data-src="shots/sleep-0000.png" data-x="30" data-y="248" data-w="300" data-h="50" data-s="3.0"></div>
+    <p class="sub" style="top: 1520px; right: 140px">Sleep in Idyll rests the apps at the one<br>you pick, and they open as you wake.</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s03 What would your line say? -->
+  <div data-piece="s03" class="f-blue">
+    <div class="marks"></div>
+    <div class="crop" style="left: 64px; top: 300px" data-src="shots/pause-why-blue.png" data-x="40" data-y="248" data-w="280" data-h="112" data-s="3.4"></div>
+    <div class="blank" style="top: 820px"></div>
+    <p class="mono c" style="position: absolute; left: 140px; width: 800px; top: 846px; opacity: .85">your line goes here</p>
+    <h1 class="mid" style="top: 1000px; right: 140px">What would<br>your line say<span class="dot">?</span></h1>
+    <p class="sub" style="top: 1560px; right: 140px; font-size: 38px">Idyll shows it before an app opens.</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s04 The pause: Back to the book. -->
+  <div data-piece="s04" class="f-pink">
+    <div class="marks"></div>
+    <p class="sub c" style="top: 270px; color: var(--ink); right: 140px">Before Instagram opens,</p>
+    <div class="crop" style="left: 28px; top: 360px" data-src="shots/pause-tune.png" data-x="20" data-y="72" data-w="320" data-h="350" data-s="3.2"></div>
+    <div class="crop" style="left: 180px; top: 1460px" data-src="shots/pause-tune.png" data-x="30" data-y="662" data-w="300" data-h="62" data-s="2.4"></div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s05 Shorts, gone. YouTube in Idyll on its own paper. -->
+  <div data-piece="s05" class="f-paper">
+    <div class="marks"></div>
+    <h1 class="big" style="top: 290px">Shorts, gone<span class="dot">.</span></h1>
+    <p class="sub" style="top: 460px">YouTube in Idyll keeps search and<br>your subscriptions.</p>
+    <div class="crop" style="left: 36px; top: 660px" data-src="shots/youtube.png" data-x="12" data-y="352" data-w="336" data-h="202" data-s="3.0"></div>
+    <div class="crop" style="left: 36px; top: 1320px" data-src="shots/youtube.png" data-x="12" data-y="606" data-w="336" data-h="56" data-s="3.0"></div>
+    <p class="mono" style="position: absolute; left: 80px; top: 1530px">YouTube in Idyll, its own settings page</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s06 Focus, fifty minutes, in the blue accent. -->
+  <div data-piece="s06" class="f-blue">
+    <div class="marks"></div>
+    <div class="crop" style="left: 60px; top: 300px" data-src="shots/focus-50-blue.png" data-x="20" data-y="60" data-w="320" data-h="296" data-s="2.75"></div>
+    <h1 class="mid" style="top: 1180px; right: 140px">Fifty minutes.<br>Then the apps<br>come back.</h1>
+    <p class="sub" style="top: 1500px; right: 140px; font-size: 38px">Or 25, or 90. A soft chime at the end.</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s07 Goodnight, in dark. -->
+  <div data-piece="s07" class="f-ink">
+    <div class="marks"></div>
+    <div class="crop" style="left: 126px; top: 270px" data-src="shots/goodnight-dark.png" data-x="0" data-y="80" data-w="360" data-h="560" data-s="2.3"></div>
+    <p class="mono c" style="position: absolute; left: 80px; right: 140px; top: 1600px; opacity: .8">Sleep, at a bedtime you pick</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s08 Discord stays. -->
+  <div data-piece="s08" class="f-paper">
+    <div class="marks"></div>
+    <div class="crop" style="left: 50px; top: 290px" data-src="shots/later.png" data-x="10" data-y="48" data-w="330" data-h="160" data-s="3.0"></div>
+    <div class="crop" style="left: 50px; top: 800px" data-src="shots/later.png" data-x="10" data-y="382" data-w="330" data-h="90" data-s="3.0"></div>
+    <p class="sub" style="top: 1260px; right: 140px">Share a link to Idyll from any app and it<br>waits here, on your phone, for when you<br>actually want it.</p>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s09 The one link. -->
+  <div data-piece="s09" class="f-paper">
+    <div class="marks"></div>
+    <h1 class="mid" style="top: 290px; right: 140px">A friend sends<br>a video<span class="dot">.</span></h1>
+    <div class="crop" style="left: 0; top: 600px" data-src="shots/end.png" data-x="0" data-y="462" data-w="360" data-h="256" data-s="3.0"></div>
+    <h1 class="mid" style="top: 1420px; right: 140px">You watch<br>that one<span class="dot">.</span></h1>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s10 Free, no account, nothing collected. A's paper. -->
+  <div data-piece="s10" class="f-sheet">
+    <div class="marks"></div>
+    <h1 class="head" style="top: 280px; right: 140px">Free. No account. <em>Nothing collected.</em></h1>
+    <div class="plate" style="left: 80px; top: 640px; width: 860px; height: 900px">
+      <div class="crop" style="left: 27px; top: 40px" data-src="shots/privacy-tall.png" data-x="18" data-y="385" data-w="322" data-h="120" data-s="2.5"></div>
+      <div class="crop" style="left: 27px; top: 420px" data-src="shots/privacy-tall.png" data-x="18" data-y="826" data-w="322" data-h="156" data-s="2.5"></div>
+    </div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s11 Rounds. -->
+  <div data-piece="s11" class="f-pink">
+    <div class="marks"></div>
+    <p class="sub" style="top: 290px; right: 140px; color: var(--ink)">The first time you open an app,<br>Idyll asks once, then remembers.</p>
+    <div class="crop" style="left: 40px; top: 520px" data-src="shots/door.png" data-x="22" data-y="396" data-w="322" data-h="326" data-s="3.1"></div>
+    <div class="grain"></div>
+  </div>
+
+  <!-- s12 Android, iPhone and Chrome. -->
+  <div data-piece="s12" class="f-sheet">
+    <div class="marks"></div>
+    <div class="foot mono" style="top: 290px; right: 140px"><span>a note</span></div>
+    <h1 class="head" style="top: 400px; right: 140px; font-size: 80px; line-height: 1.08">Idyll is made by one person. <em>It's free for good, there's no account, and it collects nothing.</em></h1>
+    <p class="cap" style="top: 1180px; right: 140px; font-size: 44px; color: var(--ink)">If something's wrong or missing, write to hello@idyll.day and it comes to me.</p>
+    <p class="cap" style="top: 1440px; right: 140px; font-size: 64px; color: var(--ink)">Eóin</p>
+    <div class="cyg" style="--m: url(../../../img/cygnet-pair-mark.png); --s: 8px; left: 560px; top: 1470px; width: 330px; height: 128px"></div>
+    <div class="grain"></div>
+  </div>
+
+</div>
+<script>
+  document.querySelectorAll('.head').forEach(h => { const g = document.createElement('span'); g.className = 'ghost'; g.innerHTML = h.innerHTML; h.prepend(g); });
+</script>
+<script src="common.js"></script>
+</body>
+</html>

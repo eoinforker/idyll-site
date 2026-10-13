@@ -1,0 +1,77 @@
+/* Idyll premium set, direction B "Close up": the one element at heroic scale on a full bleed field of the screen's own colour.
+   Pages take ?n=<piece id>. Feed posts are 1080 x 1350, stories and videos 1080 x 1920 (videos also 1080 x 1350).
+   Screens are the Android app's own renders at 4x (shots/), so crops stay sharp at 1.2x and more. */
+@import url("../../../fonts.css");
+:root { --paper: #f6f5f1; --cream: #fff6ee; --ink: #141416; --pink: #d81b7a; --blue: #2d5bff; --sheet: #f7f3ea;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif; --serif: "Timeless Serif", Georgia, serif; --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+  --grain: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.1 -.35'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --mottle: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1080' height='1080'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='4' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .42  0 0 0 0 .36  0 0 0 0 .28  0 0 0 .9 -.3'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --fibre: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.012 .35' numOctaves='2' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .26  0 0 0 0 .2  0 0 0 1.4 -.78'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"); }
+* { box-sizing: border-box; }
+html, body { margin: 0; overflow: hidden; -webkit-font-smoothing: antialiased; background: var(--ink); }
+h1, h2, p { margin: 0; font-weight: inherit; }
+#c { position: relative; width: 1080px; overflow: hidden; }
+[data-piece] { position: absolute; inset: 0; overflow: hidden; }
+.abs { position: absolute; }
+
+/* Fields: the screen's own colour, full bleed. */
+.f-pink { background: var(--pink); color: var(--cream); --mk: rgba(255,246,238,.75); --reg: rgba(45,91,255,.42); --dot: var(--ink); }
+.f-blue { background: var(--blue); color: var(--cream); --mk: rgba(255,246,238,.75); --reg: rgba(216,27,122,.5); --dot: var(--pink); }
+.f-ink { background: var(--ink); color: var(--cream); --mk: rgba(255,246,238,.42); --reg: rgba(216,27,122,.45); --dot: var(--pink); }
+.f-cream { background: var(--cream); color: var(--ink); --mk: var(--ink); --reg: rgba(45,91,255,.22); --dot: var(--pink); }
+/* A's paper sheet, for the quieter posts: mottle, fibre, a plate mark, Timeless Serif. */
+.f-sheet { background: var(--sheet); color: var(--ink); --mk: #3b3934; --dot: var(--pink); }
+.f-sheet::before { content: ""; position: absolute; inset: 0; background: var(--mottle); opacity: .07; mix-blend-mode: multiply; }
+.f-sheet::after { content: ""; position: absolute; inset: 0; background: var(--fibre); opacity: .12; mix-blend-mode: multiply; pointer-events: none; }
+
+.marks { --l: 24px; position: absolute; inset: 42px; pointer-events: none; z-index: 40; --c: var(--mk);
+  background:
+    linear-gradient(var(--c), var(--c)) 0 0 / var(--l) 1.5px no-repeat, linear-gradient(var(--c), var(--c)) 0 0 / 1.5px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 0 / var(--l) 1.5px no-repeat, linear-gradient(var(--c), var(--c)) 100% 0 / 1.5px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 0 100% / var(--l) 1.5px no-repeat, linear-gradient(var(--c), var(--c)) 0 100% / 1.5px var(--l) no-repeat,
+    linear-gradient(var(--c), var(--c)) 100% 100% / var(--l) 1.5px no-repeat, linear-gradient(var(--c), var(--c)) 100% 100% / 1.5px var(--l) no-repeat; }
+.grain { position: absolute; inset: 0; pointer-events: none; background: var(--grain); z-index: 50; mix-blend-mode: multiply; opacity: .26; }
+.f-ink .grain { mix-blend-mode: screen; opacity: .05; }
+.f-sheet .grain, .f-cream .grain { opacity: .18; }
+
+/* Type. */
+.big { position: absolute; left: 80px; right: 80px; font: 500 150px/.92 var(--sans); letter-spacing: -.055em; z-index: 5; }
+.mid { position: absolute; left: 80px; right: 80px; font: 500 96px/.96 var(--sans); letter-spacing: -.045em; z-index: 5; }
+/* A quiet line above a screen whose own title is the headline. */
+.label { position: absolute; left: 80px; right: 80px; font: 400 46px/1.2 var(--sans); letter-spacing: -.015em; z-index: 5; }
+.sub { position: absolute; left: 80px; right: 80px; font: 400 44px/1.22 var(--sans); letter-spacing: -.015em; z-index: 5; }
+.mono { font: 400 34px/1.3 var(--mono); letter-spacing: .01em; }
+.dot { color: var(--dot); }
+.head { position: absolute; left: 96px; right: 96px; font: 400 104px/1.0 var(--serif); letter-spacing: -.028em; z-index: 5; }
+.head .ghost { position: absolute; inset: 0; color: var(--pink); transform: translate(3px, 2px); mix-blend-mode: multiply; opacity: .28; }
+.head em, .cap em { font-style: italic; }
+.cap { position: absolute; left: 96px; right: 96px; font: italic 400 38px/1.3 var(--serif); color: #3b3934; z-index: 5; }
+.foot { position: absolute; left: 80px; right: 80px; display: flex; justify-content: space-between; z-index: 5; }
+.f-sheet .foot { left: 96px; right: 96px; color: #57534b; }
+
+/* Screen crops: a window onto a real render, laid out in the app's own dp. */
+.crop { position: absolute; overflow: hidden; z-index: 4; }
+.crop > img { position: absolute; display: block; max-width: none; }
+.slab { box-shadow: 0 40px 90px rgba(10,20,80,.28), 0 6px 18px rgba(10,20,80,.16); }
+.f-ink .slab { box-shadow: 0 40px 90px rgba(0,0,0,.5), 0 6px 18px rgba(0,0,0,.3); }
+.bleed-r { border-radius: 56px 0 0 56px; }
+.bleed-b { border-radius: 56px 56px 0 0; }
+.round { border-radius: 48px; }
+/* A's plate: the screen printed into the sheet. */
+.plate { position: absolute; z-index: 3; background: #faf7f0;
+  box-shadow: inset 2px 2px 0 rgba(255,255,255,.9), inset -2px -2px 0 rgba(90,80,64,.12), 1px 1px 0 rgba(255,255,255,.8), -1px -1px 0 rgba(80,70,55,.16), 0 0 0 1px rgba(80,70,55,.05); }
+.plate .crop { mix-blend-mode: multiply; }
+.plate .crop img { filter: brightness(1.045) saturate(1.06); }
+.plate .crop::before { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--mottle); background-size: 700px; opacity: .2; mix-blend-mode: screen; }
+
+/* A hand note: a bracket and a mono line, the way you'd mark up a proof. */
+.note { position: absolute; z-index: 6; }
+.note .br { height: 20px; border: 3px solid currentColor; border-top: 0; }
+.note .br.up { border-top: 3px solid currentColor; border-bottom: 0; }
+.note .mono { margin-top: 16px; text-align: center; }
+.arrow { position: absolute; z-index: 6; }
+
+/* The existing cygnet art, printed through a dot screen. */
+.cyg { position: absolute; z-index: 4; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat;
+  --d: var(--pink); --s: 9px;
+  background: radial-gradient(circle, var(--d) 38%, transparent 44%) 0 0 / var(--s) var(--s), radial-gradient(circle, var(--d) 38%, transparent 44%) calc(var(--s) / 2) calc(var(--s) / 2) / var(--s) var(--s); }
