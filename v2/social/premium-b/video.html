@@ -46,19 +46,19 @@ canvas { position: absolute; display: block; }
 
   /* Scenes push in from below, as in the showcase: the new field is revealed bottom up while the old rides away. */
   const scenes = [], PUSH = .7;
-  const scene = (cls, at) => {
+  const scene = (cls, at, push = PUSH) => {
     const s = mk(stage, `<section class="scene ${cls}"><div class="in"></div><div class="marks"></div><div class="grain"></div></section>`);
-    const o = { s, in: s.firstElementChild, at }; scenes.push(o); return o;
+    const o = { s, in: s.firstElementChild, at, push }; scenes.push(o); return o;
   };
   function drawScenes(t) {
     scenes.forEach((o, i) => {
       const next = scenes[i + 1];
-      const vis = t >= o.at && (!next || t < next.at + PUSH);
+      const vis = t >= o.at && (!next || t < next.at + next.push);
       o.s.style.display = vis ? 'block' : 'none';
       if (!vis) return;
-      const k = i === 0 ? 1 : io((t - o.at) / PUSH);
+      const k = i === 0 ? 1 : io((t - o.at) / o.push);
       o.s.style.clipPath = k < 1 ? `inset(${((1 - k) * 100).toFixed(3)}% 0 0 0)` : 'none';
-      const away = next ? io((t - next.at) / PUSH) : 0;
+      const away = next ? io((t - next.at) / next.push) : 0;
       o.in.style.transform = `translateY(${((1 - k) * H * .2 - away * H * .25).toFixed(2)}px)`;
     });
   }
@@ -248,7 +248,7 @@ canvas { position: absolute; display: block; }
     const r1 = ring(A.in, ms.at(36, 618), 54);
     const strip = crop(A.in, 'removed-ig', 12, 696, 336, 72, Y(3.0, 2.6), Y(36, 103), Y(1200, 900), 'border-radius:12px;box-shadow:0 30px 70px rgba(10,20,80,.35)');
     const c0 = cap(A.in, `Your people<br>stay<span class="dot">.</span>`, Y(290, 110));
-    const B = scene('f-paper', 4);
+    const B = scene('f-paper', 4, .001);
     const en = crop(B.in, 'end', 0, 462, 360, 256, Y(3.4, 3.0), Y(-72, 0), Y(760, 500));
     const c1 = cap(B.in, `One video<span class="dot">.</span><br>Nothing after<span class="dot">.</span>`, Y(290, 110));
     const end = await endCard('f-pink', 8);
@@ -259,7 +259,7 @@ canvas { position: absolute; display: block; }
       const ks = out5((t - sUp) / .55); strip.el.style.transform = `translateY(${((1 - ks) * 900).toFixed(1)}px)`; strip.el.style.opacity = t < sUp ? 0 : 1;
       land(c0, t, 1.0, .5);
       const ke = out5((t - sUp2) / .6); en.el.style.transform = `translateY(${((1 - ke) * 900).toFixed(1)}px)`;
-      land(c1, t, 5.4, .5);
+      land(c1, t, 4.15, .5);
       end(t);
     };
   };
