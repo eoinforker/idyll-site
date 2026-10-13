@@ -1,7 +1,8 @@
 // Render Idyll social pieces through the Chrome DevTools protocol (plain headless --screenshot hangs on this machine).
 //   node render.mjs video <url> <framesDir> <fps> <seconds> [width height]
 //   node render.mjs shot  <url> <out.png> <width> <height>
-// Pages set window.ready = true when loaded; videos also expose window.seek(t).
+// Pages set window.ready = true when loaded; videos also expose window.seek(t) (it may return a promise; it is awaited).
+// FRAMES=jpeg writes video frames as quality 95 JPEGs (a tenth of the disk) instead of PNGs.
 import { spawn } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -38,12 +39,13 @@ try {
   await send('Page.navigate', { url });
   for (let i = 0; i < 300; i++) { if (await evaluate('window.ready === true').catch(() => false)) break; await sleep(100); }
   const frame = () => evaluate('new Promise(r => requestAnimationFrame(() => requestAnimationFrame(() => r(1))))');
-  const shot = async () => Buffer.from((await send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64');
+  const JPG = mode === 'video' && process.env.FRAMES === 'jpeg';
+  const shot = async () => Buffer.from((await send('Page.captureScreenshot', { format: JPG ? 'jpeg' : 'png', ...(JPG ? { quality: 95 } : {}), clip: { x: 0, y: 0, width: W, height: H, scale: 1 } })).data, 'base64');
   if (mode === 'video') {
     const fps = +a, n = Math.round(+b * fps); mkdirSync(out, { recursive: true });
     for (let i = 0; i < n; i++) {
       await evaluate(`window.seek(${(i / fps).toFixed(5)})`); await frame();
-      writeFileSync(join(out, `f${String(i).padStart(5, '0')}.png`), await shot());
+      writeFileSync(join(out, `f${String(i).padStart(5, '0')}.${JPG ? 'jpg' : 'png'}`), await shot());
       if (i % 60 === 0) process.stdout.write(`frame ${i}/${n}\n`);
     }
   } else {
