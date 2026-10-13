@@ -1,6 +1,6 @@
 # Music for the two Idyll showcase videos, synthesised from scratch (sine partials and filtered noise).
 # Extends the felt-piano bed used in the 10 s ads with a marimba-like pluck, a soft bass, a soft kick and a shaker.
-#   python3 score.py tour out.wav     (30.0 s)
+#   python3 score.py tour out.wav     (40.0 s)
 #   python3 score.py keep out.wav     (16.0 s)
 import sys, wave
 import numpy as np
@@ -8,7 +8,7 @@ from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
 piece, out = sys.argv[1], sys.argv[2]
-DUR = {'tour': 30.0, 'keep': 16.0}[piece]
+DUR = {'tour': 40.0, 'keep': 16.0}[piece]
 N = int(SR * DUR)
 t = np.arange(N) / SR
 bus = {k: np.zeros(N) for k in ('piano', 'pluck', 'bass', 'drums', 'fx')}
@@ -76,21 +76,21 @@ if piece == 'tour':
     # 2.9 s: a soft pickup chord out of the silence. From 3.9 s, 120 bpm, a bar every 2 s: every scene, tap and change sits on the grid.
     chord([40, 52, 55, 60, 64], 2.9, 1.0, .2)
     T0, BAR = 3.9, 2.0
-    prog = [([41, 53, 57, 60, 64], 29), ([40, 52, 55, 60, 64], 28), ([38, 50, 53, 57, 60], 26), ([46, 50, 57, 60, 65], 34),
-            ([45, 53, 57, 60, 64], 33), ([43, 50, 55, 58, 65], 31), ([46, 50, 57, 62, 65], 34), ([38, 50, 53, 57, 62], 26),
-            ([46, 50, 53, 58, 62], 34), ([36, 48, 53, 55, 60], 36)]
-    mel = {0: [(76, 0)], 2: [(77, 0), (76, 1)], 6: [(77, 0), (76, 1)], 7: [(77, 0), (79, 1)], 8: [(77, 0), (74, 1)], 9: [(72, 0), (76, 1)]}
+    F_, CE, Dm7, Bbm7, FA, Gm7, Bb2, Dm9, Bb, Csus = ([41, 53, 57, 60, 64], 29), ([40, 52, 55, 60, 64], 28), ([38, 50, 53, 57, 60], 26), ([46, 50, 57, 60, 65], 34), \
+        ([45, 53, 57, 60, 64], 33), ([43, 50, 55, 58, 65], 31), ([46, 50, 57, 62, 65], 34), ([38, 50, 53, 57, 62], 26), ([46, 50, 53, 58, 62], 34), ([36, 48, 53, 55, 60], 36)
+    prog = [F_, CE, Dm7, Bbm7, FA, Gm7, Bb2, Dm9, F_, CE, Dm7, Bbm7, Gm7, Bb, Csus]  # 15 bars, 3.9 to 33.9 s
+    mel = {0: [(76, 0)], 2: [(77, 0), (76, 1)], 6: [(77, 0), (76, 1)], 7: [(77, 0), (79, 1)], 10: [(77, 0), (76, 1)], 12: [(77, 0), (79, 1)], 13: [(77, 0), (74, 1)], 14: [(72, 0), (76, 1)]}
     for b, (ch, bn) in enumerate(prog):
         at = T0 + b * BAR
-        chord(ch, at, 1.9, .2 if b < 9 else .17)
-        if b == 9: chord([36, 48, 52, 55, 58, 64], at + 1.0, .9, .14)  # the sus resolves to C7, then home.
-        bass(bn + 12 if bn < 33 else bn, at, 1.8, .34 if b < 9 else .26)
+        chord(ch, at, 1.9, .2 if b < 14 else .17)
+        if b == 14: chord([36, 48, 52, 55, 58, 64], at + 1.0, .9, .14)  # the sus resolves to C7, then home.
+        bass(bn + 12 if bn < 33 else bn, at, 1.8, .34 if b < 14 else .26)
         up = sorted(n + 12 for n in ch if n >= 50)[:4]
         while len(up) < 4: up.append(up[len(up) - 3] + 12)
         pat = [up[2], up[1], up[0], up[1], up[2], up[3], up[2], up[1]]
-        quiet = b in (3, 4, 9)  # the open and pause, and the last bar before night: room for the taps and words
+        quiet = b in (3, 6, 10, 14)  # bars with a tap, and the last bar before night: room for the taps and words
         for i, n in enumerate(pat): pluck(n, at + i * .25, (.15 if i % 2 == 0 else .1) * (.6 if quiet else 1))
-        if b <= 8:
+        if b <= 13:
             for q in range(4):
                 if q == 0 or (q == 2 and not quiet): kick(at + q * .5, .42)
                 shaker(at + q * .5 + .25, .05 if quiet else .07)
@@ -99,21 +99,22 @@ if piece == 'tour':
     for s_, n in ((4.9, 84), (5.4, 86)): pluck(n, s_, .13, .3)
     for i, s_ in enumerate((5.9, 6.15, 6.4, 6.65, 6.9, 7.15, 7.4)): pluck([77, 79, 81, 84, 86, 88, 89][i], s_, .11, .12)
     pluck(96, 7.9, .1, .4)
-    # A tap, the launch, the app's screen arriving: the pause (9.9) and the block (14.4); then a plain tap on Start Sleep (22.4).
+    # Taps: Reels (10.9, the step back at 11.4), the launch then the pause (15.9) and the block (25.4), and Start Sleep (31.4).
     hp = butter(2, 3000, 'hp', fs=SR, output='sos')
-    for tap in (9.9, 14.4, 22.4):
+    pluck(81, 12.4, .12, .5); pluck(74, 12.4, .08, .6)
+    for tap in (10.9, 15.9, 25.4, 31.4):
         seg = np.arange(int(.03 * SR)) / SR; put('fx', tap, .25 * sosfilt(hp, rnd.standard_normal(len(seg))) * np.exp(-seg / .004))
-        if tap < 20:
-            seg = np.arange(int(.35 * SR)) / SR; sw = sosfilt(butter(2, [800, 5000], 'bp', fs=SR, output='sos'), rnd.standard_normal(len(seg)))
-            put('fx', tap + .15, .07 * sw * np.sin(np.pi * seg / .35) ** 2)
-            pluck(81, tap + .45, .14, .5); pluck(69, tap + .45, .1, .6)
+        if tap in (15.9, 25.4):
+            seg = np.arange(int(.5 * SR)) / SR; sw = sosfilt(butter(2, [800, 5000], 'bp', fs=SR, output='sos'), rnd.standard_normal(len(seg)))
+            put('fx', tap + .15, .07 * sw * np.sin(np.pi * seg / .5) ** 2)
+            pluck(81, tap + .65, .14, .5); pluck(69, tap + .65, .1, .6)
     # Words and numbers changing on the beat.
-    for s_, n in ((11.4, 84), (12.4, 86), (17.4, 84), (18.4, 89), (20.4, 84), (21.4, 81)): pluck(n, s_, .13, .3)
-    # 23.9 s, Goodnight: home to F, and it rings out under the fade to black; three soft notes under the end card.
-    END = T0 + 10 * BAR
+    for s_, n in ((17.9, 84), (18.9, 86), (21.4, 89), (22.4, 84), (29.4, 81), (30.4, 84)): pluck(n, s_, .13, .3)
+    # 33.9 s, the phone gives way to the night: home to F, and it rings out under the fade to black; three soft notes under the end card.
+    END = T0 + 15 * BAR
     chord([29, 41, 48, 57, 60, 65, 69], END, 5.5, .24)
     piano(81, END + .05, 3.0, .11)
-    for i, n in enumerate([81, 77, 72]): pluck(n, 27.4 + i * .5, .08, .7)
+    for i, n in enumerate([81, 77, 72]): pluck(n, 37.4 + i * .5, .08, .7)
     # A soft pad holds the F under the fade to black, so the night rings out instead of stopping.
     seg = np.arange(int(5.9 * SR)) / SR
     env = np.clip(seg / .6, 0, 1) * np.clip((5.9 - seg) / 2.8, 0, 1) ** 1.5
