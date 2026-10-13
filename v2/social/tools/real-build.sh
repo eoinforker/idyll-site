@@ -7,7 +7,7 @@ set -e
 FMT=${1:?story or square}; FURL=${2:?frames url}; OUT=${3:?out.mp4}; WORK=${4:-$(mktemp -d)}
 HERE=${0:A:h}
 H=1920; [[ $FMT == square ]] && H=1080
-DUR=37.1
+DUR=33.0
 mkdir -p "$WORK"; rm -rf "$WORK/frames-$FMT"
 FRAMES=jpeg node "$HERE/render.mjs" video "http://127.0.0.1:8765/v2/social/real.html?fmt=$FMT&f=$FURL" "$WORK/frames-$FMT" 30 $DUR 1080 $H | tail -1
 [[ -f "$WORK/real.wav" ]] || python3 "$HERE/score.py" real "$WORK/real.wav"
