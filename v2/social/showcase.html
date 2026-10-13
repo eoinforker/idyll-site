@@ -49,6 +49,18 @@ canvas { display: block; position: absolute; }
 .paper .grain { opacity: .2; }
 .card { position: absolute; left: 110px; width: 860px; background: var(--cream); border: 3px solid var(--ink); }
 /* The list in Keep your people: what stays gets a tick, what goes gets struck through in the app's way. */
+/* A plain phone home screen: brand tiles as a launcher shows them, a tap, then the app's launch zoom. */
+.lau { position: absolute; inset: 0; z-index: 4; background: #e9e3d9; color: #1c1b1f; font-family: var(--sans); }
+.lau .clk { position: absolute; left: 0; right: 0; text-align: center; font-weight: 300; letter-spacing: -.04em; }
+.lau .day { position: absolute; left: 0; right: 0; text-align: center; opacity: .7; }
+.lau .grid { position: absolute; display: grid; grid-template-columns: repeat(4, 1fr); }
+.lau .ap { display: grid; justify-items: center; }
+.lau .tl { position: relative; border-radius: 26%; overflow: hidden; box-shadow: 0 2px 6px rgba(20,20,22,.12); }
+.lau .tl i { position: absolute; inset: 0; -webkit-mask: var(--m) center / 56% no-repeat; mask: var(--m) center / 56% no-repeat; }
+.lau .tl img { width: 100%; height: 100%; display: block; }
+.lau .lb { opacity: .8; white-space: nowrap; }
+.tap { position: absolute; border-radius: 50%; z-index: 7; pointer-events: none; }
+.splash { position: absolute; z-index: 6; background: #fff; }
 .li { position: absolute; left: 110px; right: 80px; font: 500 104px/1 var(--sans); letter-spacing: -.05em; z-index: 20; white-space: nowrap; }
 .li .tk { display: inline-block; width: 74px; height: 74px; margin-right: 26px; vertical-align: -6px; }
 .li .st { position: absolute; left: -10px; top: 52%; height: 11px; background: var(--pink); transform-origin: 0 50%; }
@@ -76,20 +88,21 @@ canvas { display: block; position: absolute; }
 
   /* Scenes push in from below: the new plate is revealed bottom up while the old one rides up and away. */
   const scenes = [];
-  const scene = (cls, at) => {
+  const scene = (cls, at, fade = 0) => {
     const s = mk(stage, `<section class="scene ${cls}"><div class="in"></div><div class="crop"></div><div class="grain"></div></section>`);
-    const o = { s, in: s.firstElementChild, at }; scenes.push(o); return o;
+    const o = { s, in: s.firstElementChild, at, fade }; scenes.push(o); return o;
   };
   const PUSH = .75;
   function drawScenes(t) {
     scenes.forEach((o, i) => {
       const next = scenes[i + 1];
-      const vis = t >= o.at && (!next || t < next.at + PUSH);
+      const vis = t >= o.at && (!next || t < next.at + (next.fade || PUSH));
       o.s.style.display = vis ? 'block' : 'none';
       if (!vis) return;
+      if (o.fade) { o.s.style.opacity = io((t - o.at) / o.fade).toFixed(3); o.s.style.clipPath = 'none'; o.in.style.transform = 'none'; return; }
       const k = i === 0 ? 1 : io((t - o.at) / PUSH);
       o.s.style.clipPath = k < 1 ? `inset(${((1 - k) * 100).toFixed(3)}% 0 0 0)` : 'none';
-      const away = next ? io((t - next.at) / PUSH) : 0;
+      const away = next && !next.fade ? io((t - next.at) / PUSH) : 0;
       o.in.style.transform = `translateY(${((1 - k) * H * .22 - away * H * .27).toFixed(2)}px)`;
     });
   }
@@ -215,8 +228,8 @@ canvas { display: block; position: absolute; }
   }
 
   /* The end card: the family cygnet prints in, Idyll., where it runs, and the address. */
-  async function endCard(cls, at, water) {
-    const S = scene(cls, at), p = S.in;
+  async function endCard(cls, at, water, fade = 0) {
+    const S = scene(cls, at, fade), p = S.in;
     const L = SQ ? { pw: 600, py: 130, ty: 490, ts: 200, py2: 735, url: 845, us: 70 } : { pw: 780, py: 480, ty: 970, ts: 240, py2: 1250, url: 1370, us: 84 };
     const pr = await print(p, 'family', L.pw, L.py, { ink: C.cream, water, seed: 21, dur: 1.1 });
     const stop = cls === 'magenta' ? 'ik' : 'pk';
@@ -231,10 +244,51 @@ canvas { display: block; position: absolute; }
 
   const pieces = {};
 
-  /* The tour, 19.5 s. Music: ticks speed up under the feed, a dead stop at 2.5 s, a pickup at 2.9 s, then 120 bpm
-     from 3.9 s, so scenes and every number change land on a beat; home to F on the end card at 15.9 s. */
+  /* A launcher inside a screen frame. tap(t, at) taps the target tile at `at`, presses it, and zooms the launch
+     open (about 0.3 s, a plain splash), then fades the whole cover away at `reveal` to show the app's real screen. */
+  const APPS = [['instagram', 'linear-gradient(45deg,#f9b23d,#e1306c 50%,#8a3ab9)', '#fff'], ['youtube', '#fff', '#ff0033'], ['tiktok', '#000', '#fff'], ['x', '#000', '#fff'],
+    ['reddit', '#ff4500', '#fff'], ['snapchat', '#fffc00', '#111'], ['facebook', '#0866ff', '#fff'], ['linkedin', '#0a66c2', '#fff'],
+    ['threads', '#000', '#fff'], ['discord', '#5865f2', '#fff'], ['substack', '#ff6719', '#fff'], ['idyll', '', '']];
+  const NAMES = { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', x: 'X', reddit: 'Reddit', snapchat: 'Snapchat', facebook: 'Facebook', linkedin: 'LinkedIn', threads: 'Threads', discord: 'Discord', substack: 'Substack', idyll: 'Idyll' };
+  function launcher(sh, target) {
+    const w = sh.w, ts = Math.round(w * .155), gx = Math.round(w * .07);
+    const tiles = APPS.map(([n, bg, fg]) => `<div class="ap" data-n="${n}"><div class="tl" style="width:${ts}px;height:${ts}px;background:${bg || '#fff'}">${n === 'idyll' ? `<img src="../../img/icon.png" alt="">` : `<i style="--m:url(../../img/brands/${n}.svg);background:${fg}"></i>`}</div><span class="lb" style="font-size:${Math.round(w * .03)}px;margin-top:${Math.round(w * .016)}px">${NAMES[n]}</span></div>`).join('');
+    const el = mk(sh.el, `<div class="lau"><p class="clk" style="top:${Math.round(w * .2)}px;font-size:${Math.round(w * .2)}px">10:24</p><p class="day" style="top:${Math.round(w * .43)}px;font-size:${Math.round(w * .036)}px">Tuesday 14 October</p>
+      <div class="grid" style="left:${gx}px;right:${gx}px;top:${Math.round(sh.h - w * 1.02)}px;row-gap:${Math.round(w * .06)}px">${tiles}</div></div>`);
+    const tile = el.querySelector(`[data-n="${target}"] .tl`);
+    const dot = mk(sh.el, `<i class="tap" style="background:rgba(20,20,22,.28)"></i>`), ring = mk(sh.el, `<i class="tap" style="border:${Math.round(w * .008)}px solid rgba(20,20,22,.45)"></i>`);
+    const sp = mk(sh.el, `<div class="splash" style="opacity:0"></div>`);
+    let r = null;
+    return (t, at, reveal) => {
+      if (!r) { const a = tile.getBoundingClientRect(), f = sh.el.getBoundingClientRect(), k = f.width / sh.el.offsetWidth || 1; r = { x: (a.left - f.left) / k, y: (a.top - f.top) / k, s: a.width / k }; }
+      const cx = r.x + r.s / 2, cy = r.y + r.s / 2, d = r.s * 1.1;
+      const tp = (t - at) / .45;
+      dot.style.cssText += `;left:${cx - d / 2}px;top:${cy - d / 2}px;width:${d}px;height:${d}px;opacity:${tp > 0 && tp < 1 ? ((1 - tp) * .9).toFixed(3) : 0};transform:scale(${(.6 + .5 * clamp(tp)).toFixed(3)})`;
+      ring.style.cssText += `;left:${cx - d / 2}px;top:${cy - d / 2}px;width:${d}px;height:${d}px;opacity:${tp > 0 && tp < 1 ? (1 - tp).toFixed(3) : 0};transform:scale(${(.7 + .9 * out3(tp)).toFixed(3)})`;
+      const pr = t < at ? 0 : t < at + .12 ? (t - at) / .12 : 1 - clamp((t - at - .12) / .1);
+      tile.style.transform = `scale(${(1 - .1 * pr).toFixed(3)})`;
+      /* The launch: the splash grows from the icon to the whole screen in 0.3 s. */
+      const lk = io((t - at - .15) / .3);
+      if (t < at + .15) sp.style.opacity = 0; else {
+        sp.style.opacity = 1;
+        sp.style.left = lerp(r.x, 0, lk) + 'px'; sp.style.top = lerp(r.y, 0, lk) + 'px';
+        sp.style.width = lerp(r.s, sh.w, lk) + 'px'; sp.style.height = lerp(r.s, sh.h, lk) + 'px';
+        sp.style.borderRadius = lerp(r.s * .26, 0, lk) + 'px';
+      }
+      /* Then Idyll's own screen arrives over it. */
+      const rv = clamp((t - reveal) / .18), o = (1 - rv).toFixed(3);
+      el.style.opacity = o; sp.style.opacity = t < at + .15 ? 0 : o;
+      return rv;
+    };
+  }
+  /* A caption that cuts between lines on the beat, with a small lift as each one lands. */
+  const cutCap = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); if (el.dataset.i !== String(i)) { el.innerHTML = list[i]; el.dataset.i = i; } return i; };
+
+  /* The tour, 30 s. Music: ticks speed up under the feed, a dead stop at 2.5 s, a pickup at 2.9 s, then 120 bpm
+     from 3.9 s: every scene, tap and change lands on a beat. Goodnight lands on the home chord at 23.9 s, which rings
+     out under the fade to black and the end card. */
   pieces.tour = async () => {
-    const DUR = 19.5;
+    const DUR = 30;
     /* 0: the feed runs, faster and faster, then stops dead. */
     const S0 = scene('blue', 0);
     const vp = mk(S0.in, `<div style="position:absolute;left:0;right:0;top:${SQ ? 330 : 560}px;bottom:0;overflow:hidden;z-index:12"><div style="position:absolute;left:0;right:0;top:0;will-change:transform"></div></div>`);
@@ -246,32 +300,62 @@ canvas { display: block; position: absolute; }
     const STOP = 2.5;
     const yAt = t => { const u = Math.min(t, STOP); return 700 * u + 1250 * u * u; };
     const both = (S, html, size) => SQ ? sideCap(S.in, html, size) : cap(S.in, html, 300);
-    /* 3.9: YouTube in Idyll, Shorts gone. */
+    /* 3.9: the apps flick past on the beat, each on Idyll's own page for it, with what's gone. */
     const S1 = scene('magenta', 3.9);
-    const c2 = both(S1, `YouTube<b class="ik">.</b><br>No Shorts<b class="ik">.</b>`);
-    const yt = place(S1.in, 'youtube');
+    /* Three held on the beat with their own line, then the other seven on eighth notes under one line, then back to YouTube. */
+    const SITES = ['youtube', 'instagram', 'tiktok', 'reddit', 'x', 'facebook', 'snapchat', 'threads', 'linkedin', 'substack'];
+    const FLICK = [3.9, 4.9, 5.4, 5.9, 6.15, 6.4, 6.65, 6.9, 7.15, 7.4, 7.9];
+    const ten = 'Ten apps<b class="ik">.</b><br>Your people stay<b class="ik">.</b>';
+    const appCaps = ['YouTube<b class="ik">.</b><br>No Shorts<b class="ik">.</b>', 'Instagram<b class="ik">.</b><br>No Reels<b class="ik">.</b>', 'TikTok<b class="ik">.</b><br>No For You<b class="ik">.</b>', ten, ten, ten, ten, ten, ten, ten, ten];
+    const c2 = both(S1, appCaps[0], 84);
+    const yt = place(S1.in, 'site-youtube');
+    const ytv = variants(yt, SITES.map(n => 'site-' + n));
     const strip = mk(yt.el, `<img src="showcase-shots/removed.png" alt="" style="position:absolute;left:3.33%;bottom:${SQ ? 18 : 28}px;width:93.33%;z-index:3">`);
-    /* 5.9: an app opens, and Idyll's pause comes first, in your own words, which change on the beat. */
-    const S2 = scene('paper', 5.9);
-    const c3 = both(S2, `Your words<br>first<b class="pk">.</b>`);
+    /* 8.9: open Instagram, and Idyll's pause comes first, in your own words. */
+    const S2 = scene('paper', 8.9);
+    const c3a = both(S2, `Open<br>Instagram<b class="pk">.</b>`), c3 = both(S2, `Your words<br>first<b class="pk">.</b>`);
     const pz = place(S2.in, 'pause-1');
     const pzv = variants(pz, ['pause-1', 'pause-2', 'pause-3']);
-    const tw = SQ ? 440 : 680, tile = mk(pz.el, `<div style="position:absolute;inset:0;z-index:4;background:var(--cream);display:grid;place-items:center"><canvas style="position:relative;width:${Math.round(tw * .42)}px;height:${Math.round(tw * .42)}px"></canvas></div>`);
-    S2.s.style.display = 'block'; /* print.js measures the canvas, so it needs the scene laid out while it samples. */
-    const ig = await Print(tile.firstElementChild, { kind: 'mark', b: 'instagram', ink: C.ink, strike: null, n: 22, seed: 4 });
-    S2.s.style.display = 'none';
-    /* 9.9: Focus, the length stepping 25, 50, 90 on the beat. */
-    const S3 = scene('magenta', 9.9);
-    const c4 = both(S3, `Focus for<br><span class="n">25</span> minutes<b class="ik">.</b>`, 84);
-    const fo = place(S3.in, 'focus-25');
+    const lp = launcher(pz, 'instagram');
+    /* 13.4: open YouTube during Focus, and it's paused. */
+    const S3 = scene('blue', 13.4);
+    const c4a = SQ ? sideCap(S3.in, `Open YouTube<br>during Focus<b class="pk">.</b>`, 76) : cap(S3.in, `Open YouTube<br>during Focus<b class="pk">.</b>`, 300), c4 = both(S3, `Paused<b class="pk">.</b>`);
+    const bk = place(S3.in, 'block-focus');
+    const lb = launcher(bk, 'youtube');
+    /* 16.4: Focus, the length stepping 25, 50, 90. */
+    const S4 = scene('magenta', 16.4);
+    const c5 = both(S4, `Focus for<br><span class="n">25</span> minutes<b class="ik">.</b>`, 84);
+    const fo = place(S4.in, 'focus-25');
     const fov = variants(fo, ['focus-25', 'focus-50', 'focus-90']);
-    /* 12.9: Sleep, the bedtime stepping 22:30, 23:00, 00:00. */
-    const S4 = scene('night', 12.9);
-    const c5 = both(S4, `Sleep<br>at <span class="n">22:30</span><b class="pk">.</b>`);
-    const sl = place(S4.in, 'sleep-2230');
-    const slv = variants(sl, ['sleep-2230', 'sleep-2300', 'sleep-0000']);
-    /* 15.9: the end card, on the resolving chord. */
-    const end = await endCard('blue', 15.9, C.pink);
+    /* 19.4: Sleep, the bedtime stepping 22:30, 23:00, 00:00; then a tap on Start Sleep, and the app goes to Goodnight. */
+    const S5 = scene('night', 19.4);
+    const c6 = both(S5, `Sleep<br>at <span class="n">22:30</span><b class="pk">.</b>`);
+    const sl = place(S5.in, 'sleep-2230');
+    const slv = variants(sl, ['sleep-2230', 'sleep-2300', 'sleep-0000', 'goodnight-dark']);
+    const sk = sl.w / 1080, sPan = SQ ? 40 : 210;
+    const sDot = mk(sl.el, `<i class="tap" style="background:rgba(255,246,238,.35);z-index:8"></i>`), sRing = mk(sl.el, `<i class="tap" style="border:5px solid rgba(255,246,238,.7);z-index:8"></i>`);
+    const gImg = sl.el.querySelectorAll('img')[3];
+    const dip = mk(sl.el, `<div style="position:absolute;inset:0;background:#141416;opacity:0;z-index:3"></div>`);
+    /* 22.9: Goodnight, full bleed on black. It holds, the words and buttons fade, the cygnet breathes, the moon shimmers. */
+    const S6 = scene('night', 22.9, .5);
+    const G = SQ ? { k: .63, top: (1080 - 1584 * .63) / 2 - 258 * .63 } : { k: .8, top: (1920 - 1981 * .8) / 2 - 258 * .8 };
+    const gw = Math.round(1080 * G.k), gx = Math.round((W - gw) / 2);
+    const gn = mk(S6.in, `<div style="position:absolute;left:${gx}px;top:${G.top.toFixed(1)}px;width:1080px;height:2340px;transform:scale(${G.k});transform-origin:0 0;z-index:12">
+      <img src="showcase-shots/goodnight-dark.png" alt="" style="position:absolute;left:0;top:0;width:1080px">
+      <div class="gcov" style="position:absolute;left:0;top:240px;width:1080px;height:890px;background:#141416"></div>
+      <div class="gmoon" style="position:absolute;left:0;top:240px;width:1080px;height:380px;overflow:hidden"><img src="showcase-shots/goodnight-dark.png" alt="" style="position:absolute;left:0;top:-240px;width:1080px"><img class="glow" src="showcase-shots/goodnight-dark.png" alt="" style="position:absolute;left:0;top:-240px;width:1080px;filter:brightness(1.6) saturate(1.2);opacity:0"></div>
+      <div class="gcyg" style="position:absolute;left:0;top:700px;width:1080px;height:430px;overflow:hidden;transform-origin:540px 417px"><img src="showcase-shots/goodnight-dark.png" alt="" style="position:absolute;left:0;top:-700px;width:1080px"><img class="glow" src="showcase-shots/goodnight-dark.png" alt="" style="position:absolute;left:0;top:-700px;width:1080px;filter:brightness(1.25);opacity:0"></div>
+      <div class="gtext" style="position:absolute;left:0;top:1235px;width:1080px;height:1105px;background:#141416;opacity:0"></div></div>`);
+    const moon = gn.querySelector('.gmoon'), cyg = gn.querySelector('.gcyg'), gtext = gn.querySelector('.gtext');
+    const [moonGlow, cygGlow] = gn.querySelectorAll('.glow');
+    /* 27: the end card, on black, as the chord rings out. */
+    const end = await endCard('night', 27, C.blue, .7);
+
+    /* The launcher's glyphs are CSS masks, which the image wait doesn't cover: load them first. */
+    await Promise.all(APPS.filter(([n]) => n !== 'idyll').map(([n]) => load(`../../img/brands/${n}.svg`)));
+    await new Promise(r => setTimeout(r, 300));
+    /* A frame that rises in, holds still while the launcher plays, then leans in once the app's screen shows. */
+    const rise = (sh, t, at, rv, zTo, oy) => { const k = out5((t - at) / 1.0); pose(sh, { y: (1 - k) * 1100, z: 1 + (zTo - 1) * sine(rv), oy }); };
 
     return [DUR, t => {
       const v = t < STOP ? 700 + 2500 * t : 0;
@@ -281,21 +365,40 @@ canvas { display: block; position: absolute; }
       col.style.filter = bl > .2 ? 'url(#vblur)' : 'none';
       land(c0, t, -1, .5, 24); if (t >= STOP) c0.style.opacity = 0;
       const kc = out5((t - STOP) / .35); c1.style.opacity = t >= STOP ? 1 : 0; c1.style.transform = `scale(${(1.08 - .08 * kc).toFixed(4)})`;
+      /* Apps: hard cuts on the beat, caption and page together. The strip is real only on YouTube. */
       land(c2, t, 4.2, .5);
-      glide(yt, t, 4.05, 1.9, { z: [1, 1.04] });
-      const ks = out5((t - 4.9) / .55); strip.style.transform = `translateY(${((1 - ks) * 140).toFixed(2)}%)`;
-      /* The app tile prints, swells as if opening, and gives way to the pause. */
-      land(c3, t, 6.2, .5);
-      glide(pz, t, 6.05, 1.4, { z: [1, 1.2], oy: SQ ? 330 : 520 });
-      ig.paint((t - 6.1) * 1000);
-      const ko = io((t - 6.75) / .45); tile.style.opacity = (1 - ko).toFixed(3); tile.firstElementChild.style.transform = `scale(${(1 + 1.6 * ko).toFixed(3)})`;
-      pzv(t < 7.4 ? 0 : t < 8.4 ? 1 : 2);
-      land(c4, t, 10.2, .5); swapCap(c4, ['25', '50', '90'], [0, 10.9, 11.9], t);
-      glide(fo, t, 10.05, 2.8, { z: [1, 1.04], oy: SQ ? 300 : 460, r: -2 });
-      fov(t < 10.9 ? 0 : t < 11.9 ? 1 : 2);
-      land(c5, t, 13.2, .5); swapCap(c5, ['22:30', '23:00', '00:00'], [0, 13.9, 14.9], t);
-      glide(sl, t, 13.05, 2.8, { z: [1, 1.04], oy: SQ ? 300 : 520, r: 2 });
-      slv(t < 13.9 ? 0 : t < 14.9 ? 1 : 2);
+      const ai = cutCap(c2, appCaps, FLICK, t);
+      glide(yt, t, 4.05, 5.6, { z: [1, 1.04] }); ytv(ai === 10 ? 0 : ai);
+      const ks = out5((t - (ai === 10 ? 8.05 : 4.35)) / .5); strip.style.transform = `translateY(${((1 - ks) * 140).toFixed(2)}%)`; strip.style.opacity = ai === 0 || ai === 10 ? 1 : 0;
+      /* Open, then pause: tap on the beat at 9.9, the launch, the pause at 10.35, the words change at 11.4 and 12.4. */
+      land(c3a, t, 9.15, .5); leave(c3a, t, 10.15, .2); land(c3, t, 10.4, .45);
+      lp(t, 9.9, 10.35); rise(pz, t, 9.05, clamp((t - 10.4) / 1.4), 1.2, SQ ? 330 : 520);
+      pzv(t < 11.4 ? 0 : t < 12.4 ? 1 : 2);
+      /* Open during Focus, then paused: tap at 14.4, the block screen at 14.85. */
+      land(c4a, t, 13.65, .5); leave(c4a, t, 14.65, .2); land(c4, t, 14.9, .45);
+      lb(t, 14.4, 14.85); rise(bk, t, 13.55, clamp((t - 14.9) / 1.4), 1.12, SQ ? 300 : 480);
+      land(c5, t, 16.7, .5); swapCap(c5, ['25', '50', '90'], [0, 17.4, 18.4], t);
+      glide(fo, t, 16.55, 2.8, { z: [1, 1.04], oy: SQ ? 300 : 460, r: -2 });
+      fov(t < 17.4 ? 0 : t < 18.4 ? 1 : 2);
+      /* Sleep: the steps, then the page scrolls to Start Sleep, a tap at 22.4, and the app turns to Goodnight. */
+      land(c6, t, 19.7, .5); swapCap(c6, ['22:30', '23:00', '00:00'], [0, 20.4, 21.4], t); leave(c6, t, 22.55, .3);
+      const sp = sPan * io((t - 21.7) / .55), kr = out5((t - 19.55) / 1.0);
+      pose(sl, { y: (1 - kr) * 1100, r: (1 - kr) * 2, pan: sp });
+      slv(t < 20.4 ? 0 : t < 21.4 ? 1 : 2);
+      /* The page dips to night, then Goodnight comes up out of it. */
+      dip.style.opacity = clamp((t - 22.5) / .12).toFixed(3);
+      gImg.style.opacity = sine((t - 22.62) / .25).toFixed(3); gImg.style.zIndex = 4;
+      const bx = 540 * sk, by = 2045 * sk - sp, d = 150 * sk * 1.1, tp = (t - 22.4) / .3;
+      for (const [e, op, sc] of [[sDot, tp > 0 && tp < 1 ? (1 - tp) * .9 : 0, .6 + .5 * clamp(tp)], [sRing, tp > 0 && tp < 1 ? 1 - tp : 0, .7 + .9 * out3(tp)]])
+        e.style.cssText += `;left:${bx - d / 2}px;top:${by - d / 2}px;width:${d}px;height:${d}px;opacity:${op.toFixed(3)};transform:scale(${sc.toFixed(3)})`;
+      /* Goodnight: hold, then the words go softly, leaving the moon and the sleeping cygnet; then all to black. */
+      gtext.style.opacity = sine((t - 24.0) / 1.0).toFixed(3);
+      const br = (t - 22.9) / 3.1 * Math.PI * 2;
+      cyg.style.transform = `translateY(${(-4 * Math.sin(br)).toFixed(2)}px) scale(${(1 + .012 * Math.sin(br)).toFixed(4)})`;
+      cygGlow.style.opacity = (.12 * (.5 + .5 * Math.sin(br * .5 + 1))).toFixed(3);
+      moonGlow.style.opacity = (.22 * (.5 + .5 * Math.sin((t - 22.9) * 2.1)) * (.6 + .4 * Math.sin((t - 22.9) * 3.7 + 2))).toFixed(3);
+      moon.style.transform = `scale(${(1 + .006 * Math.sin((t - 22.9) * 1.3)).toFixed(4)})`;
+      gn.style.opacity = (1 - sine((t - 25.8) / 1.2)).toFixed(3);
       end(t);
     }];
   };

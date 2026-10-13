@@ -1,6 +1,6 @@
 # Music for the two Idyll showcase videos, synthesised from scratch (sine partials and filtered noise).
 # Extends the felt-piano bed used in the 10 s ads with a marimba-like pluck, a soft bass, a soft kick and a shaker.
-#   python3 score.py tour out.wav     (19.5 s)
+#   python3 score.py tour out.wav     (30.0 s)
 #   python3 score.py keep out.wav     (16.0 s)
 import sys, wave
 import numpy as np
@@ -8,7 +8,7 @@ from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
 piece, out = sys.argv[1], sys.argv[2]
-DUR = {'tour': 19.5, 'keep': 16.0}[piece]
+DUR = {'tour': 30.0, 'keep': 16.0}[piece]
 N = int(SR * DUR)
 t = np.arange(N) / SR
 bus = {k: np.zeros(N) for k in ('piano', 'pluck', 'bass', 'drums', 'fx')}
@@ -73,31 +73,52 @@ if piece == 'tour':
     put('fx', 0, .2 * sw * (seg / STOP) ** 2)
     # The stop: one soft low thump into silence, then the piano picks it up.
     kick(STOP, .8)
-    # 2.9 s: a soft pickup chord out of the silence. From 3.9 s, 120 bpm, a bar every 2 s, so each scene lands on a downbeat.
+    # 2.9 s: a soft pickup chord out of the silence. From 3.9 s, 120 bpm, a bar every 2 s: every scene, tap and change sits on the grid.
     chord([40, 52, 55, 60, 64], 2.9, 1.0, .2)
     T0, BAR = 3.9, 2.0
     prog = [([41, 53, 57, 60, 64], 29), ([40, 52, 55, 60, 64], 28), ([38, 50, 53, 57, 60], 26), ([46, 50, 57, 60, 65], 34),
-            ([43, 50, 55, 58, 65], 31), ([36, 48, 55, 58, 64], 36)]
-    arp = [[72, 69, 64, 69, 72, 76, 72, 69], [72, 67, 64, 67, 72, 76, 72, 67], [74, 69, 65, 69, 74, 77, 74, 69], [74, 69, 65, 69, 74, 77, 74, 72],
-           [74, 70, 67, 70, 74, 79, 74, 70], [72, 70, 67, 70, 72, 76, 79, 76]]
-    mel = {0: [(76, 0)], 1: [(76, 0), (74, 1)], 2: [(77, 0), (76, 1)], 3: [(74, 0), (72, 1)], 4: [(74, 0), (77, 1)], 5: [(76, 0), (79, 1)]}
+            ([45, 53, 57, 60, 64], 33), ([43, 50, 55, 58, 65], 31), ([46, 50, 57, 62, 65], 34), ([38, 50, 53, 57, 62], 26),
+            ([46, 50, 53, 58, 62], 34), ([36, 48, 53, 55, 60], 36)]
+    mel = {0: [(76, 0)], 2: [(77, 0), (76, 1)], 6: [(77, 0), (76, 1)], 7: [(77, 0), (79, 1)], 8: [(77, 0), (74, 1)], 9: [(72, 0), (76, 1)]}
     for b, (ch, bn) in enumerate(prog):
         at = T0 + b * BAR
-        chord(ch, at, 1.9, .2)
-        bass(bn + 12 if bn < 33 else bn, at, 1.8, .34)
-        for i, n in enumerate(arp[b]): pluck(n, at + i * .25, (.16 if i % 2 == 0 else .11))
-        for q in range(4):
-            if q in (0, 2): kick(at + q * .5, .42)
-            shaker(at + q * .5 + .25, .07)
+        chord(ch, at, 1.9, .2 if b < 9 else .17)
+        if b == 9: chord([36, 48, 52, 55, 58, 64], at + 1.0, .9, .14)  # the sus resolves to C7, then home.
+        bass(bn + 12 if bn < 33 else bn, at, 1.8, .34 if b < 9 else .26)
+        up = sorted(n + 12 for n in ch if n >= 50)[:4]
+        while len(up) < 4: up.append(up[len(up) - 3] + 12)
+        pat = [up[2], up[1], up[0], up[1], up[2], up[3], up[2], up[1]]
+        quiet = b in (3, 4, 9)  # the open and pause, and the last bar before night: room for the taps and words
+        for i, n in enumerate(pat): pluck(n, at + i * .25, (.15 if i % 2 == 0 else .1) * (.6 if quiet else 1))
+        if b <= 8:
+            for q in range(4):
+                if q == 0 or (q == 2 and not quiet): kick(at + q * .5, .42)
+                shaker(at + q * .5 + .25, .05 if quiet else .07)
         for n, off in mel.get(b, []): piano(n + 12, at + off, 1.3, .13)
-    # A light bell where the words and numbers change on screen.
-    for s_, n in ((7.4, 84), (8.4, 86), (10.9, 84), (11.9, 89), (13.9, 84), (14.9, 81)): pluck(n, s_, .13, .3)
-    pluck(96, 6.75, .07, .05)
-    # 15.9 s, the end card: home to F, held, with three falling notes.
-    END = T0 + 6 * BAR
-    chord([29, 41, 48, 57, 60, 65, 69], END, 3.2, .24); kick(END, .5)
-    piano(81, END + .05, 2.0, .12)
-    for i, n in enumerate([81, 77, 72]): pluck(n, END + .5 + i * .5, .1, .5)
+    # The app run: a bell on each held page, then a rising run on the eighth-note flicks, and a settle back on YouTube.
+    for s_, n in ((4.9, 84), (5.4, 86)): pluck(n, s_, .13, .3)
+    for i, s_ in enumerate((5.9, 6.15, 6.4, 6.65, 6.9, 7.15, 7.4)): pluck([77, 79, 81, 84, 86, 88, 89][i], s_, .11, .12)
+    pluck(96, 7.9, .1, .4)
+    # A tap, the launch, the app's screen arriving: the pause (9.9) and the block (14.4); then a plain tap on Start Sleep (22.4).
+    hp = butter(2, 3000, 'hp', fs=SR, output='sos')
+    for tap in (9.9, 14.4, 22.4):
+        seg = np.arange(int(.03 * SR)) / SR; put('fx', tap, .25 * sosfilt(hp, rnd.standard_normal(len(seg))) * np.exp(-seg / .004))
+        if tap < 20:
+            seg = np.arange(int(.35 * SR)) / SR; sw = sosfilt(butter(2, [800, 5000], 'bp', fs=SR, output='sos'), rnd.standard_normal(len(seg)))
+            put('fx', tap + .15, .07 * sw * np.sin(np.pi * seg / .35) ** 2)
+            pluck(81, tap + .45, .14, .5); pluck(69, tap + .45, .1, .6)
+    # Words and numbers changing on the beat.
+    for s_, n in ((11.4, 84), (12.4, 86), (17.4, 84), (18.4, 89), (20.4, 84), (21.4, 81)): pluck(n, s_, .13, .3)
+    # 23.9 s, Goodnight: home to F, and it rings out under the fade to black; three soft notes under the end card.
+    END = T0 + 10 * BAR
+    chord([29, 41, 48, 57, 60, 65, 69], END, 5.5, .24)
+    piano(81, END + .05, 3.0, .11)
+    for i, n in enumerate([81, 77, 72]): pluck(n, 27.4 + i * .5, .08, .7)
+    # A soft pad holds the F under the fade to black, so the night rings out instead of stopping.
+    seg = np.arange(int(5.9 * SR)) / SR
+    env = np.clip(seg / .6, 0, 1) * np.clip((5.9 - seg) / 2.8, 0, 1) ** 1.5
+    pad = sum(a_ * np.sin(2 * np.pi * midi(n) * seg + n) * (1 + .002 * np.sin(2 * np.pi * .3 * seg + n)) for n, a_ in ((41, .5), (48, .35), (57, .25), (60, .2), (65, .15)))
+    put('fx', END + .1, .09 * env * pad)
 else:
     # 120 bpm from the first frame, a bar every 2 s, D major. Fuller: kick, clap, shaker, bass from bar 2.
     BAR = 2.0
