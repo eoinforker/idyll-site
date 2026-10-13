@@ -298,13 +298,13 @@ canvas { display: block; position: absolute; }
     return t => { t = clamp(t); if (t === 0 || t === 1) return t; let s = t; for (let i = 0; i < 8; i++) { const d = dX(s); if (Math.abs(d) < 1e-6) break; s -= (X(s) - t) / d; } return Y(clamp(s)); }; })();
   const D = { xs: .15, s: .3, m: .6, l: 1.2 };
   /* The frame: a whole phone screen at true proportions (360 x 780 dp), the same size and place in every scene. */
-  /* Story: one large phone, 780 x 1690 at true proportions, resting at y 504 and running off the bottom edge (Instagram Stories). */
-  const FR = SQ ? { x: 580, y: 102, w: 404, h: 876, r: 30, sh: 11 } : { x: 150, y: 504, w: 780, h: 1690, r: 58, sh: 18 };
+  /* Story: one whole phone, 650 x 1408 at true 360 x 780 proportions, centred, always fully in frame. */
+  const FR = SQ ? { x: 580, y: 102, w: 404, h: 876, r: 30, sh: 11 } : { x: 215, y: 448, w: 650, h: 1408, r: 48, sh: 16 };
   const U = FR.w / 360; /* px per dp inside the frame */
-  /* Captions: 84/88 in a story, one line, centred, in the band y 374 to 462, 42 px above the phone; 68/72 in a square, left column, bottoms on y 560. */
+  /* Captions: 84/88 in a story, one line, centred, centred, one or two lines, bottoms on y 410 above the phone; 68/72 in a square, left column, bottoms on y 560. */
   const tcap = (S, html) => mk(S.in, SQ
     ? `<h1 class="cap l" style="left:96px;right:auto;width:450px;top:auto;bottom:${H - 560}px;font-size:68px;line-height:72px;letter-spacing:-.045em">${html}</h1>`
-    : `<h1 class="cap" style="left:60px;right:60px;top:374px;font-size:84px;line-height:88px;letter-spacing:-.045em;white-space:nowrap">${html.replace(/<br>/g, ' ')}</h1>`);
+    : `<h1 class="cap" style="left:96px;right:96px;top:auto;bottom:${H - 410}px;font-size:84px;line-height:88px;letter-spacing:-.045em">${html}</h1>`);
   const tland = (el, t, at) => { const k = bez((t - at) / D.m); el.style.opacity = k.toFixed(3); el.style.transform = `translateY(${((1 - k) * 24).toFixed(2)}px)`; };
   /* A caption swap: the old line leaves in 150 ms, then the new one lands in 300 ms, never two lines at once. */
   const tswapIn = (el, t, at) => { const k = bez((t - at) / D.s); el.style.opacity = k.toFixed(3); el.style.transform = `translateY(${((1 - k) * 16).toFixed(2)}px)`; };
@@ -321,13 +321,14 @@ canvas { display: block; position: absolute; }
     const el = mk(host, `<div class="scr" style="left:${FR.x}px;top:${FR.y}px;width:${FR.w}px;height:${FR.h}px;border-radius:${FR.r}px;box-shadow:${FR.sh}px ${FR.sh}px 0 ${dark ? '#000' : 'var(--ink)'};${dark ? 'outline:2px solid #4a4850;outline-offset:-2px;' : ''}">${name ? `<img src="showcase-shots/${name}.png" alt="" style="position:absolute;left:0;top:${BAR}px;width:100%">` : ''}</div>`);
     const bar = statusBar(el, time);
     if (dark) { el.style.outline = 'none'; mk(el, `<i style="position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px #4a4850;z-index:12;pointer-events:none"></i>`); }
+    else if (!SQ) mk(el, `<i style="position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px rgba(20,20,22,.16);z-index:12;pointer-events:none"></i>`); /* story: the whole phone reads on light fields too */
     /* The bar takes the colour at the top of whichever screen shows, with ink or cream icons to suit. */
     const tint = img => { if (!img) return; const [r, g, b] = img._c || (img._c = topColour(img)); el.style.background = `rgb(${r},${g},${b})`; bar.style.color = (r * .3 + g * .59 + b * .11) < 140 ? '#fff6ee' : '#1d1b20'; };
     return { el, img: el.querySelector('img'), w: FR.w, h: FR.h, bar, tint };
   };
   /* Every frame rises in once (1.2 s), then drifts by about 1.5% for the rest of its scene, so a still never sits dead. */
   const tdrift = (sh, t, at, extra = {}) => {
-    const d = sine((t - at) / 5), dy = extra.dy || 0;
+    const d = sine((t - at) / 5), dy = 0; /* one fixed position; only the slow drift */
     sh.el.style.transform = `translateY(${(dy + 4 - 8 * d).toFixed(2)}px)`;
     /* Story: while a phone glides up, its top dissolves under the caption band (fully gone above y 352, a 90 px ramp below). */
     if (!SQ) { const k = clamp(-dy / 40), m = dy < 0 ? `linear-gradient(transparent 0,transparent 470px,#000 ${(470 + 50 * k + 1).toFixed(1)}px)` : 'none'; const host = sh.el.parentElement; host.style.webkitMask = m; host.style.mask = m; }
@@ -340,7 +341,7 @@ canvas { display: block; position: absolute; }
     return (i, a = 1) => { imgs.forEach((im, j) => { if (j) { im.style.transform = sh.img.style.transform; im.style.transformOrigin = sh.img.style.transformOrigin; } im.style.zIndex = 7; im.style.opacity = j === i ? a : 0; }); if (i >= 0) sh.tint(imgs[i]); };
   };
   const tswap = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); const sp = el.querySelector('.n'); if (sp.textContent !== list[i]) sp.textContent = list[i]; const k = bez((t - times[i]) / D.s); sp.style.display = 'inline-block'; sp.style.transform = `translateY(${(i ? (1 - k) * 12 : 0).toFixed(1)}px)`; sp.style.opacity = (i ? .35 + .65 * k : 1).toFixed(3); return i; };
-  const tcut = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); if (el.dataset.i !== String(i)) { el.innerHTML = SQ ? list[i] : list[i].replace(/<br>/g, ' '); el.dataset.i = i; } return i; };
+  const tcut = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); if (el.dataset.i !== String(i)) { el.innerHTML = list[i]; el.dataset.i = i; } return i; };
   /* A Material touch: the ripple spreads from the finger (600 ms) while a pressed dot fades. Coordinates in frame px. */
   const ttouch = (sh, light) => {
     const c = light ? '255,246,238' : '20,20,22', R = 28 * FR.w / 545;
@@ -517,7 +518,7 @@ canvas { display: block; position: absolute; }
 
     /* 23.4: open YouTube during Focus, and it waits. */
     const S4 = scene('paper', 23.4);
-    const c5a = tcap(S4, SQ ? `Open YouTube<br>during Focus<b class="pk">.</b>` : `YouTube, during Focus<b class="pk">.</b>`), c5 = tcap(S4, `YouTube<br>waits<b class="pk">.</b>`);
+    const c5a = tcap(S4, `Open YouTube<br>during Focus<b class="pk">.</b>`), c5 = tcap(S4, `YouTube<br>waits<b class="pk">.</b>`);
     const bk = tframe(S4, 'bar-block-focus');
     const bkv = tvariants(bk, ['bar-block-focus']);
     const lb = pixel(bk, 'youtube');
@@ -584,7 +585,7 @@ canvas { display: block; position: absolute; }
       tdrift(sl, Math.min(t, 31.0), 28.4, { dy: SQ ? 0 : -425 * bez((t - 30.7) / D.m) + 439 * bez((t - 32.1) / D.m) });
       slv(t < 29.4 ? 0 : t < 30.4 ? 1 : t < 31.85 ? 2 : 3);
       sTouch(t, 31.4, 180 * U, BAR + GN.start * U);
-      moonCover.style.opacity = SQ || t >= 31.85 ? 0 : bez((t - 30.45) / D.s).toFixed(3);
+      moonCover.style.opacity = 0;
       /* The page holds through the tap, dips to night over the whole phone (150 ms), and Goodnight arrives as ArriveSoftly does. */
       dip.style.opacity = (t < 31.85 ? bez((t - 31.7) / D.xs) : 1 - emph((t - 31.9) / .28)).toFixed(3);
       gImg.style.opacity = t < 31.85 ? 0 : 1;
@@ -592,7 +593,7 @@ canvas { display: block; position: absolute; }
       sl.el.style.opacity = (1 - dk).toFixed(3); c7.style.opacity = Math.min(+c7.style.opacity, 1 - dk).toFixed(3);
       if (t > 33.9) sl.el.style.transform += ` scale(${(1 - .03 * dk).toFixed(4)})`;
       const d0 = sine((31.0 - 28.4) / 5);
-      const k0 = gk, x0 = FR.x, y0 = FR.y + BAR + 4 - 8 * d0 + (SQ ? 0 : 14);
+      const k0 = gk, x0 = FR.x, y0 = FR.y + BAR + 4 - 8 * d0 ;
       const g = bez((t - 34.4) / D.l);
       const k1 = heroK, x1 = W / 2 - (GN.cx[0] + GN.cx[1]) / 2 * k1, y1 = heroCy - pairMid * k1;
       grp.style.opacity = t < 33.9 ? 0 : (1 - bez((t - 37.1) / D.s)).toFixed(3);
@@ -615,15 +616,33 @@ canvas { display: block; position: absolute; }
     /* 2: what stays, a tick on each beat, over the real Home. */
     const S1 = scene('paper', 2);
     const tick = `<svg class="tk" viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5" fill="none" stroke="#d81b7a" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`;
-    const ls = SQ ? { top: 90, gap: 100, fs: 84, last: 76 } : { top: 320, gap: 122, fs: 104, last: 88 };
-    const stays = ['Messages', 'Friends', 'Search', 'The video they sent'].map((w, i) => mk(S1.in, `<p class="li" style="top:${ls.top + i * ls.gap}px;font-size:${i === 3 ? ls.last : ls.fs}px;${SQ ? 'left:90px' : ''}">${tick}${w}<b class="pk">.</b></p>`));
-    const hw = SQ ? 520 : 700, hm = SQ ? shot(S1.in, 'home', 280, 540, hw, 620) : shot(S1.in, 'home', 190, 860, hw, 800);
-    const hp = Math.round(722 * hw / 1080);
+    let stays, hm, hp, sCap, goes, ch, gCap;
+    const STAY = ['Messages', 'Friends', 'Search', 'The video they sent'];
+    if (SQ) {
+      const ls = { top: 90, gap: 100, fs: 84, last: 76 };
+      stays = STAY.map((w, i) => mk(S1.in, `<p class="li" style="top:${ls.top + i * ls.gap}px;font-size:${i === 3 ? ls.last : ls.fs}px;left:90px">${tick}${w}<b class="pk">.</b></p>`));
+      hm = shot(S1.in, 'home', 280, 540, 520, 620); hp = Math.round(722 * 520 / 1080);
+    } else {
+      /* Story: one ticked line at a time above the whole phone. */
+      sCap = tcap(S1, '');
+      hm = tframe(S1, 'home');
+    }
     /* 6: what goes, struck through on the beat, over the real Chrome menu. */
     const S2 = scene('blue', 6);
-    const gs = SQ ? { top: 120, gap: 100, fs: 90 } : { top: 320, gap: 112, fs: 100 };
-    const goes = ['Reels', 'Shorts', 'For You', 'Up next', 'Autoplay'].map((w, i) => mk(S2.in, `<p class="li" style="top:${gs.top + i * gs.gap}px;font-size:${gs.fs}px;${SQ ? 'left:80px' : ''}"><span style="position:relative;display:inline-block">${w}<i class="st" style="right:-10px"></i></span></p>`));
-    const ch = SQ ? shot(S2.in, 'chrome', 560, 200, 440, 650) : shot(S2.in, 'chrome', 240, 960, 600, 710);
+    const GO = ['Reels', 'Shorts', 'For You', 'Up next', 'Autoplay'];
+    if (SQ) {
+      const gs = { top: 120, gap: 100, fs: 90 };
+      goes = GO.map((w, i) => mk(S2.in, `<p class="li" style="top:${gs.top + i * gs.gap}px;font-size:${gs.fs}px;left:80px"><span style="position:relative;display:inline-block">${w}<i class="st" style="right:-10px"></i></span></p>`));
+      ch = shot(S2.in, 'chrome', 560, 200, 440, 650);
+    } else {
+      /* Story: the five words on two centred lines, each struck on the beat, over the whole Chrome menu. */
+      gCap = tcap(S2, GO.map((w, i) => `<span style="position:relative;display:inline-block;margin:0 .18em">${w}<i class="st" style="position:absolute;left:-6px;right:-6px;top:54%;height:9px;background:#d81b7a;transform-origin:0 50%;transform:scaleX(0)"></i></span>${i === 2 ? '<br>' : ''}`).join(''));
+      goes = [...gCap.querySelectorAll('span')];
+      /* The menu is shorter than a phone, so the caption and card are centred together in the frame. */
+      const chH = Math.round(FR.w * 1800 / 1344), grpTop = Math.round((H - (176 + 38 + chH)) / 2);
+      gCap.style.bottom = `${H - (grpTop + 176)}px`;
+      ch = shot(S2.in, 'chrome', FR.x, grpTop + 176 + 38, FR.w, chH); /* ends on a divider, above the Post Mode row */
+    }
     ch.el.style.borderRadius = '14px';
     /* 10: Free. For good. The skip cygnet over its grains. */
     const S3 = scene('night', 10);
@@ -638,10 +657,22 @@ canvas { display: block; position: absolute; }
     return [DUR, t => {
       pr.paint(99); land(c0, t, -1, .6, 30);
       pr.cv.style.transform = `translate(${(30 - 30 * sine(t / 2.2)).toFixed(2)}px, ${(6 * Math.sin(t * 2.4)).toFixed(2)}px)`;
-      stays.forEach((e, i) => { const at = 2.5 + i * .5; land(e, t, at, .4, 30); e.querySelector('path').style.strokeDashoffset = (1 - out3((t - at - .05) / .3)).toFixed(3); });
-      glide(hm, t, 2.2, 3.6, { z: [1, 1.05], oy: hp, pan: [hp, hp] });
-      goes.forEach((e, i) => { land(e, t, 6.2 + i * .15, .4, 26); const k = out3((t - (7.0 + i * .5)) / .2); e.querySelector('.st').style.transform = `scaleX(${k.toFixed(3)})`; });
-      glide(ch, t, 6.3, 3.4, { z: [1, 1.05], r: -2 });
+      if (SQ) {
+        stays.forEach((e, i) => { const at = 2.5 + i * .5; land(e, t, at, .4, 30); e.querySelector('path').style.strokeDashoffset = (1 - out3((t - at - .05) / .3)).toFixed(3); });
+        glide(hm, t, 2.2, 3.6, { z: [1, 1.05], oy: hp, pan: [hp, hp] });
+        goes.forEach((e, i) => { land(e, t, 6.2 + i * .15, .4, 26); const k = out3((t - (7.0 + i * .5)) / .2); e.querySelector('.st').style.transform = `scaleX(${k.toFixed(3)})`; });
+        glide(ch, t, 6.3, 3.4, { z: [1, 1.05], r: -2 });
+      } else {
+        /* Each item holds about 0.9 s: its tick draws on as it lands. */
+        const SAT = [2.4, 3.3, 4.2, 5.1]; let si = 0; SAT.forEach((a, j) => { if (t >= a) si = j; });
+        if (sCap.dataset.i !== String(si)) { sCap.innerHTML = `${tick}${STAY[si]}<b class="pk">.</b>`; sCap.dataset.i = si; const tk = sCap.querySelector('.tk'); tk.style.cssText = 'display:inline-block;width:.8em;height:.8em;margin-right:.25em;vertical-align:-.04em'; }
+        const kk = bez((t - SAT[si]) / D.s); sCap.style.opacity = t < 2.4 ? 0 : (si === 0 ? kk : 1).toFixed(3);
+        sCap.querySelector('path') && (sCap.querySelector('path').style.strokeDashoffset = (1 - bez((t - SAT[si] - .05) / D.s)).toFixed(3));
+        tdrift(hm, t, 2);
+        tland(gCap, t, 6.25);
+        goes.forEach((e, i) => { const k = out3((t - (7.0 + i * .5)) / .2); e.querySelector('.st').style.transform = `scaleX(${k.toFixed(3)})`; });
+        tdrift(ch, t, 6);
+      }
       gr(t - 10.3, .8); sk.paint(t - 10.35); land(c3, t, 10.3, .5, 34);
       const gx = `translateX(${((1 - io((t - 10.2) / 2)) * 80).toFixed(2)}px)`; gc.style.transform = gx; sk.cv.style.transform = gx;
       end(t);
