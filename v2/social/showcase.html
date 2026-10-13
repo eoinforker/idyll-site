@@ -298,12 +298,13 @@ canvas { display: block; position: absolute; }
     return t => { t = clamp(t); if (t === 0 || t === 1) return t; let s = t; for (let i = 0; i < 8; i++) { const d = dX(s); if (Math.abs(d) < 1e-6) break; s -= (X(s) - t) / d; } return Y(clamp(s)); }; })();
   const D = { xs: .15, s: .3, m: .6, l: 1.2 };
   /* The frame: a whole phone screen at true proportions (360 x 780 dp), the same size and place in every scene. */
-  const FR = SQ ? { x: 580, y: 102, w: 404, h: 876, r: 30, sh: 11 } : { x: 268, y: 480, w: 545, h: 1180, r: 41, sh: 15 };
+  /* Story: one large phone, 780 x 1690 at true proportions, resting at y 504 and running off the bottom edge (Instagram Stories). */
+  const FR = SQ ? { x: 580, y: 102, w: 404, h: 876, r: 30, sh: 11 } : { x: 150, y: 504, w: 780, h: 1690, r: 58, sh: 18 };
   const U = FR.w / 360; /* px per dp inside the frame */
-  /* Captions: 84/88 in a story, centred, bottoms on y 430; 68/72 in a square, left column, bottoms on y 560. */
+  /* Captions: 84/88 in a story, one line, centred, in the band y 374 to 462, 42 px above the phone; 68/72 in a square, left column, bottoms on y 560. */
   const tcap = (S, html) => mk(S.in, SQ
     ? `<h1 class="cap l" style="left:96px;right:auto;width:450px;top:auto;bottom:${H - 560}px;font-size:68px;line-height:72px;letter-spacing:-.045em">${html}</h1>`
-    : `<h1 class="cap" style="left:96px;right:96px;top:auto;bottom:${H - 430}px;font-size:84px;line-height:88px;letter-spacing:-.045em">${html}</h1>`);
+    : `<h1 class="cap" style="left:60px;right:60px;top:374px;font-size:84px;line-height:88px;letter-spacing:-.045em;white-space:nowrap">${html.replace(/<br>/g, ' ')}</h1>`);
   const tland = (el, t, at) => { const k = bez((t - at) / D.m); el.style.opacity = k.toFixed(3); el.style.transform = `translateY(${((1 - k) * 24).toFixed(2)}px)`; };
   /* A caption swap: the old line leaves in 150 ms, then the new one lands in 300 ms, never two lines at once. */
   const tswapIn = (el, t, at) => { const k = bez((t - at) / D.s); el.style.opacity = k.toFixed(3); el.style.transform = `translateY(${((1 - k) * 16).toFixed(2)}px)`; };
@@ -316,7 +317,8 @@ canvas { display: block; position: absolute; }
       <span style="position:absolute;right:${20 * U}px;top:${8 * U}px;width:${18 * U}px;height:${11 * U}px;border-radius:${3 * U}px;border:${1.4 * U}px solid currentColor;box-sizing:border-box;padding:${1.4 * U}px"><i style="display:block;height:100%;width:72%;border-radius:${1 * U}px;background:currentColor"></i></span></div>`);
   const topColour = img => { try { const c = document.createElement('canvas'); c.width = c.height = 1; c.getContext('2d').drawImage(img, img.naturalWidth / 2, 2, 1, 1, 0, 0, 1, 1); const [r, g, b] = c.getContext('2d').getImageData(0, 0, 1, 1).data; return [r, g, b]; } catch (e) { return [246, 245, 241]; } };
   const tframe = (S, name, dark, time = '10:24') => {
-    const el = mk(S.in, `<div class="scr" style="left:${FR.x}px;top:${FR.y}px;width:${FR.w}px;height:${FR.h}px;border-radius:${FR.r}px;box-shadow:${FR.sh}px ${FR.sh}px 0 ${dark ? '#000' : 'var(--ink)'};${dark ? 'outline:2px solid #4a4850;outline-offset:-2px;' : ''}">${name ? `<img src="showcase-shots/${name}.png" alt="" style="position:absolute;left:0;top:${BAR}px;width:100%">` : ''}</div>`);
+    const host = SQ ? S.in : (S.pm || (S.pm = mk(S.in, `<div style="position:absolute;inset:0;z-index:12"></div>`)));
+    const el = mk(host, `<div class="scr" style="left:${FR.x}px;top:${FR.y}px;width:${FR.w}px;height:${FR.h}px;border-radius:${FR.r}px;box-shadow:${FR.sh}px ${FR.sh}px 0 ${dark ? '#000' : 'var(--ink)'};${dark ? 'outline:2px solid #4a4850;outline-offset:-2px;' : ''}">${name ? `<img src="showcase-shots/${name}.png" alt="" style="position:absolute;left:0;top:${BAR}px;width:100%">` : ''}</div>`);
     const bar = statusBar(el, time);
     if (dark) { el.style.outline = 'none'; mk(el, `<i style="position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px #4a4850;z-index:12;pointer-events:none"></i>`); }
     /* The bar takes the colour at the top of whichever screen shows, with ink or cream icons to suit. */
@@ -325,8 +327,10 @@ canvas { display: block; position: absolute; }
   };
   /* Every frame rises in once (1.2 s), then drifts by about 1.5% for the rest of its scene, so a still never sits dead. */
   const tdrift = (sh, t, at, extra = {}) => {
-    const d = sine((t - at) / 5);
-    sh.el.style.transform = `translateY(${(4 - 8 * d).toFixed(2)}px)`;
+    const d = sine((t - at) / 5), dy = extra.dy || 0;
+    sh.el.style.transform = `translateY(${(dy + 4 - 8 * d).toFixed(2)}px)`;
+    /* Story: while a phone glides up, its top dissolves under the caption band (fully gone above y 352, a 90 px ramp below). */
+    if (!SQ) { const k = clamp(-dy / 40), m = dy < 0 ? `linear-gradient(transparent 0,transparent 470px,#000 ${(470 + 50 * k + 1).toFixed(1)}px)` : 'none'; const host = sh.el.parentElement; host.style.webkitMask = m; host.style.mask = m; }
     if (sh.img) { sh.img.style.transformOrigin = `50% ${(extra.oy || 0).toFixed(1)}px`; sh.img.style.transform = `scale(${(extra.z || 1).toFixed(4)})`; }
   };
   const tvariants = (sh, names) => {
@@ -336,7 +340,7 @@ canvas { display: block; position: absolute; }
     return (i, a = 1) => { imgs.forEach((im, j) => { if (j) { im.style.transform = sh.img.style.transform; im.style.transformOrigin = sh.img.style.transformOrigin; } im.style.zIndex = 7; im.style.opacity = j === i ? a : 0; }); if (i >= 0) sh.tint(imgs[i]); };
   };
   const tswap = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); const sp = el.querySelector('.n'); if (sp.textContent !== list[i]) sp.textContent = list[i]; const k = bez((t - times[i]) / D.s); sp.style.display = 'inline-block'; sp.style.transform = `translateY(${(i ? (1 - k) * 12 : 0).toFixed(1)}px)`; sp.style.opacity = (i ? .35 + .65 * k : 1).toFixed(3); return i; };
-  const tcut = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); if (el.dataset.i !== String(i)) { el.innerHTML = list[i]; el.dataset.i = i; } return i; };
+  const tcut = (el, list, times, t) => { let i = 0; times.forEach((tt, j) => { if (t >= tt) i = j; }); if (el.dataset.i !== String(i)) { el.innerHTML = SQ ? list[i] : list[i].replace(/<br>/g, ' '); el.dataset.i = i; } return i; };
   /* A Material touch: the ripple spreads from the finger (600 ms) while a pressed dot fades. Coordinates in frame px. */
   const ttouch = (sh, light) => {
     const c = light ? '255,246,238' : '20,20,22', R = 28 * FR.w / 545;
@@ -354,12 +358,22 @@ canvas { display: block; position: absolute; }
   /* A clean Pixel-style home screen at 360 x 780 dp: status bar, a glance, two rows of apps, a dock and the search pill. */
   const PIX = { instagram: ['radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)', '#fff'], youtube: ['#fff', '#ff0033'], tiktok: ['#010101', '#fff'], x: ['#000', '#fff'],
     reddit: ['#ff4500', '#fff'], snapchat: ['#fffc00', '#111'], facebook: ['#0866ff', '#fff'], linkedin: ['#0a66c2', '#fff'], threads: ['#000', '#fff'], discord: ['#5865f2', '#fff'], substack: ['#ff6719', '#fff'] };
+  const SNAP = 'M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.39.839-1.213 1.168-.089.029-.209.075-.344.119-.45.135-1.139.36-1.333.81-.09.224-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.271-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.031-.063-.052-.15-.055-.225-.015-.243.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.645.119-.869-.195-.434-.884-.658-1.332-.809-.121-.029-.24-.074-.346-.119-1.107-.435-1.257-.93-1.197-1.273.09-.479.674-.793 1.168-.793.146 0 .27.029.383.074.42.194.789.3 1.104.3.234 0 .384-.06.465-.105l-.046-.569c-.098-1.626-.225-3.651.307-4.837C7.392 1.077 10.739.807 11.727.807l.419-.015h.06z';
   const PNAMES = { instagram: 'Instagram', youtube: 'YouTube', tiktok: 'TikTok', x: 'X', reddit: 'Reddit', snapchat: 'Snapchat', facebook: 'Facebook', linkedin: 'LinkedIn' };
   function pixel(sh, target) {
     const u = U, ic = 52 * u;
     const NM = { ...PNAMES, threads: 'Threads', discord: 'Discord', substack: 'Substack', idyll: 'Idyll' };
-    const gl = n => n === 'idyll' ? `<img src="showcase-shots/idyll-launcher.png" alt="" style="width:100%;height:100%;display:block">` : `<i style="position:absolute;inset:0;-webkit-mask:url(../../img/brands/${n}.svg) center/50% no-repeat;mask:url(../../img/brands/${n}.svg) center/50% no-repeat;background:${PIX[n][1]}"></i>`;
-    const tile = n => `<div data-n="${n}" style="display:grid;justify-items:center;row-gap:${6 * u}px"><div class="pt" style="position:relative;width:${ic}px;height:${ic}px;border-radius:50%;overflow:hidden;background:${n === 'idyll' ? 'transparent' : PIX[n][0]};box-shadow:0 ${1 * u}px ${2.5 * u}px rgba(20,20,22,.16)">${gl(n)}</div><span style="font:400 ${12 * u}px/1 var(--sans);letter-spacing:.01em;color:#1d1b20">${NM[n]}</span></div>`;
+    /* Each tile as the real launcher icon draws it. Some Simple Icons marks are negatives (Facebook, LinkedIn), so they are inverted here. */
+    const mask = (n, size, col, extra = '') => `<i style="position:absolute;inset:0;-webkit-mask:url(../../img/brands/${n}.svg) center/${size}% no-repeat;mask:url(../../img/brands/${n}.svg) center/${size}% no-repeat;background:${col};${extra}"></i>`;
+    const gl = n => {
+      if (n === 'idyll') return `<img src="showcase-shots/idyll-launcher.png" alt="" style="width:100%;height:100%;display:block">`;
+      if (n === 'snapchat') return `<svg viewBox="-1.5 -1.5 27 27" style="position:absolute;left:19%;top:19%;width:62%;height:62%"><path d="${SNAP}" fill="#fff" stroke="#111" stroke-width="1.35" stroke-linejoin="round"/></svg>`;
+      if (n === 'facebook') return mask(n, 100, '#0866ff');
+      if (n === 'linkedin') return `<i style="position:absolute;left:22%;top:22%;width:56%;height:56%;border-radius:18%;background:#fff;-webkit-mask:url(../../img/brands/linkedin.svg) center/100% no-repeat,linear-gradient(#000,#000);-webkit-mask-composite:xor;mask:url(../../img/brands/linkedin.svg) center/100% no-repeat exclude,linear-gradient(#000,#000)"></i>`;
+      if (n === 'tiktok') return mask(n, 50, '#25f4ee', `transform:translate(${-.9 * u}px,${-.9 * u}px)`) + mask(n, 50, '#fe2c55', `transform:translate(${.9 * u}px,${.9 * u}px)`) + mask(n, 50, '#fff');
+      return mask(n, 50, PIX[n][1]);
+    };
+    const tile = n => `<div data-n="${n}" style="display:grid;justify-items:center;row-gap:${6 * u}px"><div class="pt" style="position:relative;width:${ic}px;height:${ic}px;border-radius:50%;overflow:hidden;background:${n === 'idyll' ? 'transparent' : n === 'facebook' ? '#fff' : PIX[n][0]};box-shadow:0 ${1 * u}px ${2.5 * u}px rgba(20,20,22,.16)">${gl(n)}</div><span style="font:400 ${12 * u}px/1 var(--sans);letter-spacing:.01em;color:#1d1b20">${NM[n]}</span></div>`;
     const row = (list, top) => `<div style="position:absolute;left:${16 * u}px;right:${16 * u}px;top:${top * u}px;display:grid;grid-template-columns:repeat(4,1fr)">${list.map(tile).join('')}</div>`;
     const el = mk(sh.el, `<div class="lau" style="position:absolute;inset:0;z-index:4;overflow:hidden;border-radius:inherit;background:linear-gradient(168deg,#f7ebe9 0%,#efe7f3 46%,#e3e9fb 100%);font-family:var(--sans)">
       <div class="pw" style="position:absolute;inset:0;transform-origin:50% 50%">
@@ -503,7 +517,7 @@ canvas { display: block; position: absolute; }
 
     /* 23.4: open YouTube during Focus, and it waits. */
     const S4 = scene('paper', 23.4);
-    const c5a = tcap(S4, `Open YouTube<br>during Focus<b class="pk">.</b>`), c5 = tcap(S4, `YouTube<br>waits<b class="pk">.</b>`);
+    const c5a = tcap(S4, SQ ? `Open YouTube<br>during Focus<b class="pk">.</b>` : `YouTube, during Focus<b class="pk">.</b>`), c5 = tcap(S4, `YouTube<br>waits<b class="pk">.</b>`);
     const bk = tframe(S4, 'bar-block-focus');
     const bkv = tvariants(bk, ['bar-block-focus']);
     const lb = pixel(bk, 'youtube');
@@ -516,6 +530,8 @@ canvas { display: block; position: absolute; }
     const gImg = sl.el.querySelectorAll('img')[3];
     const dip = mk(sl.el, `<div style="position:absolute;inset:0;background:#141416;opacity:0;z-index:10"></div>`); gImg.style.zIndex = 4;
     const sTouch = ttouch(sl, true);
+    /* Story: the Sleep page's moon is covered in its own magenta as the phone glides up, so no stray arc shows under the caption. */
+    const moonCover = mk(sl.el, `<div style="position:absolute;left:${244 * U}px;top:${72 * U}px;width:${106 * U}px;height:${100 * U}px;border-radius:50%;background:#d81b7a;z-index:7;opacity:0"></div>`);
     /* The moon and the cygnet, cut from the 4x Goodnight render, in their own layers so they can stay when the phone goes. */
     const GN = { moon: [295, 775], cyg: [865, 1405], water: 1387, cx: [401, 1018], start: 653.8 }; /* measured from the render (1440 x 3008 px; start in dp) */
     const gk = FR.w / 1440;
@@ -549,15 +565,15 @@ canvas { display: block; position: absolute; }
       tdrift(ap, t, 3.9); apv(ai === 10 ? 0 : ai);
       /* Reels: the caption, a held beat, the tap at 10.9; the reel opens; Idyll steps back to the feed (500 ms) and the strip rises. */
       tland(c3a, t, 9.15); tleave(c3a, t, 12.4); tswapIn(c3, t, 12.55);
-      tdrift(rf, t, 8.9); reels(t, 10.9, 12.4);
+      tdrift(rf, t, 8.9, { dy: SQ ? 0 : -520 * bez((t - 10.0) / D.m) }); reels(t, 10.9, 12.4);
       /* Open, then pause: caption, tap at 15.9, the launch (500 ms), the pause arrives at 16.55; the words change at 17.9 and 18.9. */
       tland(c4a, t, 14.65); tleave(c4a, t, 16.83); tswapIn(c4, t, 16.98);
-      tdrift(pz, t, 14.4); const a1 = lp(t, 15.9, 16.55);
+      tdrift(pz, t, 14.4, { dy: SQ ? 0 : 0 }); const a1 = lp(t, 15.9, 16.55);
       pzv(!a1 ? -1 : t < 17.9 ? 0 : t < 18.9 ? 1 : 2, a1);
       /* Open during Focus, then paused: caption, tap at 21.9, the launch, the block screen at 22.55, held. */
       /* Focus: 25, 90 at 21.4, settling on 50 at 22.4. */
       tland(c6, t, 20.65); tswap(c6, ['25', '90', '50'], [0, 21.4, 22.4], t);
-      tdrift(fo, t, 20.4); fov(t < 21.4 ? 0 : t < 22.4 ? 1 : 2);
+      tdrift(fo, t, 20.4, { dy: SQ ? 0 : 8 }); fov(t < 21.4 ? 0 : t < 22.4 ? 1 : 2);
       /* Open YouTube during that Focus: the caption holds, tap at 25.4, the launch, the block screen (until 11:14) at 26.05, held. */
       tland(c5a, t, 23.65); tleave(c5a, t, 26.33); tswapIn(c5, t, 26.48);
       tdrift(bk, t, 23.4); const a2 = lb(t, 25.4, 26.05); bkv(a2 ? 0 : -1, a2);
@@ -565,9 +581,10 @@ canvas { display: block; position: absolute; }
          and holds 2 s; at 33.9 the phone and its words dissolve (600 ms, to 97%); the moon and cygnet stay and glide to hero size
          (1.2 s from 34.4), breathe, and dip out at 37.1. */
       tland(c7, t, 28.65); tswap(c7, ['22:30', '00:00', '23:00'], [0, 29.4, 30.4], t);
-      tdrift(sl, Math.min(t, 31.0), 28.4);
+      tdrift(sl, Math.min(t, 31.0), 28.4, { dy: SQ ? 0 : -425 * bez((t - 30.7) / D.m) + 439 * bez((t - 32.1) / D.m) });
       slv(t < 29.4 ? 0 : t < 30.4 ? 1 : t < 31.85 ? 2 : 3);
       sTouch(t, 31.4, 180 * U, BAR + GN.start * U);
+      moonCover.style.opacity = SQ || t >= 31.85 ? 0 : bez((t - 30.45) / D.s).toFixed(3);
       /* The page holds through the tap, dips to night over the whole phone (150 ms), and Goodnight arrives as ArriveSoftly does. */
       dip.style.opacity = (t < 31.85 ? bez((t - 31.7) / D.xs) : 1 - emph((t - 31.9) / .28)).toFixed(3);
       gImg.style.opacity = t < 31.85 ? 0 : 1;
@@ -575,7 +592,7 @@ canvas { display: block; position: absolute; }
       sl.el.style.opacity = (1 - dk).toFixed(3); c7.style.opacity = Math.min(+c7.style.opacity, 1 - dk).toFixed(3);
       if (t > 33.9) sl.el.style.transform += ` scale(${(1 - .03 * dk).toFixed(4)})`;
       const d0 = sine((31.0 - 28.4) / 5);
-      const k0 = gk, x0 = FR.x, y0 = FR.y + BAR - 10 * d0;
+      const k0 = gk, x0 = FR.x, y0 = FR.y + BAR + 4 - 8 * d0 + (SQ ? 0 : 14);
       const g = bez((t - 34.4) / D.l);
       const k1 = heroK, x1 = W / 2 - (GN.cx[0] + GN.cx[1]) / 2 * k1, y1 = heroCy - pairMid * k1;
       grp.style.opacity = t < 33.9 ? 0 : (1 - bez((t - 37.1) / D.s)).toFixed(3);
