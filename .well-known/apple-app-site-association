@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.app.idyll"],
+        "components": [
+          { "/": "/together", "comment": "Focus together links. The times live after the #, which never reaches this server." },
+          { "/": "/together/" }
+        ]
+      }
+    ]
+  }
+}

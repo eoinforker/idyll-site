@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Focus together</title>
+<meta name="description" content="Someone asked you to focus with them. Open the link in Idyll and the same apps rest on both phones.">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="../img/icons/H2-white-on-magenta.png" type="image/png">
+<link rel="stylesheet" href="../fonts.css">
+<style>
+/* One magenta plate, cream type, the site's crop marks. */
+:root {
+  --pink: #d81b7a;
+  --cream: #fff6ee;
+  --ink: #161514;
+  --sans: "Timeless Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Paper Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: var(--pink); color: var(--cream); }
+body { font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; display: flex; justify-content: center; padding: 16px; }
+.plate { position: relative; width: 100%; max-width: 520px; min-height: calc(100svh - 32px); padding: 56px 28px 40px; display: flex; flex-direction: column; }
+.plate::before, .plate::after, .plate i::before, .plate i::after { content: ""; position: absolute; width: 11px; height: 11px; border: 0 solid var(--cream); }
+.plate::before { left: 0; top: 0; border-left-width: 1px; border-top-width: 1px; }
+.plate::after { right: 0; top: 0; border-right-width: 1px; border-top-width: 1px; }
+.plate i::before { left: 0; bottom: 0; border-left-width: 1px; border-bottom-width: 1px; }
+.plate i::after { right: 0; bottom: 0; border-right-width: 1px; border-bottom-width: 1px; }
+.wm { display: inline-flex; gap: 10px; align-items: center; color: inherit; text-decoration: none; font: 500 19px/1 var(--sans); }
+.wm img { width: 24px; height: 24px; border-radius: 6px; }
+.pair { width: min(300px, 80%); margin: 48px auto 0; display: block; }
+h1 { font: 500 clamp(40px, 11vw, 64px)/.95 var(--sans); letter-spacing: -.045em; margin: 40px 0 14px; text-align: center; }
+h1 span { color: var(--ink); }
+p { margin: 0 0 12px; text-align: center; }
+.when { font: 400 13px/1.4 var(--mono); letter-spacing: .03em; text-align: center; margin-bottom: 18px; min-height: 1.4em; }
+.foot { margin-top: auto; padding-top: 32px; display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
+.button { display: block; text-align: center; background: var(--ink); color: var(--cream); text-decoration: none; font: 500 18px/1 var(--sans); padding: 19px 12px; }
+.button:hover { opacity: .9; }
+.small { font-size: 14px; text-align: center; }
+a { color: inherit; text-underline-offset: .18em; }
+:focus-visible { outline: 2px solid var(--cream); outline-offset: 3px; }
+</style>
+</head>
+<body>
+<main class="plate"><i></i>
+  <a class="wm" href="../"><img src="../img/icons/H2-white-on-magenta.png" alt="" width="24" height="24">Idyll</a>
+  <img class="pair" src="../img/cygnet-pair-print.png" alt="">
+  <h1>Focus together<span>.</span></h1>
+  <p class="when" id="when"></p>
+  <p>Someone asked you to focus with them. On a phone with Idyll, this link opens in the app, and the same apps rest on both phones for the same hour.</p>
+  <p>If it opened here instead, install Idyll, then tap the link again in the chat it came from.</p>
+  <div class="foot">
+    <a class="button" href="https://play.google.com/store/apps/details?id=app.idyll">Get Idyll for Android</a>
+    <p class="small">Free, for good. No account. Everything after the # in this link stays on your phone: this page reads it in your browser and sends it nowhere.</p>
+  </div>
+</main>
+<script>
+// Reads the times from the fragment, here in the browser only. Nothing is sent.
+(function () {
+  var f = {};
+  location.hash.replace(/^#/, "").split("&").forEach(function (p) {
+    var i = p.indexOf("=");
+    if (i > 0) f[p.slice(0, i)] = p.slice(i + 1);
+  });
+  var s = Number(f.s), e = Number(f.e);
+  if (f.v !== "1" || !(s > 0) || !(e > s) || e - s > 720) return;
+  var opts = { hour: "2-digit", minute: "2-digit" };
+  var from = new Date(s * 60000), to = new Date(e * 60000);
+  var out = document.getElementById("when");
+  if (to.getTime() <= Date.now()) { out.textContent = "This Focus has ended."; return; }
+  var day = from.toDateString() === new Date().toDateString() ? "" : from.toLocaleDateString(undefined, { weekday: "long" }) + ", ";
+  out.textContent = day + from.toLocaleTimeString(undefined, opts) + " to " + to.toLocaleTimeString(undefined, opts);
+})();
+</script>
+</body>
+</html>
