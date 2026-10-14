@@ -1,10 +1,13 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "app.idyll",
       "sha256_cert_fingerprints": [
+        "63:AC:42:3B:87:F6:08:E4:8B:F9:79:F2:89:98:6E:9C:79:4D:70:9F:38:3B:6C:C7:7C:D9:B2:C5:8F:F8:C9:00",
         "44:98:F0:EA:1A:75:10:DD:9F:88:70:27:9C:E1:0F:89:6F:65:70:38:A5:D0:ED:D2:21:63:56:22:1B:C2:7B:EB"
       ]
     }

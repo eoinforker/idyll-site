@@ -60,7 +60,7 @@ Brand marks are the official ones from Simple Icons (CC0), printed as our own ha
 
 **TODO (Eóin):**
 
-* **Play App Signing.** `assetlinks.json` holds the SHA-256 of the upload key only. Google re-signs the app with its own app signing key, so add that fingerprint too: Play Console, Idyll, Test and release, App integrity, App signing, "App signing key certificate", SHA-256. Paste it as a second string in `sha256_cert_fingerprints`. Until then, links open in the browser page for installs from Play.
+* **Play App Signing.** Done: `assetlinks.json` holds Google's app signing key and the upload key, so links open Idyll for installs from Play and for local release builds.
 * **Apple Team ID.** Replace `TEAMID` in `apple-app-site-association` with the ten character Team ID (developer.apple.com, Membership), so it reads like `ABCDE12345.app.idyll`. The app's entitlement already asks for `applinks:idyll.day`.
 
 ## Working on it
